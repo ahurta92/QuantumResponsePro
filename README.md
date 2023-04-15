@@ -31,17 +31,11 @@ pip install -e .
 ```python
 from quantumresponsepro import (
     Dalton,
-    MADNESSTranslator,
-    MADNESSOutputProcessor,
-    PolarizabilityAnalyzer,
-    BasisSetAnalyzer,
-    BasisSetAugmentationAnalyzer,
-    BasisSetCorePolarizationAnalyzer,
-    BasisSetValenceSizeAnalyzer,
-    BasisSetValenceSizeAugmentationAnalyzer,
+    MadnessResponseReader,
+    ResponseDataBundle,
 )
 
-response_dataframes=ResponsePropertyDataframe(dir)
+response_dataframes=ResponseDataBundle(dir)
 
 ```
 For more detailed examples, please refer to the examples directory and the provided Jupyter notebooks.
