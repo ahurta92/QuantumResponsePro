@@ -29,73 +29,6 @@ op = 'dipole'
 development = "/mnt/data/madness_data/post_acs/development"
 august = "/mnt/data/madness_data/post_watoc/august"
 
-
-class GammaSets:
-    def __init__(self, mdata, v, upper1, lower1, upper2, lower2, upper3, lower3, upper4, lower4):
-        self.svp = set(mdata.query(
-            'polarization =="V" & augmentation == "aug" & valence == @v & gamma > @upper1 ').molecule.unique())
-        self.svn = set(mdata.query(
-            'polarization =="V" & augmentation == "aug" & valence == @v & gamma < @lower1 ').molecule.unique())
-        self.sv = self.svp.union(self.svn)
-
-        self.scp = set(mdata.query(
-            'polarization =="CV" & augmentation == "aug" & valence == @v & gamma > @upper2 ').molecule.unique())
-        self.scn = set(mdata.query(
-            'polarization =="CV" & augmentation == "aug" & valence == @v & gamma < @lower2 ').molecule.unique())
-        self.sc = self.scp.union(self.scn)
-
-        self.dvp = set(mdata.query(
-            'polarization =="V" & augmentation == "d-aug" & valence == @v & gamma > @upper3 ').molecule.unique())
-        self.dvn = set(mdata.query(
-            'polarization =="V" & augmentation == "d-aug" & valence == @v & gamma < @lower3 ').molecule.unique())
-        self.dv = self.dvp.union(self.dvn)
-
-        self.dcp = set(mdata.query(
-            'polarization =="CV" & augmentation == "d-aug" & valence == @v & gamma > @upper4 ').molecule.unique())
-        self.dcn = set(mdata.query(
-            'polarization =="CV" & augmentation == "d-aug" & valence == @v & gamma < @lower4 ').molecule.unique())
-        self.dc = self.dcp.union(self.dcn)
-
-
-class MolSetsAbsolute:
-    def __init__(self, mdata, v, t1, t2, t3, t4):
-        self.sv = set(mdata.query(
-            'polarization =="V" & augmentation == "aug" & valence == @v & alpha.abs() > @t1 ').molecule.unique())
-        self.sc = set(mdata.query(
-            'polarization =="CV" & augmentation == "aug" & valence == @v & alpha.abs() > @t2 ').molecule.unique())
-        self.dv = set(mdata.query(
-            'polarization =="V" & augmentation == "d-aug" & valence == @v & alpha.abs() > @t3 ').molecule.unique())
-        self.dc = set(mdata.query(
-            'polarization =="CV" & augmentation == "d-aug" & valence == @v & alpha.abs() > @t4 ').molecule.unique())
-
-
-class MolSets:
-    def __init__(self, mdata, v, upper1, lower1, upper2, lower2, upper3, lower3, upper4, lower4):
-        self.svp = set(mdata.query(
-            'polarization =="V" & augmentation == "aug" & valence == @v & alpha > @upper1 ').molecule.unique())
-        self.svn = set(mdata.query(
-            'polarization =="V" & augmentation == "aug" & valence == @v & alpha < @lower1 ').molecule.unique())
-        self.sv = self.svp.union(self.svn)
-
-        self.scp = set(mdata.query(
-            'polarization =="CV" & augmentation == "aug" & valence == @v & alpha > @upper2 ').molecule.unique())
-        self.scn = set(mdata.query(
-            'polarization =="CV" & augmentation == "aug" & valence == @v & alpha < @lower2 ').molecule.unique())
-        self.sc = self.scp.union(self.scn)
-
-        self.dvp = set(mdata.query(
-            'polarization =="V" & augmentation == "d-aug" & valence == @v & alpha > @upper3 ').molecule.unique())
-        self.dvn = set(mdata.query(
-            'polarization =="V" & augmentation == "d-aug" & valence == @v & alpha < @lower3 ').molecule.unique())
-        self.dv = self.dvp.union(self.dvn)
-
-        self.dcp = set(mdata.query(
-            'polarization =="CV" & augmentation == "d-aug" & valence == @v & alpha > @upper4 ').molecule.unique())
-        self.dcn = set(mdata.query(
-            'polarization =="CV" & augmentation == "d-aug" & valence == @v & alpha < @lower4 ').molecule.unique())
-        self.dc = self.dcp.union(self.dcn)
-
-
 # create a Path object with the path to the file
 
 class ResponsePropertiesDataFrames:
@@ -139,13 +72,6 @@ class ResponsePropertiesDataFrames:
         num_not_converged = len(not_converged)
         num_part_converged = len(part_converged)
         print("converged : ", num_c)
-        print("not converged : ", num_n)
-        print("not found : ", num_nf)
-        print("json error : ", num_json_e)
-        print("type error : ", num_type_e)
-        print("total : ", total)
-        print("fully not converged", num_not_converged)
-        print("num partly fully converged", num_part_converged)
         return converged, part_converged, not_converged, not_found, type_error, json_error
 
     def __init__(self, data_dir):
