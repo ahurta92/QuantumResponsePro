@@ -3,7 +3,7 @@ from src.quantumresponsepro.madness.madness_reader_v2 import ResponseCalc
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from src.quantumresponsepro.Dalton.dalton import Dalton
+from src.quantumresponsepro.dalton.dalton import Dalton
 import seaborn as sns
 
 polar_keys = ['xx', 'xy', 'xz', 'yx', 'yy', 'yz', 'zx', 'zy', 'zz']
@@ -137,7 +137,7 @@ def get_basis_polar_data(mols, basis_sets, xc, op, database):
     for mol in mols:
         for basis in basis_sets:
             try:
-                ground, response = d.get_frequency_result(mol, 'hf', 'dipole', basis)
+                ground, response = d.get_frequency_result(mol, xc, op, basis)
                 basis_polar_df = response[polar_keys]
                 bd.append(column_polar_df(basis_polar_df, mol, basis))
             except TypeError:

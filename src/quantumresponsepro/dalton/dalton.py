@@ -2,13 +2,12 @@ import subprocess
 
 import numpy as np
 import shutil
-from src.quantumresponsepro.madnessToDaltony import madnessToDalton
 import os
 import pandas as pd
 import json
 
-from src.quantumresponsepro.Dalton.daltonToJson import daltonToJson
-
+from src.quantumresponsepro.dalton.daltonToJson import daltonToJson
+from src.quantumresponsepro.madness_to_dalton import madnessToDalton
 
 class Dalton:
     dalton_dir = None
@@ -274,7 +273,7 @@ class Dalton:
                     pass
             else:
 
-                print("Did not find ", basis, " data for", mol, "and Dalton is not set to run")
+                print("Did not find ", basis, " data for", mol, "and dalton is not set to run")
                 pass
         return data
 

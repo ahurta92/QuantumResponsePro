@@ -1,6 +1,7 @@
-from mra_compare import *
-from qcdatabase import FrequencyDatabase as FDatabase
+from analysis import *
 from pathlib import Path
+import glob
+import json
 
 
 def get_polar_df(molecules, xc, op, database, basis):
@@ -29,7 +30,7 @@ development = "/mnt/data/madness_data/post_acs/development"
 august = "/mnt/data/madness_data/post_watoc/august"
 
 
-class gamma_sets:
+class GammaSets:
     def __init__(self, mdata, v, upper1, lower1, upper2, lower2, upper3, lower3, upper4, lower4):
         self.svp = set(mdata.query(
             'polarization =="V" & augmentation == "aug" & valence == @v & gamma > @upper1 ').molecule.unique())
@@ -56,7 +57,7 @@ class gamma_sets:
         self.dc = self.dcp.union(self.dcn)
 
 
-class mol_sets_absolute:
+class MolSetsAbsolute:
     def __init__(self, mdata, v, t1, t2, t3, t4):
         self.sv = set(mdata.query(
             'polarization =="V" & augmentation == "aug" & valence == @v & alpha.abs() > @t1 ').molecule.unique())
@@ -68,7 +69,7 @@ class mol_sets_absolute:
             'polarization =="CV" & augmentation == "d-aug" & valence == @v & alpha.abs() > @t4 ').molecule.unique())
 
 
-class mol_sets:
+class MolSets:
     def __init__(self, mdata, v, upper1, lower1, upper2, lower2, upper3, lower3, upper4, lower4):
         self.svp = set(mdata.query(
             'polarization =="V" & augmentation == "aug" & valence == @v & alpha > @upper1 ').molecule.unique())
@@ -97,7 +98,55 @@ class mol_sets:
 
 # create a Path object with the path to the file
 
-class HFPolarDatabase:
+class ResponsePropertiesDataFrames:
+
+    def __report_convergence(self):
+        converged = []
+        not_converged = []
+        not_found = []
+        type_error = []
+        json_error = []
+        for mol in self.mol_list:
+            try:
+                check_mol = FrequencyData(mol, self.xc, self.op, self.database_dir)
+                if check_mol.converged.all() and check_mol.converged.sum() == self.num_freq:
+                    converged.append(mol)
+                else:
+                    not_converged.append(mol)
+            except FileNotFoundError as f:
+                not_found.append(mol)
+            except TypeError as f:
+                type_error.append(mol)
+            except json.decoder.JSONDecodeError as j:
+                json_error.append(mol)
+
+        num_c = len(converged)
+        num_n = len(not_converged)
+        num_nf = len(not_found)
+        num_json_e = len(json_error)
+        num_type_e = len(type_error)
+        total = num_c + num_n + num_nf + num_json_e + num_type_e
+        not_converged = []
+        part_converged = []
+        if True:
+            for mol in not_converged:
+                check = FrequencyData(mol, self.xc, self.op, self.database_dir)
+                if check.converged.any():
+                    # print(mol,'\n',check.converged)
+                    part_converged.append(mol)
+                else:
+                    not_converged.append(mol)
+        num_not_converged = len(not_converged)
+        num_part_converged = len(part_converged)
+        print("converged : ", num_c)
+        print("not converged : ", num_n)
+        print("not found : ", num_nf)
+        print("json error : ", num_json_e)
+        print("type error : ", num_type_e)
+        print("total : ", total)
+        print("fully not converged", num_not_converged)
+        print("num partly fully converged", num_part_converged)
+        return converged, part_converged, not_converged, not_found, type_error, json_error
 
     def __init__(self, data_dir):
         self.data_dir = data_dir
@@ -110,8 +159,11 @@ class HFPolarDatabase:
             self.all_polar_data = pd.read_feather(all_data_path)
             self.molecules = list(self.all_polar_data.molecule.unique())
         else:
-            mra_data = FDatabase(self.data_dir, 'hf', 'dipole', 9)
-            self.molecules = mra_data.report_convergence()[0]
+            for g in glob.glob(self.mol_dir + '/*.mol'):
+                m = g.split('/')
+                mol = m[-1].split('.')[0]
+                self.molecules.append(mol)
+            self.molecules = self.__report_convergence()[0]
             self.all_polar_data = get_polar_df(self.molecules, xc, op, august, basis_sets)
             self.all_polar_data.to_feather(all_data_path)
 

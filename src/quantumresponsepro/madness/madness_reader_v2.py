@@ -5,11 +5,11 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from setuptools import glob
 
-from src.quantumresponsepro.Dalton.dalton import Dalton
+from src.quantumresponsepro.dalton.dalton import Dalton
 
 import numpy as np
 
-from src.quantumresponsepro.madnessToDaltony import *
+from src.quantumresponsepro.madness_to_dalton import *
 
 
 def tensor_to_numpy(j):
@@ -953,180 +953,7 @@ def polar_overview(basis, excluded):
     return pd.DataFrame(data)
 
 
-def create_basis_mol_data(basis_list, mol_list, data_dict):
-    b_data = {}
-    for b in basis_list:
-        diff_dict = {}
-        for mol in mol_list:
-            diff_m = data_dict[mol] - data_dict[mol].loc["MRA"]
-            diff_dict[mol] = diff_m.loc[b]
-            diff_dict[mol].index = [
-                "Total HF Energy",
-                r"$\alpha(\omega_0)$",
-                r"$\alpha(\omega_1)$",
-                r"$\alpha(\omega_2)$",
-                r"$\alpha(\omega_3)$",
-                r"$\alpha(\omega_4)$",
-            ]
-        pdm = pd.DataFrame(diff_dict)
-        pdm.name = b
-        b_data[b] = pdm.T
-    return b_data
 
-
-def mean_and_std(basis_list, mol_list, data_dict):
-    b_data = create_basis_mol_data(basis_list, mol_list, data_dict)
-    mean_d = {}
-    std_d = {}
-    for b in basis_list:
-        mean_d[b] = b_data[b].mean()
-        std_d[b] = b_data[b].std()
-    p_mean = pd.DataFrame(mean_d)
-    p_std = pd.DataFrame(std_d)
-    return p_mean, p_std
-
-
-def plot_norm_and_residual_excited(d, num_i, ax):
-    fkeys = get_function_keys(d.num_states, d.num_orbitals)
-    abs_keys = fkeys["x_abs_error"]
-    rel_keys = fkeys["x_rel_error"]
-    chi_norms_keys = fkeys["x_norms"]
-
-    # print("chi norms key", chi_norms_keys)
-    # print("abs norms key", abs_keys)
-    # print("rel norms key", rel_keys)
-
-    params = d.params
-    dconv = params["dconv"]
-
-    chi_norms_i = d.function_data[chi_norms_keys]
-    bsh_residuals_i = d.function_data[abs_keys]
-    rel_residuals_i = d.function_data[rel_keys]
-
-    chi_norms_i.plot(ax=ax[0], logy=False, legend=True, colormap='magma', title='Chi Norms', marker='*', grid=True)
-    bsh_residuals_i.plot(ax=ax[1], logy=True, legend=True, colormap='magma', title='Absolute Residuals', marker='*',
-                         grid=True)
-    rel_residuals_i.plot(ax=ax[2], logy=True, legend=True, colormap='magma', title='Relative Residuals', marker='*',
-                         grid=True)
-
-    iters = d.num_iter_proto
-    # print(iters)
-
-    for pc in iters:
-        for i in range(3):
-            ax[i].axvline(x=pc, ymin=0, ymax=1, c="black", linestyle="dashed")
-    for i in range(3):
-        if i != 0:
-            ax[i].axhline(y=dconv, xmin=0, xmax=iters[-1], c="black", linestyle="dashed", )
-        ax[i].grid(which="both")
-        ax[i].minorticks_on()
-        ax[i].tick_params(which="both", top="on", left="on", right="on", bottom="on", )
-
-
-def excited_state_norm_residual_plot(mol, xc, save):
-    d = ExcitedData(mol, xc)
-    xkeys = []
-    ykeys = []
-    for i in range(d.num_states):
-        xkeys.append("x" + str(i))
-        ykeys.append("y" + str(i))
-    mad_read = MadnessReader()
-
-    sns.set_theme(style="darkgrid")
-    sns.set_context("talk", font_scale=1.5, rc={"lines.linewidth": 2.5})
-
-    fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(25, 9), constrained_layout=True)
-    title = 'Excited_State Convergence: ' + mol
-    fig.suptitle(title)
-    plot_norm_and_residual_excited(d, i, ax)
-    plotname = 'excited_{}'.format(i) + ".svg"
-    if save:
-        if not os.path.exists("convergence"):
-            os.mkdir("convergence")
-        if not os.path.exists('convergence/' + mol):
-            os.mkdir("convergence/" + mol)
-        if not os.path.exists('convergence/' + mol + '/' + xc):
-            os.mkdir("convergence/" + mol + '/' + xc)
-        plt.savefig("convergence/" + mol + '/' + xc + '/' + plotname)
-    print(mol + "\n converged: ", d.converged)
-
-
-def plot_norm_and_residual_freq(d, num_i, ax):
-    fkeys = get_function_keys(d.num_states, d.num_orbitals)
-    abs_keys = fkeys["x_abs_error"]
-    rel_keys = fkeys["x_rel_error"]
-    chi_norms_keys = fkeys["x_norms"]
-
-    # print("chi norms key",chi_norms_keys)
-    # print("abs norms key",abs_keys)
-    # print("rel norms key",rel_keys)
-    f_key = list(d.function_data.keys())[num_i]
-    dconv = d.params[f_key]["dconv"]
-
-    chi_norms_i = d.function_data[f_key][chi_norms_keys]
-    bsh_residuals_i = d.function_data[f_key][abs_keys]
-    rel_residuals_i = d.function_data[f_key][rel_keys]
-
-    chi_norms_i.plot(ax=ax[0], logy=False, legend=True, colormap='magma', title='Chi Norms', marker='*', grid=True)
-    bsh_residuals_i.plot(ax=ax[1], logy=True, legend=True, colormap='magma', title='Absolute Residuals', marker='*',
-                         grid=True)
-    rel_residuals_i.plot(ax=ax[2], logy=True, legend=True, colormap='magma', title='Relative Residuals', marker='*',
-                         grid=True)
-
-    iters = d.num_iter_proto[f_key]
-
-    for pc in iters:
-        for i in range(3):
-            ax[i].axvline(x=pc, ymin=0, ymax=1, c="black", linestyle="dashed")
-    for i in range(3):
-        if i != 0:
-            ax[i].axhline(y=dconv, xmin=0, xmax=iters[-1], c="black", linestyle="dashed", )
-        ax[i].grid(which="both")
-        ax[i].minorticks_on()
-        ax[i].tick_params(which="both", top="on", left="on", right="on", bottom="on", )
-
-
-def freq_norm_and_residual(mol, xc, op, save):
-    d = ResponseCalc(mol, xc, op)
-
-    xkeys = []
-    ykeys = []
-
-    for i in range(d.num_states):
-        xkeys.append("x" + str(i))
-        ykeys.append("y" + str(i))
-
-    mad_read = MadnessReader()
-    freq = mad_read.freq_json[mol][xc][op]
-
-    num_ran = len(d.converged)
-    num_pass = sum(d.converged)
-
-    num_freqs = len(freq)
-    frequencies = list(d.num_iter_proto.keys())
-
-    # print('num frequencies: ',num_freqs)
-    # print('num pass: ',num_pass)
-    # print('num ran: ',num_ran)
-
-    sns.set_theme(style="darkgrid")
-    sns.set_context("talk", font_scale=1.5, rc={"lines.linewidth": 2.5})
-    for i in range(num_ran):
-
-        fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(25, 9), constrained_layout=True)
-        title = 'Polarizability Convergence: ' + mol + r'  $\omega({}/{})$'.format(i, num_freqs - 1)
-        fig.suptitle(title)
-        plot_norm_and_residual_freq(d, i, ax)
-        plotname = 'freq_{}'.format(i) + ".svg"
-        if save:
-            if not os.path.exists("convergence"):
-                os.mkdir("convergence")
-            if not os.path.exists('convergence/' + mol):
-                os.mkdir("convergence/" + mol)
-            if not os.path.exists('convergence/' + mol + '/' + xc):
-                os.mkdir("convergence/" + mol + '/' + xc)
-            plt.savefig("convergence/" + mol + '/' + xc + '/' + plotname)
-    print(mol + "\n converged: ", d.converged)
 
 
 class MadRunner:
