@@ -33,6 +33,7 @@ setup(
         "numpy",
         "scipy",
         "pandas",
+        "jupyter",
         "matplotlib",
         "seaborn",
         "scikit-learn",

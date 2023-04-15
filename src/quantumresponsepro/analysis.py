@@ -1,9 +1,9 @@
-from src.quantumresponsepro.madness.madnessReader import FrequencyData
-from src.quantumresponsepro.madness.madness_reader_v2 import ResponseCalc
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from src.quantumresponsepro.dalton.dalton import Dalton
+from .dalton.daltonrunner import DaltonRunner
+from .madness.madnessReader import FrequencyData
+from .madness.madness_reader_v2 import MadnessResponseReader
 import seaborn as sns
 
 polar_keys = ['xx', 'xy', 'xz', 'yx', 'yy', 'yz', 'zx', 'zy', 'zz']
@@ -15,7 +15,7 @@ def get_mra_polar_data(mols, xc, op, database):
     basis = 'MRA'
     for mol in mols:
         try:
-            mad_r = ResponseCalc(mol, xc, op, database)
+            mad_r = MadnessResponseReader(mol, xc, op, database)
             polar_df = mad_r.polar_data[polar_keys]
             polar_df.index.name = 'frequencies'
             polar_df = polar_df.reset_index()
@@ -36,7 +36,6 @@ def partition_molecule_list(mol_list):
     rest = []
     seconds = ["Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar"]
     for mol_i in mol_list:
-        print(mol_i)
         if "F" in mol_i and not any([e2 in mol_i for e2 in seconds]):
             Flist.append(mol_i)
         elif any([e2 in mol_i for e2 in seconds]):
@@ -98,9 +97,9 @@ def column_polar_df(df, mol, basis):
 
 
 def compare_database(mol, xc, op, database, basis_sets):
-    d = Dalton(database, False)
+    d = DaltonRunner(database, False)
     try:
-        mad_r = ResponseCalc(mol, xc, op, database)
+        mad_r = MadnessResponseReader(mol, xc, op, database)
         polar_df = mad_r.polar_data[polar_keys]
         polar_df.index.name = 'frequencies'
         polar_df = polar_df.reset_index()
@@ -132,7 +131,7 @@ def compare_database(mol, xc, op, database, basis_sets):
 
 
 def get_basis_polar_data(mols, basis_sets, xc, op, database):
-    d = Dalton(database, False)
+    d = DaltonRunner(database, False)
     bd = []
     for mol in mols:
         for basis in basis_sets:
@@ -257,7 +256,6 @@ def create_component_diff_df(a_data):
             dB.alpha = dab
             a_diff.append(dB)
     ij_diff = pd.concat(a_diff)
-    print(ij_diff)
     return ij_diff
 
 
@@ -296,8 +294,8 @@ def make_detailed_df(data):
     data.loc[data["basis"].isin(TZ), "valence"] = 'T'
     data.loc[data["basis"].isin(QZ), "valence"] = 'Q'
     data["valence"] = data["valence"].astype("category")
-    data['valence'].cat.reorder_categories(['D', 'T', 'Q'], inplace=True)
-    data['polarization'].cat.reorder_categories(['V', 'CV', ], inplace=True)
+    data["valence"] = data['valence'].cat.reorder_categories(['D', 'T', 'Q'])
+    data['polarization'].cat.reorder_categories(['V', 'CV', ])
 
     data['Type'] = data[['augmentation', 'polarization']].apply(lambda x: "-cc-p".join(x) + 'nZ', axis=1)
     data["Type"] = data["Type"].astype("category")

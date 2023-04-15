@@ -1,8 +1,8 @@
-import subprocess
 
-from src.quantumresponsepro.dalton.dalton import Dalton
 import numpy as np
-from src.quantumresponsepro.madness_to_dalton import *
+from ..madness_to_dalton import *
+from ..dalton.daltonrunner import DaltonRunner
+import subprocess
 
 
 class MadnessReader:
@@ -570,7 +570,7 @@ class FrequencyData:
         return self.thresh_data
 
     def compare_dalton(self, basis, base_dir):
-        dalton_reader = Dalton(base_dir, False)
+        dalton_reader = DaltonRunner(base_dir, False)
         ground_dalton, response_dalton = dalton_reader.get_frequency_result(
             self.mol, self.xc, self.operator, basis
         )
@@ -596,7 +596,7 @@ class FrequencyData:
         return ground_compare, response_dalton, polar_df, diff_df
 
     def plot_polar_data(self, basis, ij_list):
-        dalton_reader = Dalton()
+        dalton_reader = DaltonRunner()
         if basis in self.dalton_data:
             response_dalton = self.dalton_data[basis]
         else:
@@ -673,7 +673,7 @@ class ExcitedData:
         )
 
     def compare_dalton(self, basis):
-        dalton_reader = Dalton()
+        dalton_reader = DaltonRunner()
         ground_dalton, response_dalton = dalton_reader.get_excited_result(self.mol, self.xc, basis, True)
 
         ground_compare = pd.concat(
@@ -697,7 +697,6 @@ class ExcitedData:
         omega_df.loc[:, "bshy-residual"] = self.bsh_residuals.iloc[
                                            -1, self.num_states::
                                            ].reset_index(drop=True)
-
         return ground_compare, omega_df
 
 

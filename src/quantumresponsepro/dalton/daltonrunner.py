@@ -6,10 +6,11 @@ import os
 import pandas as pd
 import json
 
-from src.quantumresponsepro.dalton.daltonToJson import daltonToJson
-from src.quantumresponsepro.madness_to_dalton import madnessToDalton
+from .daltonToJson import daltonToJson
+from ..madness_to_dalton import madnessToDalton
 
-class Dalton:
+
+class DaltonRunner:
     dalton_dir = None
 
     @classmethod
@@ -18,7 +19,7 @@ class Dalton:
         self.base_dir = base_dir  # what is my base directory?
         self.dalton_dir = os.path.join(self.base_dir, 'dalton')
         # here I can change PROOT to my directory of chocse
-        if shutil.which("mpirun") != None:
+        if shutil.which("mpirun") is not None:
             self.use_mpi = True
             self.Np = int(os.cpu_count() / 8)
         else:

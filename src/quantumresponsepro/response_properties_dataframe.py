@@ -1,4 +1,4 @@
-from analysis import *
+from .analysis import *
 from pathlib import Path
 import glob
 import json
@@ -29,9 +29,16 @@ op = 'dipole'
 development = "/mnt/data/madness_data/post_acs/development"
 august = "/mnt/data/madness_data/post_watoc/august"
 
+
 # create a Path object with the path to the file
 
-class ResponsePropertiesDataFrames:
+
+class ResponseDataBundle:
+    """
+    Class to create dataframes for response properties
+    Takes the database directory as an argument and reads madness and dalton data
+    from the database directory and creates dataframes for the response properties
+    """
 
     def __report_convergence(self):
         converged = []
@@ -328,7 +335,7 @@ class HFDatabasePlots:
                             facet_kws=fwk,
                             palette='Paired',
                             aspect=aspect,
-                            #sizes="abs"
+                            # sizes="abs"
                             )
         g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0). \
             set_axis_labels(r"$\omega_i$", "Percent Error"). \
