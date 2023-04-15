@@ -1,1 +1,7 @@
 /.idea/inspectionProfiles/profiles_settings.xml
+src/quantumresponsepro.egg-info/dependency_links.txt
+src/quantumresponsepro.egg-info/PKG-INFO
+src/quantumresponsepro.egg-info/requires.txt
+src/quantumresponsepro.egg-info/*
+src/quantumresponsepro/__pycache__/*
+*.pyc
