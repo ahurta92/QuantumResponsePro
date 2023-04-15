@@ -35,9 +35,7 @@ august = "/mnt/data/madness_data/post_watoc/august"
 
 class ResponseDataBundle:
     """
-    Class to create dataframes for response properties
-    Takes the database directory as an argument and reads madness and dalton data
-    from the database directory and creates dataframes for the response properties
+    ResponseDataBundle: A class designed to manage and organize a collection of DataFrames related to response properties for molecules. This class simplifies the process of comparing and analyzing data from various sources, such as MADNESS and Dalton quantum chemistry packages, by consolidating the response properties information into a single, easy-to-use structure.
     """
 
     def __report_convergence(self):
