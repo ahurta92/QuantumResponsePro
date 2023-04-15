@@ -2,12 +2,12 @@ import subprocess
 
 import numpy as np
 import shutil
-from madnessToDaltony import madnessToDalton
+from src.quantumresponsepro.madnessToDaltony import madnessToDalton
 import os
 import pandas as pd
 import json
 
-from daltonToJson import daltonToJson
+from src.quantumresponsepro.Dalton.daltonToJson import daltonToJson
 
 
 class Dalton:

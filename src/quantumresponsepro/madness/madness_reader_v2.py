@@ -1,15 +1,15 @@
 import subprocess
-from madnessReader import FrequencyData
+from src.quantumresponsepro.madness.madnessReader import FrequencyData
 import seaborn as sns
 
 import matplotlib.pyplot as plt
 from setuptools import glob
 
-from dalton import Dalton
+from src.quantumresponsepro.Dalton.dalton import Dalton
 
 import numpy as np
 
-from madnessToDaltony import *
+from src.quantumresponsepro.madnessToDaltony import *
 
 
 def tensor_to_numpy(j):

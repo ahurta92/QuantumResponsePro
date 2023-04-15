@@ -1,11 +1,10 @@
 import glob
 import subprocess
 
-import seaborn as sns
 import matplotlib.pyplot as plt
-from dalton import Dalton
+from src.quantumresponsepro.Dalton.dalton import Dalton
 import numpy as np
-from madnessToDaltony import *
+from src.quantumresponsepro.madnessToDaltony import *
 
 
 class MadnessReader:
@@ -58,9 +57,6 @@ class MadnessReader:
 
         omega_dfs = []
         residual_dfs = []
-
-        bsh_norms_dfs = []
-        d_norms_dfs = []
 
         protos = []
         kprotos = []

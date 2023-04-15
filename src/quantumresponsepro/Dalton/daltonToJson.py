@@ -197,7 +197,7 @@ class daltonToJson:
             if opKey == "XDIPLEN ; XDIPLEN":
                 self.polar_dict["xx"][self.xx] = grab_val(lineSP)
                 self.xx += 1
-                #print(opKey,self.xx,lineSP)
+                # print(opKey,self.xx,lineSP)
             elif opKey == "XDIPLEN ; YDIPLEN":
                 self.polar_dict["xy"][self.xy] = grab_val(lineSP)
                 self.polar_dict["yx"][self.yx] = self.polar_dict["xy"][self.xy]
@@ -211,7 +211,7 @@ class daltonToJson:
             elif opKey == "YDIPLEN ; YDIPLEN":
                 self.polar_dict["yy"][self.yy] = grab_val(lineSP)
                 self.yy += 1
-                #print(opKey,self.yy)
+                # print(opKey,self.yy)
             elif opKey == "YDIPLEN ; ZDIPLEN":
                 self.polar_dict["yz"][self.yz] = grab_val(lineSP)
                 self.polar_dict["zy"][self.zy] = self.polar_dict["yz"][self.yz]
@@ -220,8 +220,7 @@ class daltonToJson:
             elif opKey == "ZDIPLEN ; ZDIPLEN":
                 self.polar_dict["zz"][self.zz] = grab_val(lineSP)
                 self.zz += 1
-                #print(opKey,self.zz)
-
+                # print(opKey,self.zz)
 
         scfInp = OrderedDict(
             [
