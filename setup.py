@@ -36,6 +36,7 @@ setup(
         "jupyter",
         "matplotlib",
         "seaborn",
+        'pytest',
         "scikit-learn",
         "scikit-image",
         # Add any other required dependencies here

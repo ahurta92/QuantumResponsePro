@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from .dalton.daltonrunner import DaltonRunner
 from .madness.madnessReader import FrequencyData
-from .madness.madness_reader_v2 import MadnessResponseReader
+from .madness.madness_reader_v2 import MadnessResponse
 import seaborn as sns
 
 polar_keys = ['xx', 'xy', 'xz', 'yx', 'yy', 'yz', 'zx', 'zy', 'zz']
@@ -15,7 +15,7 @@ def get_mra_polar_data(mols, xc, op, database):
     basis = 'MRA'
     for mol in mols:
         try:
-            mad_r = MadnessResponseReader(mol, xc, op, database)
+            mad_r = MadnessResponse(mol, xc, op, database)
             polar_df = mad_r.polar_data[polar_keys]
             polar_df.index.name = 'frequencies'
             polar_df = polar_df.reset_index()
@@ -99,7 +99,7 @@ def column_polar_df(df, mol, basis):
 def compare_database(mol, xc, op, database, basis_sets):
     d = DaltonRunner(database, False)
     try:
-        mad_r = MadnessResponseReader(mol, xc, op, database)
+        mad_r = MadnessResponse(mol, xc, op, database)
         polar_df = mad_r.polar_data[polar_keys]
         polar_df.index.name = 'frequencies'
         polar_df = polar_df.reset_index()

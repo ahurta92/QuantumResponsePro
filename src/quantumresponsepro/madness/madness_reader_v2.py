@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from setuptools import glob
 
-from madnessReader import FrequencyData
+from .madnessReader import FrequencyData
 from ..dalton.daltonrunner import DaltonRunner
 from ..madness_to_dalton import *
 
@@ -277,7 +277,7 @@ class MadnessReader:
         )
 
 
-class MadnessResponseReader:
+class MadnessResponse:
     def __init__(self, mol, xc, operator, data_dir):
         self.data_dir = data_dir
         self.ground_info = None
@@ -509,7 +509,7 @@ class MadnessResponseReader:
             old_x = mad_compare.polar_df[op].copy()
 
         except:
-            mad_compare = MadnessResponseReader(self.mol, self.xc, self.operator, database_compare)
+            mad_compare = MadnessResponse(self.mol, self.xc, self.operator, database_compare)
             old_x = mad_compare.polar_data[op].copy()
 
         old_x.rename(columns=oC, inplace=True)
@@ -520,7 +520,7 @@ class MadnessResponseReader:
     def compare_mra_convergence(self, database_compare, frequency, value, ij):
         try:
             this_data = self.data['convergence'][frequency][value][ij].copy()
-            mad_compare = MadnessResponseReader(self.mol, self.xc, self.operator, database_compare)
+            mad_compare = MadnessResponse(self.mol, self.xc, self.operator, database_compare)
             compare_data = mad_compare.data['convergence'][frequency][value][ij].copy()
         except TypeError as t:
             print(t)

@@ -1,0 +1,19 @@
+response
+         print_level  20         # defined   0: no output; 1: final energy; 2: iterations; 3: timings; 10: debug
+                plot  false      # defined   turn on plotting of final orbitals. Output format is .vts
+   plot_all_orbitals  true       # defined   Turn on 2D plotting of response orbitals
+             maxiter  25         # defined   maximum number of iterations
+               dconv  1.0000e-06 # defined   recommended values: 1.e-4 < dconv < 1.e-8
+           guess_xyz  false      # defined   TODO : check what this is for
+            protocol  [1.0000e-04, 1.0000e-06, 1.0000e-07] # defined   calculation protocol
+             restart  true       # defined   Flag to restart scf loop from file
+        restart_file  ../dipole_hf_0-000000/restart_dipole_hf_0-000000 # defined   file to read ground parameters from
+                kain  true       # defined   Turn on Krylov Accelarated Inexact Newton Solver
+              maxsub  5          # defined   size of iterative subspace ... set to 0 or 1 to disable
+                  xc  hf         # defined   XC input line
+                save  true       # defined   if true save orbitals to disk
+           save_file  restart_dipole_hf_0-016668 # defined   File name to save orbitals for restart
+         first_order  true       # defined   Flag to turn on first order response calc
+              dipole  true       # defined   Flag to turn on frequency dependent property calc
+               omega  1.6668e-02 # defined   Incident energy for dynamic response
+end

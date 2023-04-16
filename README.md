@@ -43,8 +43,10 @@ For more detailed examples, please refer to the examples directory and the provi
 Contributing
 We welcome contributions to QuantumResponsePro! Please fork the repository, create a new branch with your changes, and submit a pull request. Make sure to follow the established code style and add appropriate tests and documentation for your changes.
 
-License
-QuantumResponsePro is released under the MIT License.
+## License
+
+QuantumResponsePro is released under the [MIT License](LICENSE.txt).
+.
 
 
 

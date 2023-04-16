@@ -1,0 +1,49 @@
+{% set name = "QuantumResponsePro" %}
+{% set version = "0.1.0" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  path: ..
+
+build:
+  noarch: python
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - pip
+  host:
+    - python
+    - pip
+  run:
+    - python
+    - pandas
+    - numpy
+    - scipy
+    - matplotlib
+    - seaborn
+    - jupyter
+    # Add any other dependencies your package requires
+
+test:
+  imports:
+    - quantumresponsepro
+
+about:
+  home: https://github.com/yourusername/QuantumResponsePro
+  license: MIT
+  license_file: LICENSE.txt
+  summary: A Python package for computing, comparing, and analyzing dynamic molecular response properties in TDDFT and TDHF formalisms.
+  description: |
+    QuantumResponsePro is a Python package that streamlines the use of MADNESS and Dalton quantum chemistry packages for accurate calculations and extensive basis set analysis of dynamic molecular response properties in TDDFT and TDHF formalisms.
+  doc_url: https://quantumresponsepro.readthedocs.io/
+  dev_url: https://github.com/ahurta92/QuantumResponsePro
+
+extra:
+  recipe-maintainers:
+    - ahurta92
