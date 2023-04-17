@@ -109,7 +109,7 @@ class DatabaseGenerator:
                 json.dump(excited_json, f, indent=4)
         return excited_json
 
-    def get_frequency_json(self, xc, op, basis: str):
+    def get_frequency_json(self, num_steps_to_max: int, xc: str, op: str, basis: str):
         """
         Generate frequency json files for a given xc functional
         and basis set list. Reads data from dalton directory in database_path.
@@ -123,7 +123,7 @@ class DatabaseGenerator:
                 for molecule in self.get_molecule_list():
                     omega_max = excited_json[xc][molecule][basis]['response']['freq'][0]
                     omega_max = omega_max / 2.0
-                    freqs = [0, omega_max / 8.0, omega_max / 4.0, omega_max / 2.0, omega_max]
+                    freqs = [float(i) * omega_max / num_steps_to_max for i in range(num_steps_to_max + 1)]
                     freq_j[molecule] = {xc: {op: freqs}}
 
         except FileNotFoundError as f:
