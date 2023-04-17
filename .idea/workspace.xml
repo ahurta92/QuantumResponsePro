@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7af674dd-5e62-47db-810a-177fa0259216" name="Changes" comment="example creating frequency.json and merging dalton_excited">
-      <change afterPath="$PROJECT_DIR$/tests/test_DatabaseGenerator.py" afterDir="false" />
+    <list default="true" id="7af674dd-5e62-47db-810a-177fa0259216" name="Changes" comment="Include a test script for generate data">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/utils/generate_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/utils/generate_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -112,7 +111,7 @@
       <workItem from="1681730604361" duration="7268000" />
       <workItem from="1681738079027" duration="11445000" />
       <workItem from="1681754273084" duration="736000" />
-      <workItem from="1681755017445" duration="9779000" />
+      <workItem from="1681755017445" duration="10290000" />
     </task>
     <task id="LOCAL-00001" summary="using Path instead of bare strings for file management">
       <created>1681736371953</created>
@@ -170,7 +169,14 @@
       <option name="project" value="LOCAL" />
       <updated>1681763858393</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Include a test script for generate data">
+      <created>1681765353759</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1681765353759</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -184,10 +190,11 @@
     <MESSAGE value="glob2" />
     <MESSAGE value="examples" />
     <MESSAGE value="example creating frequency.json and merging dalton_excited" />
-    <option name="LAST_COMMIT_MESSAGE" value="example creating frequency.json and merging dalton_excited" />
+    <MESSAGE value="Include a test script for generate data" />
+    <option name="LAST_COMMIT_MESSAGE" value="Include a test script for generate data" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/QuantumResponsePro$pytest_for_test_DatabaseGenerator_test_generate_frequeny_json.coverage" NAME="pytest for test_DatabaseGenerator.test_generate_frequeny_json Coverage Results" MODIFIED="1681765280827" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$pytest_for_test_DatabaseGenerator_test_generate_frequeny_json.coverage" NAME="pytest for test_DatabaseGenerator.test_generate_frequeny_json Coverage Results" MODIFIED="1681765303993" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$create_json_files.coverage" NAME="create_json_files Coverage Results" MODIFIED="1681764475153" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
   </component>
 </project>
