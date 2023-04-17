@@ -5,3 +5,12 @@ src/quantumresponsepro.egg-info/requires.txt
 src/quantumresponsepro.egg-info/*
 src/quantumresponsepro/__pycache__/*
 *.pyc
+*.plt
+*.xyz
+response.in
+*.vts
+moldft.in
+moldft.scf_info.json
+moldft.restartaodata
+response_base.json
+moldft.energies.dat

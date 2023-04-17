@@ -3,9 +3,9 @@ response
                 plot  false      # defined   turn on plotting of final orbitals. Output format is .vts
    plot_all_orbitals  true       # defined   Turn on 2D plotting of response orbitals
              maxiter  25         # defined   maximum number of iterations
-               dconv  1.0000e-06 # defined   recommended values: 1.e-4 < dconv < 1.e-8
+               dconv  1.0000e-04 # defined   recommended values: 1.e-4 < dconv < 1.e-8
            guess_xyz  false      # defined   TODO : check what this is for
-            protocol  [1.0000e-04, 1.0000e-06, 1.0000e-07] # defined   calculation protocol
+            protocol  [1.0000e-04, 1.0000e-06] # defined   calculation protocol
              restart  true       # defined   Flag to restart scf loop from file
         restart_file  ../dipole_hf_0-055087/restart_dipole_hf_0-055087 # defined   file to read ground parameters from
                 kain  true       # defined   Turn on Krylov Accelarated Inexact Newton Solver
