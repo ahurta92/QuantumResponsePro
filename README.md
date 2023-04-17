@@ -81,14 +81,18 @@ except KeyError as k:
 excited_json = dg.get_dalton_excited_json('hf', ['aug-cc-pVDZ'], run=True)
 ```
 
-In this example we generate a frequency.json file for the hf functional, dipole response, and aug-cc-pVTZ basis set.
-A `frequency.json` file defines the frequencies for the response property calculations
-for a functional and operator. The frequencies are generated from the excited-state energies
-of the basis set.  
-The code `get_frequency_json` first checks if the `dalton_excited.json` file exists and if the data
-for a functional and basis exists. If it does it will overwrite the `frequency.json` file. If it does not
-it will throw an exception. It is expected that you will run the `get_dalton_excited_json` function
-for the functional and basis set before running the `get_frequency_json` function as shown in the example.
+In this example, we generate a `frequency.json` file for the **HF** functional, **dipole** response, and **aug-cc-pVTZ**
+basis set.
+The `frequency.json` file defines the frequencies for response property calculations for a specific functional and
+operator.
+The frequencies are generated from the excited-state energies of the basis set.
+
+The `get_frequency_json` function first checks if the `dalton_excited.json` file exists and whether data for a specific
+functional and basis set is present. If found, it overwrites the frequency.json file. Otherwise, it raises an exception.
+
+Before running the `get_frequency_json` function, make sure to run the `get_dalton_excited_json` function for the
+desired
+functional and basis set, as shown in the example.
 
 ### Run MADNESS and Dalton calculations with `frequency.json` file
 
