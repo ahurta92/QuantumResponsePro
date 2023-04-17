@@ -129,6 +129,7 @@ class DaltonRunner:
         # /dalton/[xc]/[madmol]/excited-state
 
         molname = madmol.split(".")[0]
+        print(molname)
         dalton_inp = []
         dalton_inp.append("**DALTON INPUT")
         dalton_inp.append(".RUN PROPERTIES")
@@ -207,14 +208,25 @@ class DaltonRunner:
         return {basis: {"ground": e_data, "response": r_dict, "dipole": dipole_data}}
 
     @staticmethod
-    def __create_excited_json(outfile, basis):
+    def __create_excited_json(output_json, basis):
         # generate tables given name of output files and basis_list used to generate output files
         data = {"totalEnergy": [], "nuclearRepulsionEnergy": [], "electronEnergy": []}
         s_dict = {}
-        e_data = json.loads(outfile)["simulation"]["calculations"][0]
-        r_data = json.loads(outfile)["simulation"]["calculations"][1]
+
+        calcs = {}
+        for cals in output_json['simulation']['calculations']:
+            calc_type = cals['calculationType']
+            calcs[calc_type] = cals
+            print(calc_type)
+        print(calcs)
+
+        e_data = calcs['energyCalculation']
+        dipole_data = calcs['Dipole']
+        r_data = calcs['SingletExcitationEnergy']
+
         for dkeys in data.keys():
             data[dkeys].append(float(e_data["calculationResults"][dkeys]["value"]))
+        print(r_data)
 
         # sort the frequencies
         freq = r_data["calculationResults"]["frequencies"]
@@ -302,25 +314,37 @@ class DaltonRunner:
         run_directory, dal_input, mol_input = self.__write_excited_input(self,
                                                                          mol, xc, basis, num_states
                                                                          )
+        print('run_directory:', run_directory)
+        run_name = "excited_" + "-".join([mol, basis]) + ".out"
+        json_name = "excited_" + "-".join([mol, basis]) + ".json"
         # First look for the output file and try and convert it to a json
-        outfile = "excited_" + "-".join([mol, basis]) + ".out"
-        out_file_path = run_directory.joinpath(outfile)
+        outfile = run_directory.joinpath(run_name)
+        outJSON = run_directory.joinpath(json_name)
+        print('outfile:', outfile)
         data = None
         try:
             # open the output file
-            with open(out_file_path, "r") as daltonOutput:
+            with open(outfile, "r") as daltonOutput:
                 dj = daltonToJson()
-                data = self.__create_excited_json(dj.convert(daltonOutput), basis)
-        except:
-
-            print("did not find output file")
+                dalton_json = json.loads(dj.convert(daltonOutput))
+                print(dalton_json)
+                with(open(outJSON, "w")) as f:
+                    json.dump(dalton_json, f, indent=4)
+            data = self.__create_excited_json(dalton_json, basis)
+        except FileNotFoundError as e:
+            print("did not find output file", e)
             if run:
                 print("Try and run molecule ", mol)
                 d_out, d_error = self.__run_dalton(run_directory, dal_input, mol_input)
-                # print(d_out, d_error)
+                print(d_out, d_error)
+                print("Finshed running  ", mol, " in ", run_directory)
+                print("Trying to open ", outfile)
                 with open(outfile, "r") as daltonOutput:
                     dj = daltonToJson()
-                    data = self.__create_excited_json(dj.convert(daltonOutput), basis)
+                    dalton_json = json.loads(dj.convert(daltonOutput))
+                    with(open(outJSON, "w")) as f:
+                        f.write(json.dumps(dalton_json, indent=4))
+                    data = self.__create_excited_json(dalton_json, basis)
                 pass
             else:
                 print("Not trying to run dalton for ", mol)
