@@ -28,6 +28,7 @@ requirements:
     - matplotlib
     - seaborn
     - jupyter
+    - pyarrow
     # Add any other dependencies your package requires
 
 test:

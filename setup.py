@@ -38,9 +38,7 @@ setup(
         "matplotlib",
         "seaborn",
         'pytest',
-        "scikit-learn",
-        "scikit-image",
-        "glob2"
+        'pyarrow'
         # Add any other required dependencies here
     ],
     extras_require={
