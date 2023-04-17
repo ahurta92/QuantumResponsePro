@@ -7,7 +7,6 @@
     <list default="true" id="7af674dd-5e62-47db-810a-177fa0259216" name="Changes" comment="examples">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/utils/generate_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/utils/generate_data.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,7 +86,7 @@
       <workItem from="1681730604361" duration="7268000" />
       <workItem from="1681738079027" duration="11445000" />
       <workItem from="1681754273084" duration="736000" />
-      <workItem from="1681755017445" duration="651000" />
+      <workItem from="1681755017445" duration="1455000" />
     </task>
     <task id="LOCAL-00001" summary="using Path instead of bare strings for file management">
       <created>1681736371953</created>
@@ -131,7 +130,14 @@
       <option name="project" value="LOCAL" />
       <updated>1681755067115</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="examples">
+      <created>1681755680382</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1681755680382</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
