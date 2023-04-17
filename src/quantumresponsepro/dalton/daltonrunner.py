@@ -8,17 +8,20 @@ import json
 
 from .daltonToJson import daltonToJson
 from ..madness_to_dalton import madnessToDalton
+from pathlib import Path
 
 
 class DaltonRunner:
-    dalton_dir = None
 
     @classmethod
-    def __init__(self, base_dir, run_new):
+    def __init__(self, base_dir: Path, run_new):
         self.run = run_new
         self.base_dir = base_dir  # what is my base directory?
-        self.dalton_dir = os.path.join(self.base_dir, 'dalton')
-        # here I can change PROOT to my directory of chocse
+        self.dalton_dir = self.base_dir.joinpath('dalton')
+
+        print('DaltonRunner base_dir: ', self.base_dir)
+        print('DaltonRunner dal_dir: ', self.dalton_dir)
+
         if shutil.which("mpirun") is not None:
             self.use_mpi = True
             self.Np = int(os.cpu_count() / 8)
@@ -29,8 +32,13 @@ class DaltonRunner:
         # where ever I run I can assume that the dalton directory will be one above cwd
         if not os.path.exists("dalton"):
             os.mkdir("dalton")
-        with open(self.base_dir + "/molecules/frequency.json") as json_file:
-            self.freq_json = json.loads(json_file.read())
+        try:
+            with open(self.base_dir.joinpath("molecules/frequency.json")) as json_file:
+                self.freq_json = json.loads(json_file.read())
+        except FileNotFoundError as f_error:
+            print("No frequency.json found. Run generate_data.py to generate it.")
+            print("only excited state calculations will be available")
+            pass
 
         # with open(DALROOT + '/dalton-dipole.json') as json_file:
         #    self.dipole_json = json.loads(json_file.read())
@@ -41,7 +49,7 @@ class DaltonRunner:
     def __write_polar_input(self, madmol, xc, operator, basis):
         """writes the polar input to folder"""
         # DALTON INPUT
-        molname = madmol.split(".")[0]
+        molecule_input = madmol.split(".")[0]
         dalton_inp = []
         dalton_inp.append("**DALTON INPUT")
         dalton_inp.append(".RUN RESPONSE")
@@ -63,7 +71,7 @@ class DaltonRunner:
         # looks like it's the only option for a response calculation
         if operator == "dipole":
             dalton_inp.append(".DIPLEN")
-            freq = self.freq_json[molname][xc][operator]
+            freq = self.freq_json[molecule_input][xc][operator]
             num_freq = len(freq)
             dalton_inp.append(".FREQUENCIES")
             dalton_inp.append(str(num_freq))
@@ -75,7 +83,7 @@ class DaltonRunner:
 
         dalton_inp.append("**END OF DALTON INPUT")
         dalton_inp = "\n".join(dalton_inp)
-        run_dir = self.dalton_dir + "/" + xc + "/" + molname + "/" + operator
+        run_dir = self.dalton_dir + "/" + xc + "/" + molecule_input + "/" + operator
         if not os.path.exists(run_dir):
             os.makedirs(run_dir)
         # Here I read the madness mol file from the molecules directory
@@ -88,12 +96,12 @@ class DaltonRunner:
         dal_run_file = run_dir + "/freq.dal"
         with open(dal_run_file, "w") as file:  # Use file to refer to the file object
             file.write(dalton_inp)
-        mol_file = run_dir + "/" + molname + "-" + basis.replace("*", "S") + ".mol"
+        mol_file = run_dir + "/" + molecule_input + "-" + basis.replace("*", "S") + ".mol"
         with open(mol_file, "w") as file:  # Use file to refer to the file object
             file.write(mol_input)
-        molname = mol_file.split("/")[-1]
-        dalname = dal_run_file.split("/")[-1]
-        return run_dir, dalname, molname
+        molecule_input = mol_file.split("/")[-1]
+        dalton_input = dal_run_file.split("/")[-1]
+        return run_dir, dalton_input, molecule_input
 
     def __run_dalton(self, rdir, dfile, mfile):
         dalton = shutil.which('dalton')
@@ -146,23 +154,26 @@ class DaltonRunner:
 
         dalton_inp.append("**END OF DALTON INPUT")
         dalton_inp = "\n".join(dalton_inp)
-        run_dir = self.dalton_dir + xc + "/" + molname + "/" + "excited-state"
-        mad_to_dal = madnessToDalton(self.base_dir)
+        run_dir = self.dalton_dir.joinpath(xc).joinpath(molname).joinpath('excited_state')
+        print(run_dir)
+        mad_to_dal = madnessToDalton(self.base_dir.absolute())
         if not os.path.exists(run_dir):
             os.makedirs(run_dir)
-        madmolfile = self.base_dir + "/molecules/" + madmol + ".mol"
+        madmolfile = self.base_dir.joinpath('molecules').joinpath(madmol + '.mol')
         if basis.split("-")[-1] == "uc":
             mol_input = mad_to_dal.madmol_to_dalmol(madmolfile, "-".join(basis.split("-")[:-1]))
         else:
             mol_input = mad_to_dal.madmol_to_dalmol(madmolfile, basis)
-        dal_run_file = run_dir + "/excited.dal"
+        dal_run_file = run_dir.joinpath('excited.dal')
         with open(dal_run_file, "w") as file:  # Use file to refer to the file object
             file.write(dalton_inp)
-        mol_file = run_dir + "/" + molname + "-" + basis.replace("*", "S") + ".mol"
+        mol_file = run_dir.joinpath(molname + "-" + basis.replace("*", "S") + ".mol")
         with open(mol_file, "w") as file:  # Use file to refer to the file object
             file.write(mol_input)
-        molname = mol_file.split("/")[-1]
-        dalname = dal_run_file.split("/")[-1]
+        molname = mol_file.name.split("/")[-1]
+        dalname = dal_run_file.name.split("/")[-1]
+        print('molname', molname)
+        print('dalname', dalname)
         return run_dir, dalname, molname
 
     @staticmethod
@@ -278,28 +289,32 @@ class DaltonRunner:
                 pass
         return data
 
-    def get_excited_json(self, mol, xc, basis, run):
-        """get the json output given mol xc and basis
+    def get_excited_json(self, mol, xc, basis, run, num_states):
+        """
+        Get the excited state json data for a molecule
+        :param mol:
+        :param xc:
+        :param basis: str
+        :param run: bool
+
         :param run:
         """
-        num_states = self.freq_json[mol][xc]["excited-state"]
         run_directory, dal_input, mol_input = self.__write_excited_input(self,
                                                                          mol, xc, basis, num_states
                                                                          )
         # First look for the output file and try and convert it to a json
-        outfile = "/excited_" + "-".join([mol, basis]) + ".out"
-        outfile = run_directory + outfile
+        outfile = "excited_" + "-".join([mol, basis]) + ".out"
+        out_file_path = run_directory.joinpath(outfile)
         data = None
         try:
             # open the output file
-            with open(outfile, "r") as daltonOutput:
+            with open(out_file_path, "r") as daltonOutput:
                 dj = daltonToJson()
                 data = self.__create_excited_json(dj.convert(daltonOutput), basis)
         except:
 
             print("did not find output file")
             if run:
-
                 print("Try and run molecule ", mol)
                 d_out, d_error = self.__run_dalton(run_directory, dal_input, mol_input)
                 # print(d_out, d_error)
@@ -314,7 +329,7 @@ class DaltonRunner:
 
     def get_excited_result(self, mol, xc, basis, run):
 
-        excited_j = self.get_excited_json(mol, xc, basis, run)
+        excited_j = self.get_excited_json(mol, xc, basis, run, 4)
         if excited_j is not None:
 
             time = excited_j[basis]["ground"]["calculationTime"]

@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import json
+from pathlib import Path
 
 
 # make this into a class that way I can define class members like
@@ -17,16 +18,17 @@ import json
 
 
 class madnessToDalton:
-    def __init__(self, base_dir):
+    def __init__(self, base_dir: Path):
         self.base_dir = base_dir
-        self.DALROOT = os.path.join(self.base_dir, os.pardir)
-        self.DALROOT += "/dalton/"
+        self.DALROOT = self.base_dir.joinpath('dalton').absolute()
+        print('madnessToDalton base dir', self.base_dir)
+        print('madnessToDalton dalroot dir', self.DALROOT)
         if not os.path.exists("dalton"):
             os.mkdir("dalton")
 
-        self.pt = pd.read_csv(self.base_dir + '/periodic_table.csv')
+        self.periodic_table = pd.read_csv(self.base_dir.joinpath('periodic_table.csv'))
 
-        with open(self.base_dir + '/molecules/frequency.json') as json_file:
+        with open(self.base_dir.joinpath('molecules/frequency.json')) as json_file:
             self.freq_json = json.loads(json_file.read())
 
     def madmol_to_dalmol(self, madmol_f, basis):
@@ -43,7 +45,6 @@ class madnessToDalton:
                     split.remove('')
                 if (split[0] == 'units'):
                     units = split[1]
-                # madness key words
                 skeys = ['geometry', 'eprec', 'units', 'end']
                 skey = split[0]
                 # if not a key word then it's probably an atom
@@ -64,7 +65,7 @@ class madnessToDalton:
 
         for atom in atom_dict.keys():
             # Get the charge of the atom
-            charge = self.pt[self.pt['Symbol'] == atom]['NumberofProtons'].reset_index()
+            charge = self.periodic_table[self.periodic_table['Symbol'] == atom]['NumberofProtons'].reset_index()
             charge = charge['NumberofProtons'][0]
             # number of atoms of type atom
             num_atoms = len(atom_dict[atom])

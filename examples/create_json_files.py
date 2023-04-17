@@ -1,8 +1,7 @@
 import argparse
-import glob
 from pathlib import Path
 
-from utils import generate_excited_state_json
+from utils import generate_dalton_excited_state_json
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Example script to generate excited_state.json.")
@@ -12,13 +11,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     database_path = Path(args.arg1)
-
-    molecule_path = database_path.joinpath("molecules")
-
     print('database path', database_path)
-    print('molecule path', molecule_path)
-    print('molecule path', molecule_path)
 
-    mols = glob.glob('*.mol')
-
-    # mol_files = glob.glob(f"{args.arg1}/*.mol")
+    excited_state_json = generate_dalton_excited_state_json('hf', ['aug-cc-pVDZ'], database_path, False)
