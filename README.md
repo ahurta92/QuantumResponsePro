@@ -33,6 +33,7 @@ pip install -e .
 
 ### Generate a response database
 
+
 1. Create a response database directory with the following subdirectories:
 molecules: contains the molecule definition madness.mol in xyz format
 json_data: stores database property json files (generated later)
@@ -55,6 +56,12 @@ db_gen.DatabaseGenerator.get_dalton_excited_json(xc, [basis], True)
 The code generates input files for the first excited-state calculation, runs the calculation, and saves the results for each molecule in dalton/xc/excited_state/
 Output files have the prefix `excited_mol_basis`, with .out for output files and .json for json files.
 All molecule-basis pair json files are combined into a single `dalton_excited.json` file in the **json_data** directory.
+
+Once the excited-state calculations are complete and a `dalton_excited.json` file has been generated you 
+can now generate a `frequency.json` file with a list of frequencies for computing response properties.
+The `frequency.json` file is used by the MADNESS `mad_freq` executable and dalton to set the frequencies for 
+the response property calculations.
+
 
 2. Create a json file for the database properties. The json file should contain the following properties:
 

@@ -38,7 +38,8 @@ setup(
         "matplotlib",
         "seaborn",
         'pytest',
-        'pyarrow'
+        'pyarrow',
+        'mergedeep'
         # Add any other required dependencies here
     ],
     extras_require={
