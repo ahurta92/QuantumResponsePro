@@ -92,7 +92,7 @@ class DatabaseGenerator:
 
         return data_dict
 
-    def update_dalton_excited_state_json(self, xc, basis_list, run):
+    def get_dalton_excited_json(self, xc, basis_list, run):
 
         if not self.json_path.exists():
             self.json_path.mkdir()
