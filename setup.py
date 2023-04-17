@@ -10,7 +10,8 @@ setup(
     version="0.1.0",
     author="Adrian Hurtado",
     author_email="ahurta92@gmail.com",
-    description="A molecular analysis tool for computing and analyzing dynamic response properties using MADNESS and dalton quantum chemistry packages",
+    description="A molecular analysis tool for computing and analyzing dynamic response properties using MADNESS and "
+                "dalton quantum chemistry packages",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/yourusername/quantumresponsepro",
@@ -39,6 +40,7 @@ setup(
         'pytest',
         "scikit-learn",
         "scikit-image",
+        "glob2"
         # Add any other required dependencies here
     ],
     extras_require={
