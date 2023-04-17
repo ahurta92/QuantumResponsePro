@@ -1,0 +1,1597 @@
+
+
+     ************************************************************************
+     *************** Dalton - An Electronic Structure Program ***************
+     ************************************************************************
+
+    This is output from DALTON release Dalton2020.0 (2020)
+         ( Web site: http://daltonprogram.org )
+
+   ----------------------------------------------------------------------------
+
+    NOTE:
+     
+    Dalton is an experimental code for the evaluation of molecular
+    properties using (MC)SCF, DFT, CI, and CC wave functions.
+    The authors accept no responsibility for the performance of
+    the code or for the correctness of the results.
+     
+    The code (in whole or part) is provided under a licence and
+    is not to be reproduced for further distribution without
+    the written permission of the authors or their representatives.
+     
+    See the home page "http://daltonprogram.org" for further information.
+     
+    If results obtained with this code are published,
+    the appropriate citations would be both of:
+     
+       K. Aidas, C. Angeli, K. L. Bak, V. Bakken, R. Bast,
+       L. Boman, O. Christiansen, R. Cimiraglia, S. Coriani,
+       P. Dahle, E. K. Dalskov, U. Ekstroem,
+       T. Enevoldsen, J. J. Eriksen, P. Ettenhuber, B. Fernandez,
+       L. Ferrighi, H. Fliegl, L. Frediani, K. Hald, A. Halkier,
+       C. Haettig, H. Heiberg, T. Helgaker, A. C. Hennum,
+       H. Hettema, E. Hjertenaes, S. Hoest, I.-M. Hoeyvik,
+       M. F. Iozzi, B. Jansik, H. J. Aa. Jensen, D. Jonsson,
+       P. Joergensen, J. Kauczor, S. Kirpekar,
+       T. Kjaergaard, W. Klopper, S. Knecht, R. Kobayashi, H. Koch,
+       J. Kongsted, A. Krapp, K. Kristensen, A. Ligabue,
+       O. B. Lutnaes, J. I. Melo, K. V. Mikkelsen, R. H. Myhre,
+       C. Neiss, C. B. Nielsen, P. Norman, J. Olsen,
+       J. M. H. Olsen, A. Osted, M. J. Packer, F. Pawlowski,
+       T. B. Pedersen, P. F. Provasi, S. Reine, Z. Rinkevicius,
+       T. A. Ruden, K. Ruud, V. Rybkin, P. Salek, C. C. M. Samson,
+       A. Sanchez de Meras, T. Saue, S. P. A. Sauer,
+       B. Schimmelpfennig, K. Sneskov, A. H. Steindal,
+       K. O. Sylvester-Hvid, P. R. Taylor, A. M. Teale,
+       E. I. Tellgren, D. P. Tew, A. J. Thorvaldsen, L. Thoegersen,
+       O. Vahtras, M. A. Watson, D. J. D. Wilson, M. Ziolkowski
+       and H. Agren,
+       "The Dalton quantum chemistry program system",
+       WIREs Comput. Mol. Sci. 2014, 4:269–284 (doi: 10.1002/wcms.1172)
+     
+    and
+     
+       Dalton, a molecular electronic structure program,
+       Release Dalton2020.0 (2020), see http://daltonprogram.org
+   ----------------------------------------------------------------------------
+
+    Authors in alphabetical order (Major contribution(s) in parenthesis):
+
+  Kestutis Aidas,           Vilnius University,           Lithuania   (QM/MM)
+  Celestino Angeli,         University of Ferrara,        Italy       (NEVPT2)
+  Keld L. Bak,              UNI-C,                        Denmark     (AOSOPPA, non-adiabatic coupling, magnetic properties)
+  Vebjoern Bakken,          University of Oslo,           Norway      (DALTON; geometry optimizer, symmetry detection)
+  Radovan Bast,             UiT The Arctic U. of Norway,  Norway      (DALTON installation and execution frameworks)
+  Pablo Baudin,             University of Valencia,       Spain       (Cholesky excitation energies)
+  Linus Boman,              NTNU,                         Norway      (Cholesky decomposition and subsystems)
+  Bruno N. Cabral Tenorio,  Technical Univ. of Denmark,   Denmark     (Lanczos-based CC methods)
+  Ove Christiansen,         Aarhus University,            Denmark     (CC module)
+  Renzo Cimiraglia,         University of Ferrara,        Italy       (NEVPT2)
+  Sonia Coriani,            Technical Univ. of Denmark,   Denmark     (CC and RESPONS modules)
+  Janusz Cukras,            University of Warsaw,         Poland      (MChD in RESPONS)
+  Paal Dahle,               University of Oslo,           Norway      (Parallelization)
+  Erik K. Dalskov,          UNI-C,                        Denmark     (SOPPA)
+  Thomas Enevoldsen,        Univ. of Southern Denmark,    Denmark     (SOPPA)
+  Janus J. Eriksen,         Aarhus University,            Denmark     (Polarizable embedding, TDA)
+  Rasmus Faber,             Technical Univ. of Denmark,   Denmark     (Vib.avg. NMR w. SOPPA, parallel AO-SOPPA, CVS-CC and EOMCC)
+  Tobias Fahleson,          KTH Stockholm,                Sweden      (Damped cubic response)
+  Berta Fernandez,          U. of Santiago de Compostela, Spain       (Doublet spin, ESR in RESPONS)
+  Lara Ferrighi,            Aarhus University,            Denmark     (PCM Cubic response)
+  Heike Fliegl,             University of Oslo,           Norway      (CCSD(R12))
+  Luca Frediani,            UiT The Arctic U. of Norway,  Norway      (PCM)
+  Emmanuel Fromager,        Univ. Strasbourg,             France      (MC-srDFT)
+  Bin Gao,                  UiT The Arctic U. of Norway,  Norway      (Gen1Int library)
+  Andre S. P. Gomes,        CNRS/Universite de Lille,     France      (Frozen density embedding)
+  Christof Haettig,         Ruhr-University Bochum,       Germany     (CC module)
+  Kasper Hald,              Aarhus University,            Denmark     (CC module)
+  Asger Halkier,            Aarhus University,            Denmark     (CC module)
+  Frederik Beyer Hansen,    University of Copenhagen,     Denmark     (Parallel AO-SOPPA)
+  Erik D. Hedegaard,        Univ. of Southern Denmark,    Denmark     (Polarizable embedding, QM/MM, and MC-srDFT)
+  Hanne Heiberg,            University of Oslo,           Norway      (Geometry analysis, selected one-electron integrals)
+  Trygve Helgaker,          University of Oslo,           Norway      (DALTON; ABACUS, ERI, DFT modules, London, and much more)
+  Alf Christian Hennum,     University of Oslo,           Norway      (Parity violation)
+  Hinne Hettema,            University of Auckland,       New Zealand (Quadratic response in RESPONS; SIRIUS supersymmetry)
+  Eirik Hjertenaes,         NTNU,                         Norway      (Cholesky decomposition)
+  Pi A. B. Haase,           University of Copenhagen,     Denmark     (Triplet AO-SOPPA)
+  Maria Francesca Iozzi,    University of Oslo,           Norway      (RPA)
+  Christoph Jacob           TU Braunschweig               Germany     (Frozen density embedding)
+  Brano Jansik              Technical Univ. of Ostrava    Czech Rep.  (DFT cubic response)
+  Hans Joergen Aa. Jensen,  Univ. of Southern Denmark,    Denmark     (DALTON; SIRIUS, RESPONS, ABACUS, MC-srDFT, and much more)
+  Dan Jonsson,              UiT The Arctic U. of Norway,  Norway      (Cubic response in RESPONS module)
+  Poul Joergensen,          Aarhus University,            Denmark     (RESPONS, ABACUS, and CC modules)
+  Maciej Kaminski,          University of Warsaw,         Poland      (CPPh in RESPONS)
+  Joanna Kauczor,           Linkoeping University,        Sweden      (Complex polarization propagator (CPP) module)
+  Sheela Kirpekar,          Univ. of Southern Denmark,    Denmark     (Mass-velocity & Darwin integrals)
+  Erik Kjellgren,           Univ. of Southern Denmark,    Denmark     (MC-srDFT)
+  Wim Klopper,              KIT Karlsruhe,                Germany     (R12 code in CC, SIRIUS, and ABACUS modules)
+  Stefan Knecht,            ETH Zurich,                   Switzerland (Parallel CI and MCSCF, MC-srDFT)
+  Rika Kobayashi,           Australian National Univ.,    Australia   (DIIS in CC, London in MCSCF)
+  Henrik Koch,              NTNU,                         Norway      (CC module, Cholesky decomposition)
+  Jacob Kongsted,           Univ. of Southern Denmark,    Denmark     (Polarizable embedding, polarizable density embedding, QM/MM)
+  Andrea Ligabue,           University of Modena,         Italy       (CTOCD, AOSOPPA)
+  Nanna H. List             Univ. of Southern Denmark,    Denmark     (Polarizable embedding)
+  Ola B. Lutnaes,           University of Oslo,           Norway      (DFT Hessian)
+  Juan I. Melo,             University of Buenos Aires,   Argentina   (LRESC, Relativistic Effects on NMR Shieldings)
+  Kurt V. Mikkelsen,        University of Copenhagen,     Denmark     (MC-SCRF and QM/MM)
+  Rolf H. Myhre,            NTNU,                         Norway      (Subsystems and CC3)
+  Christian Neiss,          Univ. Erlangen-Nuernberg,     Germany     (CCSD(R12))
+  Christian B. Nielsen,     University of Copenhagen,     Denmark     (QM/MM)
+  Patrick Norman,           KTH Stockholm,                Sweden      (Cubic response and complex frequency response in RESPONS)
+  Jeppe Olsen,              Aarhus University,            Denmark     (SIRIUS CI/density modules)
+  Jogvan Magnus H. Olsen,   Aarhus University,            Denmark     (Polarizable embedding and polarizable density embedding)
+  Anders Osted,             Copenhagen University,        Denmark     (QM/MM)
+  Martin J. Packer,         University of Sheffield,      UK          (SOPPA)
+  Filip Pawlowski,          Kazimierz Wielki University,  Poland      (CC3)
+  Morten N. Pedersen,       Univ. of Southern Denmark,    Denmark     (Polarizable embedding)
+  Thomas B. Pedersen,       University of Oslo,           Norway      (Cholesky decomposition)
+  Patricio F. Provasi,      University of Northeastern,   Argentina   (Analysis of coupling constants in localized orbitals)
+  Peter Reinholdt,          Univ. of Southern Denmark,    Denmark     (Polarizable embedding and polarizable density embedding)
+  Zilvinas Rinkevicius,     KTH Stockholm,                Sweden      (open-shell DFT, ESR)
+  Elias Rudberg,            KTH Stockholm,                Sweden      (DFT grid and basis info)
+  Torgeir A. Ruden,         University of Oslo,           Norway      (Numerical derivatives in ABACUS)
+  Kenneth Ruud,             UiT The Arctic U. of Norway,  Norway      (DALTON; ABACUS magnetic properties and much more)
+  Pawel Salek,              KTH Stockholm,                Sweden      (DALTON; DFT code)
+  Claire C. M. Samson       University of Karlsruhe       Germany     (Boys localization, r12 integrals in ERI)
+  Alfredo Sanchez de Meras, University of Valencia,       Spain       (CC module, Cholesky decomposition)
+  Trond Saue,               Paul Sabatier University,     France      (direct Fock matrix construction)
+  Stephan P. A. Sauer,      University of Copenhagen,     Denmark     (SOPPA(CCSD), SOPPA prop., AOSOPPA, vibrational g-factors)
+  Bernd Schimmelpfennig,    Forschungszentrum Karlsruhe,  Germany     (AMFI module)
+  Anna K. Schnack-Petersen, University of Copenhagen,     Denmark     (RPA(D) and HRPA(D) properties in AOSOPPA)
+  Kristian Sneskov,         Aarhus University,            Denmark     (Polarizable embedding, QM/MM)
+  Arnfinn H. Steindal,      UiT The Arctic U. of Norway,  Norway      (parallel QM/MM, polarizable embedding)
+  Casper Steinmann,         Aalborg University,           Denmark     (QFIT, polarizable embedding)
+  K. O. Sylvester-Hvid,     University of Copenhagen,     Denmark     (MC-SCRF)
+  Peter R. Taylor,          VLSCI/Univ. of Melbourne,     Australia   (Symmetry handling ABACUS, integral transformation)
+  Andrew M. Teale,          University of Nottingham,     England     (DFT-AC, DFT-D)
+  David P. Tew,             University of Bristol,        England     (CCSD(R12))
+  Julien Toulouse,          Sorbonne Univ.,               France      (MC-srDFT)
+  Olav Vahtras,             KTH Stockholm,                Sweden      (Triplet response, spin-orbit, ESR, TDDFT, open-shell DFT)
+  Lucas Visscher,           Vrije Universiteit Amsterdam, Netherlands (Frozen density embedding)
+  David J. Wilson,          La Trobe University,          Australia   (DFT Hessian and DFT magnetizabilities)
+  Hans Agren,               KTH Stockholm,                Sweden      (SIRIUS module, RESPONS, MC-SCRF solvation)
+ --------------------------------------------------------------------------------
+
+     Date and time (Linux)  : Wed Jan 11 14:14:24 2023
+     Host name              : cn027                                   
+
+ * Work memory size             :    64000000 =  488.28 megabytes.
+
+ * Directories for basis set searches:
+   1) /gpfs/projects/rjh/adrian/fd_compare/dalton/hf/Ne/dipole
+   2) /gpfs/projects/rjh/adrian/dalton/build/basis
+
+
+Compilation information
+-----------------------
+
+ Who compiled             | ahurtado
+ Host                     | sn-mem
+ System                   | Linux-3.10.0-1160.24.1.el7.x86_64
+ CMake generator          | Unix Makefiles
+ Processor                | x86_64
+ 64-bit integers          | OFF
+ MPI                      | ON
+ Fortran compiler         | /gpfs/software/intel/oneAPI/2021_4/mpi/2021.4.0/bi
+                          | n/mpif90
+ Fortran compiler version | GNU Fortran (GCC) 11.2.0
+ C compiler               | /gpfs/software/intel/oneAPI/2021_4/mpi/2021.4.0/bi
+                          | n/mpicc
+ C compiler version       | gcc (GCC) 11.2.0
+ C++ compiler             | /gpfs/software/intel/oneAPI/2021_4/mpi/2021.4.0/bi
+                          | n/mpicxx
+ C++ compiler version     | unknown
+ BLAS                     | /gpfs/software/intel/oneAPI/2021_4/mkl/2021.4.0/li
+                          | b/intel64/libmkl_gf_lp64.so;/gpfs/software/intel/o
+                          | neAPI/2021_4/mkl/2021.4.0/lib/intel64/libmkl_seque
+                          | ntial.so;/gpfs/software/intel/oneAPI/2021_4/mkl/20
+                          | 21.4.0/lib/intel64/libmkl_core.so;/usr/lib64/libpt
+                          | hread.so;/usr/lib64/libm.so
+ LAPACK                   | /gpfs/software/intel/oneAPI/2021_4/mkl/2021.4.0/li
+                          | b/intel64/libmkl_lapack95_lp64.a;/gpfs/software/in
+                          | tel/oneAPI/2021_4/mkl/2021.4.0/lib/intel64/libmkl_
+                          | gf_lp64.so
+ Static linking           | OFF
+ Last Git revision        | 66052b3af5ea7225e31178bf9a8b031913c72190
+ Git branch               | (HEAD detached at Dalton2020.0)
+ Configuration time       | 2023-01-11 13:33:37.731835
+
+ * MPI parallel run using 20 processes.
+
+
+   Content of the .dal input file
+ ----------------------------------
+
+**DALTON INPUT
+.RUN RESPONSE
+.DIRECT
+**WAVE FUNCTIONS
+.HF
+**RESPONSE
+*LINEAR
+.DIPLEN
+.FREQUENCIES
+9
+0.0 0.046122125 0.09224425 0.13836637499999999 0.1844885 0.230610625 0.27673274999999997 0.322854875
+**END OF DALTON INPUT
+
+
+   Content of the .mol file
+ ----------------------------
+
+BASIS
+aug-cc-pVQZ
+blah
+blah
+Atomtype=1 Angstrom
+Charge=10 Atoms=1
+Ne_a 0.000000000000 0.000000000000 0.000000000000
+
+
+       *******************************************************************
+       *********** Output from DALTON general input processing ***********
+       *******************************************************************
+
+ --------------------------------------------------------------------------------
+   Overall default print level:    0
+   Print level for DALTON.STAT:    1
+
+    Parallel calculation using MPI
+    AO-direct calculation (in sections where implemented)
+    HERMIT 1- and 2-electron integral sections will be executed
+    "Old" integral transformation used (limited to max 255 basis functions)
+    Wave function sections will be executed (SIRIUS module)
+    Dynamic molecular response properties section will be executed (RESPONSE module)
+ --------------------------------------------------------------------------------
+
+
+   ****************************************************************************
+   *************** Output of molecule and basis set information ***************
+   ****************************************************************************
+
+
+    The two title cards from your ".mol" input:
+    ------------------------------------------------------------------------
+ 1: blah                                                                    
+ 2: blah                                                                    
+    ------------------------------------------------------------------------
+
+  Coordinates are entered in Angstrom and converted to atomic units.
+          - Conversion factor : 1 bohr = 0.52917721 A
+
+  Atomic type no.    1
+  --------------------
+  Nuclear charge:  10.00000
+  Number of symmetry independent centers:    1
+  Number of basis sets to read;    2
+  Basis set file used for this atomic type with Z =  10 :
+     "/gpfs/projects/rjh/adrian/dalton/build/basis/aug-cc-pVQZ"
+
+
+                      SYMADD: Requested addition of symmetry
+                      --------------------------------------
+
+ Symmetry test threshold:  5.00E-06
+
+@   The molecule is centered at center of mass and rotated
+@   so principal axes of inertia are along coordinate axes.
+
+ Symmetry class found: D(oo,h)        
+
+ Symmetry Independent Centres             
+ ----------------------------
+Ne_a  10 :      0.00000000     0.00000000     0.00000000  Isotope  1
+
+ The following symmetry elements were found:   X  Y  Z  
+
+
+                         SYMGRP: Point group information
+                         -------------------------------
+
+@    Full point group is: D(oo,h)        
+@    Represented as:      D2h
+
+@  * The irrep name for each symmetry:    1: Ag     2: B3u    3: B2u    4: B1g    5: B1u    6: B2g    7: B3g    8: Au 
+
+
+   * The point group was generated by:
+
+      Reflection in the yz-plane
+      Reflection in the xz-plane
+      Reflection in the xy-plane
+
+   * Group multiplication table
+
+        |  E   C2z  C2y  C2x   i   Oxy  Oxz  Oyz
+   -----+----------------------------------------
+     E  |  E   C2z  C2y  C2x   i   Oxy  Oxz  Oyz
+    C2z | C2z   E   C2x  C2y  Oxy   i   Oyz  Oxz
+    C2y | C2y  C2x   E   C2z  Oxz  Oyz   i   Oxy
+    C2x | C2x  C2y  C2z   E   Oyz  Oxz  Oxy   i 
+     i  |  i   Oxy  Oxz  Oyz   E   C2z  C2y  C2x
+    Oxy | Oxy   i   Oyz  Oxz  C2z   E   C2x  C2y
+    Oxz | Oxz  Oyz   i   Oxy  C2y  C2x   E   C2z
+    Oyz | Oyz  Oxz  Oxy   i   C2x  C2y  C2z   E 
+
+   * Character table
+
+        |  E   C2z  C2y  C2x   i   Oxy  Oxz  Oyz
+   -----+----------------------------------------
+    Ag  |   1    1    1    1    1    1    1    1
+    B3u |   1   -1   -1    1   -1    1    1   -1
+    B2u |   1   -1    1   -1   -1    1   -1    1
+    B1g |   1    1   -1   -1    1    1   -1   -1
+    B1u |   1    1   -1   -1   -1   -1    1    1
+    B2g |   1   -1    1   -1    1   -1    1   -1
+    B3g |   1   -1   -1    1    1   -1   -1    1
+    Au  |   1    1    1    1   -1   -1   -1   -1
+
+   * Direct product table
+
+        | Ag   B3u  B2u  B1g  B1u  B2g  B3g  Au 
+   -----+----------------------------------------
+    Ag  | Ag   B3u  B2u  B1g  B1u  B2g  B3g  Au 
+    B3u | B3u  Ag   B1g  B2u  B2g  B1u  Au   B3g
+    B2u | B2u  B1g  Ag   B3u  B3g  Au   B1u  B2g
+    B1g | B1g  B2u  B3u  Ag   Au   B3g  B2g  B1u
+    B1u | B1u  B2g  B3g  Au   Ag   B3u  B2u  B1g
+    B2g | B2g  B1u  Au   B3g  B3u  Ag   B1g  B2u
+    B3g | B3g  Au   B1u  B2g  B2u  B1g  Ag   B3u
+    Au  | Au   B3g  B2g  B1u  B1g  B2u  B3u  Ag 
+
+
+                                 Isotopic Masses
+                                 ---------------
+
+                           Ne_a       19.992439
+
+                       Total mass:    19.992439 amu
+                       Natural abundance:  90.480 %
+
+ Center-of-mass coordinates (a.u.):    0.000000    0.000000    0.000000
+ Center-of-mass coordinates (Angs):    0.000000    0.000000    0.000000
+
+
+  Atoms and basis sets
+  --------------------
+
+  Number of atom types :    1
+  Total number of atoms:    1
+
+  Basis set used is "aug-cc-pVQZ" from the basis set library.
+
+  label    atoms   charge   prim   cont     basis
+  ----------------------------------------------------------------------
+  Ne          1   10.0000    93    80      [13s7p4d3f2g|6s5p4d3f2g]                           
+  ----------------------------------------------------------------------
+  total:      1   10.0000    93    80
+  ----------------------------------------------------------------------
+  Spherical harmonic basis used.
+
+  Threshold for neglecting AO integrals:  1.00D-12
+
+
+  Cartesian Coordinates (a.u.)
+  ----------------------------
+
+  Total number of coordinates:    3
+  Ne_a    :     1  x   0.0000000000    2  y   0.0000000000    3  z   0.0000000000
+
+
+  Symmetry Coordinates
+  --------------------
+
+  Number of coordinates in each symmetry:     0    1    1    0    1    0    0    0
+
+  Symmetry  B3u ( 2)
+
+    1   Ne_a  x    1
+
+  Symmetry  B2u ( 3)
+
+    2   Ne_a  y    2
+
+  Symmetry  B1u ( 5)
+
+    3   Ne_a  z    3
+
+
+@ This is an atomic calculation.
+
+
+  Symmetry Orbitals
+  -----------------
+
+  Number of orbitals in each symmetry:          20   11   11    8   11    8    8    3
+
+
+  Symmetry  Ag ( 1)
+
+    1     Ne_a     1s         1
+    2     Ne_a     1s         2
+    3     Ne_a     1s         3
+    4     Ne_a     1s         4
+    5     Ne_a     1s         5
+    6     Ne_a     1s         6
+    7     Ne_a     3d0       24
+    8     Ne_a     3d2+      26
+    9     Ne_a     3d0       29
+   10     Ne_a     3d2+      31
+   11     Ne_a     3d0       34
+   12     Ne_a     3d2+      36
+   13     Ne_a     3d0       39
+   14     Ne_a     3d2+      41
+   15     Ne_a     5g0       67
+   16     Ne_a     5g2+      69
+   17     Ne_a     5g4+      71
+   18     Ne_a     5g0       76
+   19     Ne_a     5g2+      78
+   20     Ne_a     5g4+      80
+
+
+  Symmetry  B3u( 2)
+
+   21     Ne_a     2px        7
+   22     Ne_a     2px       10
+   23     Ne_a     2px       13
+   24     Ne_a     2px       16
+   25     Ne_a     2px       19
+   26     Ne_a     4f1+      46
+   27     Ne_a     4f3+      48
+   28     Ne_a     4f1+      53
+   29     Ne_a     4f3+      55
+   30     Ne_a     4f1+      60
+   31     Ne_a     4f3+      62
+
+
+  Symmetry  B2u( 3)
+
+   32     Ne_a     2py        8
+   33     Ne_a     2py       11
+   34     Ne_a     2py       14
+   35     Ne_a     2py       17
+   36     Ne_a     2py       20
+   37     Ne_a     4f3-      42
+   38     Ne_a     4f1-      44
+   39     Ne_a     4f3-      49
+   40     Ne_a     4f1-      51
+   41     Ne_a     4f3-      56
+   42     Ne_a     4f1-      58
+
+
+  Symmetry  B1g( 4)
+
+   43     Ne_a     3d2-      22
+   44     Ne_a     3d2-      27
+   45     Ne_a     3d2-      32
+   46     Ne_a     3d2-      37
+   47     Ne_a     5g4-      63
+   48     Ne_a     5g2-      65
+   49     Ne_a     5g4-      72
+   50     Ne_a     5g2-      74
+
+
+  Symmetry  B1u( 5)
+
+   51     Ne_a     2pz        9
+   52     Ne_a     2pz       12
+   53     Ne_a     2pz       15
+   54     Ne_a     2pz       18
+   55     Ne_a     2pz       21
+   56     Ne_a     4f0       45
+   57     Ne_a     4f2+      47
+   58     Ne_a     4f0       52
+   59     Ne_a     4f2+      54
+   60     Ne_a     4f0       59
+   61     Ne_a     4f2+      61
+
+
+  Symmetry  B2g( 6)
+
+   62     Ne_a     3d1+      25
+   63     Ne_a     3d1+      30
+   64     Ne_a     3d1+      35
+   65     Ne_a     3d1+      40
+   66     Ne_a     5g1+      68
+   67     Ne_a     5g3+      70
+   68     Ne_a     5g1+      77
+   69     Ne_a     5g3+      79
+
+
+  Symmetry  B3g( 7)
+
+   70     Ne_a     3d1-      23
+   71     Ne_a     3d1-      28
+   72     Ne_a     3d1-      33
+   73     Ne_a     3d1-      38
+   74     Ne_a     5g3-      64
+   75     Ne_a     5g1-      66
+   76     Ne_a     5g3-      73
+   77     Ne_a     5g1-      75
+
+
+  Symmetry  Au ( 8)
+
+   78     Ne_a     4f2-      43
+   79     Ne_a     4f2-      50
+   80     Ne_a     4f2-      57
+
+  Symmetries of electric field:  B3u(2)  B2u(3)  B1u(5)
+
+  Symmetries of magnetic field:  B3g(7)  B2g(6)  B1g(4)
+
+
+                     .---------------------------------------.
+                     | Starting in Integral Section (HERMIT) |
+                     `---------------------------------------'
+
+
+
+ ***************************************************************************************
+ ****************** Output from **INTEGRALS input processing (HERMIT) ******************
+ ***************************************************************************************
+
+
+ - Using defaults, no **INTEGRALS input found
+
+ Default print level:        1
+
+ Calculation of one-electron Hamiltonian integrals.
+
+ Center of mass  (bohr):      0.000000000000      0.000000000000      0.000000000000
+ Operator center (bohr):      0.000000000000      0.000000000000      0.000000000000
+ Gauge origin    (bohr):      0.000000000000      0.000000000000      0.000000000000
+ Dipole origin   (bohr):      0.000000000000      0.000000000000      0.000000000000
+
+
+     ************************************************************************
+     ************************** Output from HERINT **************************
+     ************************************************************************
+
+
+
+                      Nuclear contribution to dipole moments
+                      --------------------------------------
+
+                    All dipole components are zero by symmetry
+
+
+  Total CPU  time used in HERMIT:   0.08 seconds
+  Total wall time used in HERMIT:   0.08 seconds
+
+
+                        .----------------------------------.
+                        | End of Integral Section (HERMIT) |
+                        `----------------------------------'
+
+
+
+                   .--------------------------------------------.
+                   | Starting in Wave Function Section (SIRIUS) |
+                   `--------------------------------------------'
+
+
+ *** Output from Huckel module :
+
+     Using EWMO model:          T
+     Using EHT  model:          F
+     Number of Huckel orbitals each symmetry:    2    1    1    0    1    0    0    0
+
+ EWMO - Energy Weighted Maximum Overlap - is a Huckel type method,
+        which normally is better than Extended Huckel Theory.
+ Reference: Linderberg and Ohrn, Propagators in Quantum Chemistry (Wiley, 1973)
+
+ Huckel EWMO eigenvalues for symmetry :  1
+          -32.772400      -1.930400
+
+ Huckel EWMO eigenvalues for symmetry :  2
+           -0.850400
+
+ Huckel EWMO eigenvalues for symmetry :  3
+           -0.850400
+
+ Huckel EWMO eigenvalues for symmetry :  5
+           -0.850400
+
+ **********************************************************************
+ *SIRIUS* a direct, restricted step, second order MCSCF program       *
+ **********************************************************************
+
+ 
+     Date and time (Linux)  : Wed Jan 11 14:14:24 2023
+     Host name              : cn027                                   
+
+ Title lines from ".mol" input file:
+     blah                                                                    
+     blah                                                                    
+
+ Print level on unit LUPRI =   2 is   0
+ Print level on unit LUW4  =   2 is   5
+
+@    Restricted, closed shell Hartree-Fock calculation.
+
+@    Time-dependent Hartree-Fock calculation (random phase approximation).
+ Fock matrices are calculated directly and in parallel without use of integrals on disk.
+
+ Initial molecular orbitals are obtained according to
+ ".MOSTART EWMO  " input option
+
+     Wave function specification
+     ============================
+@    Wave function type        --- HF ---
+@    Number of closed shell electrons          10
+@    Number of electrons in active shells       0
+@    Total charge of the molecule               0
+
+@    Spin multiplicity and 2 M_S                1         0
+@    Total number of symmetries                 8 (point group: D2h)
+@    Reference state symmetry                   1 (irrep name : Ag )
+
+     Orbital specifications
+     ======================
+@    Abelian symmetry species          All |    1    2    3    4    5    6    7    8
+@                                          |  Ag   B3u  B2u  B1g  B1u  B2g  B3g  Au 
+                                       --- |  ---  ---  ---  ---  ---  ---  ---  ---
+@    Total number of orbitals           80 |   20   11   11    8   11    8    8    3
+@    Number of basis functions          80 |   20   11   11    8   11    8    8    3
+
+      ** Automatic occupation of RHF orbitals **
+
+      -- Initial occupation of symmetries is determined from extended Huckel guess.           
+      -- Initial occupation of symmetries is :
+@    Occupied SCF orbitals               5 |    2    1    1    0    1    0    0    0
+
+     Maximum number of Fock   iterations      0
+     Maximum number of DIIS   iterations     60
+     Maximum number of QC-SCF iterations     60
+     Threshold for SCF convergence     1.00D-05
+
+
+ ***********************************************
+ ***** DIIS acceleration of SCF iterations *****
+ ***********************************************
+
+ C1-DIIS algorithm; max error vectors =    8
+
+ Automatic occupation of symmetries with  10 electrons.
+
+ Iter     Total energy    Error norm  Delta(E)    SCF occupation
+ -----------------------------------------------------------------------------
+   1  Screening settings (-IFTHRS, JTDIIS, DIFDEN, times)   -6    1    T  3.08D-02  3.00D-02
+@  1  -128.540333995       4.66D-01  -1.29D+02     2   1   1   0   1   0   0   0
+      Virial theorem: -V/T =      2.000663
+@    MULPOP   Ne_a    0.00; 
+   1  Level shift: doubly occupied orbital energies shifted by -2.00D-01
+ -----------------------------------------------------------------------------
+   2  Screening settings (-IFTHRS, JTDIIS, DIFDEN, times)  -10    2    F  8.28D-03  8.00D-03
+@  2  -128.543669769       5.53D-02  -3.34D-03     2   1   1   0   1   0   0   0
+      Virial theorem: -V/T =      1.999831
+@    MULPOP   Ne_a    0.00; 
+   2  Level shift: doubly occupied orbital energies shifted by -5.00D-02
+ -----------------------------------------------------------------------------
+   3  Screening settings (-IFTHRS, JTDIIS, DIFDEN, times)  -10    3    T  8.56D-03  9.00D-03
+@  3  -128.543753583       7.96D-03  -8.38D-05     2   1   1   0   1   0   0   0
+      Virial theorem: -V/T =      2.000179
+@    MULPOP   Ne_a    0.00; 
+   3  Level shift: doubly occupied orbital energies shifted by -1.25D-02
+ -----------------------------------------------------------------------------
+   4  Screening settings (-IFTHRS, JTDIIS, DIFDEN, times)  -10    4    T  8.30D-03  8.00D-03
+@  4  -128.543755661       3.69D-03  -2.08D-06     2   1   1   0   1   0   0   0
+      Virial theorem: -V/T =      2.000012
+@    MULPOP   Ne_a    0.00; 
+ -----------------------------------------------------------------------------
+   5  Screening settings (-IFTHRS, JTDIIS, DIFDEN, times)  -10    5    T  7.86D-03  8.00D-03
+@  5  -128.543755936       1.24D-04  -2.75D-07     2   1   1   0   1   0   0   0
+      Virial theorem: -V/T =      2.000063
+@    MULPOP   Ne_a   -0.00; 
+ -----------------------------------------------------------------------------
+   6  Screening settings (-IFTHRS, JTDIIS, DIFDEN, times)  -10    6    T  8.02D-03  8.00D-03
+@  6  -128.543755937       1.93D-05  -1.52D-09     2   1   1   0   1   0   0   0
+      Virial theorem: -V/T =      2.000062
+@    MULPOP   Ne_a    0.00; 
+ -----------------------------------------------------------------------------
+   7  Screening settings (-IFTHRS, JTDIIS, DIFDEN, times)  -10    7    T  8.23D-03  8.00D-03
+@  7  -128.543755937       1.79D-06  -1.25D-11     2   1   1   0   1   0   0   0
+
+@ *** DIIS converged in   7 iterations !
+@     Converged SCF energy, gradient:   -128.543755937287    1.79D-06
+    - total time used in SIRFCK :              0.00 seconds
+
+
+ *** SCF orbital energy analysis ***
+
+ Only the 20 lowest virtual orbital energies printed in each symmetry.
+
+ Number of electrons :   10
+ Orbital occupations :    2    1    1    0    1    0    0    0
+
+ Sym       Hartree-Fock orbital energies
+
+1 Ag    -32.77421191    -1.93120728     0.21071288     0.82169554     0.82169554
+          1.38965545     2.56843247     2.56843247     6.14050024     6.14050024
+          6.14050024     6.25726194     7.24411063     7.24411063    17.27541908
+         17.27541908    17.27541908    21.30922305    21.30922305    67.24548784
+
+2 B3u    -0.85065368     0.20650308     1.04878614     2.69576505     2.69576505
+          4.12347575     7.46865128     7.46865128    15.95531296    20.82812309
+         20.82812309
+
+3 B2u    -0.85065368     0.20650308     1.04878614     2.69576505     2.69576505
+          4.12347575     7.46865128     7.46865128    15.95531296    20.82812309
+         20.82812309
+
+4 B1g     0.82169554     2.56843247     6.14050024     6.14050024     7.24411063
+         17.27541908    17.27541908    21.30922305
+
+5 B1u    -0.85065368     0.20650308     1.04878614     2.69576505     2.69576505
+          4.12347575     7.46865128     7.46865128    15.95531296    20.82812309
+         20.82812309
+
+6 B2g     0.82169554     2.56843247     6.14050024     6.14050024     7.24411063
+         17.27541908    17.27541908    21.30922305
+
+7 B3g     0.82169554     2.56843247     6.14050024     6.14050024     7.24411063
+         17.27541908    17.27541908    21.30922305
+
+8 Au      2.69576505     7.46865128    20.82812309
+
+    E(LUMO) :     0.20650308 au (symmetry 3)
+  - E(HOMO) :    -0.85065368 au (symmetry 3)
+  ------------------------------------------
+    gap     :     1.05715676 au
+
+ --- Writing SIRIFC interface file
+
+ CPU and wall time for SCF :       0.087       0.089
+
+
+                       .-----------------------------------.
+                       | --- Final results from SIRIUS --- |
+                       `-----------------------------------'
+
+
+@    Spin multiplicity:           1
+@    Spatial symmetry:            1 ( irrep  Ag  in D2h )
+@    Total charge of molecule:    0
+
+@    Final HF energy:            -128.543755937287                 
+@    Nuclear repulsion:             0.000000000000
+@    Electronic energy:          -128.543755937287
+
+@    Final gradient norm:           0.000001790429
+
+ 
+     Date and time (Linux)  : Wed Jan 11 14:14:24 2023
+     Host name              : cn027                                   
+
+File label for MO orbitals:  11Jan23   FOCKDIIS
+
+ (Only coefficients > 0.0100 are printed.)
+
+ Molecular orbitals for symmetry species 1  (Ag )
+ ------------------------------------------------
+
+    Orbital         1        2        3        4        5        6        7
+   1 Ne_a:1s     1.0001  -0.0002  -0.0240   0.0000   0.0000   0.0802   0.0000
+   2 Ne_a:1s     0.0003   0.9993  -0.3110   0.0000  -0.0000  -0.2986   0.0000
+   3 Ne_a:1s     0.0001  -0.0005  -0.0579   0.0000  -0.0000   0.2784  -0.0000
+   4 Ne_a:1s    -0.0005   0.0030   0.3053  -0.0000   0.0000  -2.1415   0.0000
+   5 Ne_a:1s     0.0004  -0.0041  -0.9348  -0.0000   0.0000   3.2604   0.0000
+   6 Ne_a:1s    -0.0003   0.0033   1.5824   0.0000  -0.0000  -1.2427   0.0000
+   8 Ne_a:3d2+  -0.0000   0.0000  -0.0000   0.0080  -0.0000  -0.0000   0.0558
+   9 Ne_a:3d0   -0.0000   0.0000   0.0000  -0.0000  -0.0748   0.0000  -0.0000
+  10 Ne_a:3d2+   0.0000  -0.0000   0.0000  -0.0748   0.0000   0.0000  -0.0912
+  11 Ne_a:3d0    0.0000   0.0000  -0.0000   0.0000   0.2109  -0.0000   0.0000
+  12 Ne_a:3d2+  -0.0000   0.0000  -0.0000   0.2109  -0.0000  -0.0000   1.3726
+  13 Ne_a:3d0   -0.0000  -0.0000   0.0000  -0.0000  -1.1159   0.0000  -0.0000
+  14 Ne_a:3d2+   0.0000  -0.0000   0.0000  -1.1159   0.0000   0.0000  -0.7660
+
+    Orbital         8        9       10       11       12
+   1 Ne_a:1s    -0.0000   0.0000  -0.0000   0.0000  -0.5905
+   2 Ne_a:1s    -0.0000   0.0000  -0.0000   0.0000  -3.5475
+   3 Ne_a:1s    -0.0000   0.0000  -0.0000   0.0000  -2.0574
+   4 Ne_a:1s     0.0000  -0.0000   0.0000  -0.0000   6.1219
+   5 Ne_a:1s     0.0000  -0.0000   0.0000  -0.0000  -1.2497
+   6 Ne_a:1s     0.0000  -0.0000   0.0000  -0.0000   0.5975
+   7 Ne_a:3d0    0.0558   0.0000  -0.0000   0.0000  -0.0000
+   9 Ne_a:3d0   -0.0912  -0.0000   0.0000  -0.0000   0.0000
+  11 Ne_a:3d0    1.3726   0.0000  -0.0000   0.0000  -0.0000
+  13 Ne_a:3d0   -0.7660  -0.0000   0.0000  -0.0000   0.0000
+  15 Ne_a:5g0    0.0000  -0.1857   0.0000  -0.0000   0.0000
+  16 Ne_a:5g2+  -0.0000   0.0000  -0.0000  -0.1857  -0.0000
+  17 Ne_a:5g4+   0.0000  -0.0000  -0.1857  -0.0000   0.0000
+  18 Ne_a:5g0    0.0000   1.0982   0.0000  -0.0000   0.0000
+  19 Ne_a:5g2+   0.0000  -0.0000   0.0000   1.0982   0.0000
+  20 Ne_a:5g4+  -0.0000   0.0000   1.0982   0.0000  -0.0000
+
+ Molecular orbitals for symmetry species 2  (B3u)
+ ------------------------------------------------
+
+    Orbital         1        2        3        4        5        6        7
+   1 Ne_a:2px    1.0004  -0.1770  -0.6836   0.0000  -0.0000  -1.0503  -0.0000
+   2 Ne_a:2px   -0.0009  -0.0272   0.1312  -0.0000   0.0000  -0.7899   0.0000
+   3 Ne_a:2px    0.0021   0.0726  -0.4783  -0.0000   0.0000   2.3803   0.0000
+   4 Ne_a:2px   -0.0071  -0.3564   1.8872  -0.0000   0.0000  -0.8204   0.0000
+   5 Ne_a:2px    0.0099   1.2087  -0.7592  -0.0000   0.0000   0.3370   0.0000
+   6 Ne_a:4f1+   0.0000  -0.0000  -0.0000   0.0000   0.0491  -0.0000   0.0956
+   7 Ne_a:4f3+  -0.0000   0.0000   0.0000   0.0491   0.0000   0.0000   0.0000
+   8 Ne_a:4f1+  -0.0000   0.0000   0.0000  -0.0000  -0.3098   0.0000  -1.4603
+   9 Ne_a:4f3+   0.0000  -0.0000  -0.0000  -0.3098  -0.0000  -0.0000  -0.0000
+  10 Ne_a:4f1+   0.0000  -0.0000  -0.0000   0.0000   1.1919  -0.0000   0.8239
+  11 Ne_a:4f3+  -0.0000   0.0000   0.0000   1.1919   0.0000   0.0000   0.0000
+
+    Orbital         8        9       10       11
+   1 Ne_a:2px   -0.0000  -6.7657  -0.0000   0.0000
+   2 Ne_a:2px    0.0000   4.2640   0.0000  -0.0000
+   3 Ne_a:2px    0.0000   1.8421   0.0000  -0.0000
+   4 Ne_a:2px    0.0000   2.1136   0.0000  -0.0000
+   5 Ne_a:2px    0.0000  -0.1478  -0.0000   0.0000
+   6 Ne_a:4f1+  -0.0000  -0.0000   1.2273  -0.0000
+   7 Ne_a:4f3+  -0.0956   0.0000   0.0000   1.2273
+   8 Ne_a:4f1+   0.0000   0.0000  -0.8548   0.0000
+   9 Ne_a:4f3+   1.4603  -0.0000  -0.0000  -0.8548
+  10 Ne_a:4f1+  -0.0000  -0.0000   0.3783  -0.0000
+  11 Ne_a:4f3+  -0.8239   0.0000   0.0000   0.3783
+
+ Molecular orbitals for symmetry species 3  (B2u)
+ ------------------------------------------------
+
+    Orbital         1        2        3        4        5        6        7
+   1 Ne_a:2py    1.0004  -0.1770  -0.6836  -0.0000  -0.0000  -1.0503   0.0000
+   2 Ne_a:2py   -0.0009  -0.0272   0.1312   0.0000   0.0000  -0.7899  -0.0000
+   3 Ne_a:2py    0.0021   0.0726  -0.4783   0.0000   0.0000   2.3803  -0.0000
+   4 Ne_a:2py   -0.0071  -0.3564   1.8872   0.0000   0.0000  -0.8204  -0.0000
+   5 Ne_a:2py    0.0099   1.2087  -0.7592   0.0000   0.0000   0.3370  -0.0000
+   6 Ne_a:4f3-   0.0000  -0.0000  -0.0000  -0.0000   0.0491  -0.0000   0.0000
+   7 Ne_a:4f1-   0.0000  -0.0000  -0.0000   0.0491  -0.0000  -0.0000  -0.0956
+   8 Ne_a:4f3-  -0.0000   0.0000   0.0000   0.0000  -0.3098   0.0000  -0.0000
+   9 Ne_a:4f1-  -0.0000   0.0000   0.0000  -0.3098   0.0000   0.0000   1.4603
+  10 Ne_a:4f3-   0.0000  -0.0000  -0.0000  -0.0000   1.1919  -0.0000   0.0000
+  11 Ne_a:4f1-   0.0000  -0.0000  -0.0000   1.1919  -0.0000  -0.0000  -0.8239
+
+    Orbital         8        9       10       11
+   1 Ne_a:2py    0.0000   6.7657  -0.0000  -0.0000
+   2 Ne_a:2py   -0.0000  -4.2640   0.0000   0.0000
+   3 Ne_a:2py   -0.0000  -1.8421   0.0000   0.0000
+   4 Ne_a:2py   -0.0000  -2.1136   0.0000   0.0000
+   5 Ne_a:2py   -0.0000   0.1478  -0.0000  -0.0000
+   6 Ne_a:4f3-  -0.0956   0.0000  -0.0000   1.2273
+   7 Ne_a:4f1-   0.0000   0.0000   1.2273   0.0000
+   8 Ne_a:4f3-   1.4603  -0.0000   0.0000  -0.8548
+   9 Ne_a:4f1-  -0.0000  -0.0000  -0.8548  -0.0000
+  10 Ne_a:4f3-  -0.8239   0.0000  -0.0000   0.3783
+  11 Ne_a:4f1-   0.0000   0.0000   0.3783   0.0000
+
+ Molecular orbitals for symmetry species 4  (B1g)
+ ------------------------------------------------
+
+    Orbital         1        2        3        4        5        6        7
+   1 Ne_a:3d2-   0.0080   0.0558   0.0000   0.0000   0.0428   0.0000   0.0000
+   2 Ne_a:3d2-  -0.0748  -0.0912   0.0000   0.0000  -1.3795   0.0000   0.0000
+   3 Ne_a:3d2-   0.2109   1.3726   0.0000   0.0000   1.1046   0.0000   0.0000
+   4 Ne_a:3d2-  -1.1159  -0.7660   0.0000   0.0000  -0.4100   0.0000   0.0000
+   5 Ne_a:5g4-   0.0000   0.0000  -0.1857   0.0000   0.0000  -1.2240   0.0000
+   6 Ne_a:5g2-   0.0000   0.0000   0.0000  -0.1857   0.0000   0.0000  -1.2240
+   7 Ne_a:5g4-   0.0000   0.0000   1.0982   0.0000   0.0000   0.5716   0.0000
+   8 Ne_a:5g2-   0.0000   0.0000   0.0000   1.0982   0.0000   0.0000   0.5716
+
+    Orbital         8
+   1 Ne_a:3d2-  -1.3626
+   2 Ne_a:3d2-   1.1456
+   3 Ne_a:3d2-  -0.5562
+   4 Ne_a:3d2-   0.1946
+
+ Molecular orbitals for symmetry species 5  (B1u)
+ ------------------------------------------------
+
+    Orbital         1        2        3        4        5        6        7
+   1 Ne_a:2pz    1.0004  -0.1770  -0.6836  -0.0000   0.0000  -1.0503  -0.0000
+   2 Ne_a:2pz   -0.0009  -0.0272   0.1312   0.0000  -0.0000  -0.7899   0.0000
+   3 Ne_a:2pz    0.0021   0.0726  -0.4783   0.0000  -0.0000   2.3803   0.0000
+   4 Ne_a:2pz   -0.0071  -0.3564   1.8872   0.0000  -0.0000  -0.8204   0.0000
+   5 Ne_a:2pz    0.0099   1.2087  -0.7592   0.0000   0.0000   0.3370  -0.0000
+   6 Ne_a:4f0   -0.0000   0.0000   0.0000   0.0000   0.0491   0.0000   0.0956
+   7 Ne_a:4f2+   0.0000  -0.0000  -0.0000   0.0491   0.0000  -0.0000  -0.0000
+   8 Ne_a:4f0    0.0000  -0.0000  -0.0000  -0.0000  -0.3098  -0.0000  -1.4603
+   9 Ne_a:4f2+  -0.0000   0.0000   0.0000  -0.3098  -0.0000   0.0000   0.0000
+  10 Ne_a:4f0   -0.0000   0.0000   0.0000  -0.0000   1.1919   0.0000   0.8239
+  11 Ne_a:4f2+   0.0000  -0.0000  -0.0000   1.1919   0.0000  -0.0000  -0.0000
+
+    Orbital         8        9       10       11
+   1 Ne_a:2pz    0.0000   6.7657  -0.0000   0.0000
+   2 Ne_a:2pz   -0.0000  -4.2640   0.0000  -0.0000
+   3 Ne_a:2pz   -0.0000  -1.8421   0.0000  -0.0000
+   4 Ne_a:2pz   -0.0000  -2.1136   0.0000  -0.0000
+   5 Ne_a:2pz   -0.0000   0.1478  -0.0000  -0.0000
+   6 Ne_a:4f0   -0.0000  -0.0000   0.0000   1.2273
+   7 Ne_a:4f2+  -0.0956   0.0000   1.2273   0.0000
+   8 Ne_a:4f0    0.0000   0.0000  -0.0000  -0.8548
+   9 Ne_a:4f2+   1.4603  -0.0000  -0.8548  -0.0000
+  10 Ne_a:4f0   -0.0000  -0.0000   0.0000   0.3783
+  11 Ne_a:4f2+  -0.8239   0.0000   0.3783   0.0000
+
+ Molecular orbitals for symmetry species 6  (B2g)
+ ------------------------------------------------
+
+    Orbital         1        2        3        4        5        6        7
+   1 Ne_a:3d1+   0.0080   0.0558   0.0000   0.0000   0.0428   0.0000   0.0000
+   2 Ne_a:3d1+  -0.0748  -0.0912   0.0000   0.0000  -1.3795   0.0000   0.0000
+   3 Ne_a:3d1+   0.2109   1.3726   0.0000   0.0000   1.1046   0.0000   0.0000
+   4 Ne_a:3d1+  -1.1159  -0.7660   0.0000   0.0000  -0.4100   0.0000   0.0000
+   5 Ne_a:5g1+   0.0000   0.0000  -0.1857   0.0000   0.0000  -1.2240   0.0000
+   6 Ne_a:5g3+   0.0000   0.0000   0.0000  -0.1857   0.0000   0.0000  -1.2240
+   7 Ne_a:5g1+   0.0000   0.0000   1.0982   0.0000   0.0000   0.5716   0.0000
+   8 Ne_a:5g3+   0.0000   0.0000   0.0000   1.0982   0.0000   0.0000   0.5716
+
+    Orbital         8
+   1 Ne_a:3d1+  -1.3626
+   2 Ne_a:3d1+   1.1456
+   3 Ne_a:3d1+  -0.5562
+   4 Ne_a:3d1+   0.1946
+
+ Molecular orbitals for symmetry species 7  (B3g)
+ ------------------------------------------------
+
+    Orbital         1        2        3        4        5        6        7
+   1 Ne_a:3d1-   0.0080   0.0558   0.0000   0.0000   0.0428   0.0000   0.0000
+   2 Ne_a:3d1-  -0.0748  -0.0912   0.0000   0.0000  -1.3795   0.0000   0.0000
+   3 Ne_a:3d1-   0.2109   1.3726   0.0000   0.0000   1.1046   0.0000   0.0000
+   4 Ne_a:3d1-  -1.1159  -0.7660   0.0000   0.0000  -0.4100   0.0000   0.0000
+   5 Ne_a:5g3-   0.0000   0.0000   0.0000  -0.1857   0.0000   0.0000  -1.2240
+   6 Ne_a:5g1-   0.0000   0.0000  -0.1857   0.0000   0.0000  -1.2240   0.0000
+   7 Ne_a:5g3-   0.0000   0.0000   0.0000   1.0982   0.0000   0.0000   0.5716
+   8 Ne_a:5g1-   0.0000   0.0000   1.0982   0.0000   0.0000   0.5716   0.0000
+
+    Orbital         8
+   1 Ne_a:3d1-  -1.3626
+   2 Ne_a:3d1-   1.1456
+   3 Ne_a:3d1-  -0.5562
+   4 Ne_a:3d1-   0.1946
+
+ Molecular orbitals for symmetry species 8  (Au )
+ ------------------------------------------------
+
+    Orbital         1        2        3
+   1 Ne_a:4f2-   0.0491  -0.0956   1.2273
+   2 Ne_a:4f2-  -0.3098   1.4603  -0.8548
+   3 Ne_a:4f2-   1.1919  -0.8239   0.3783
+
+  Total CPU  time used in SIRIUS :   0.09 seconds
+  Total wall time used in SIRIUS :   0.10 seconds
+
+ 
+     Date and time (Linux)  : Wed Jan 11 14:14:24 2023
+     Host name              : cn027                                   
+
+
+                     .---------------------------------------.
+                     | End of Wave Function Section (SIRIUS) |
+                     `---------------------------------------'
+
+
+
+                 .------------------------------------------------.
+                 | Starting in Dynamic Property Section (RESPONS) |
+                 `------------------------------------------------'
+
+
+ ----------------------------------------------------------------------------------------
+  RESPONSE  -  an MCSCF, MC-srDFT, DFT, SOPPA and SOPPA-srDFT response property program
+ ----------------------------------------------------------------------------------------
+
+
+ -------- OUTPUT FROM RESPONSE INPUT PROCESSING --------
+
+
+
+
+ Linear Response calculation
+ ---------------------------
+
+ Print level                                    : IPRLR  =   2
+ Maximum number of iterations                   : MAXITL =  60
+ Threshold for relative convergence             : THCLR  = 1.000D-03
+ Maximum iterations in optimal orbital algorithm: MAXITO =   5
+
+  9 B-frequencies  0.000000D+00  4.612212D-02  9.224425D-02  1.383664D-01  1.844885D-01
+  2.306106D-01  2.767327D-01  3.228549D-01  3.689770D-01
+
+    1 second order properties calculated with symmetry no.    2 and labels:
+
+          XDIPLEN 
+
+    1 second order properties calculated with symmetry no.    3 and labels:
+
+          YDIPLEN 
+
+    1 second order properties calculated with symmetry no.    5 and labels:
+
+          ZDIPLEN 
+
+
+   SCF energy         :     -128.543755937286562
+ -- inactive part     :     -128.543755937286562
+ -- nuclear repulsion :        0.000000000000000
+
+
+                     ***************************************
+                     *** RHF response calculation (TDHF) ***
+                     ***************************************
+
+ ----------------------------------------------------------------
+ ----- Linear response calculation
+ ----- Symmetry of excitation/property operator(s)    2  ( B3u)
+ ----------------------------------------------------------------
+
+ Number of excitations of this symmetry            0
+ Number of response properties of this symmetry    1
+ Number of C6/C8 properties of this symmetry       0
+
+
+ Perturbation symmetry.     KSYMOP:           2
+ Perturbation spin symmetry.TRPLET:           F
+ Orbital variables.         KZWOPT:          54
+ Configuration variables.   KZCONF:           0
+ Total number of variables. KZVAR :          54
+
+
+ RSPLR -- linear response calculation for symmetry 2  ( B3u)
+ RSPLR -- operator label : XDIPLEN 
+ RSPLR -- operator spin  :   0
+ RSPLR -- frequencies    :     0.000000  0.046122  0.092244  0.138366  0.184488
+                               0.230611  0.276733  0.322855  0.368977
+
+
+
+ ---  SOLVING SETS OF LINEAR EQUATIONS FOR LINEAR RESPONSE PROPERTIES ---
+
+ Operator symmetry = 2  ( B3u); triplet =   F
+
+RSPORT:    1 out of    9 new trial vectors linear dependent
+
+ ** RSPCTL MICROITERATION NUMBER    1
+
+       No.  Residual tot.,    conf., and orb.    Bnorm      Frequency 
+      ----------------------------------------------------------------
+         1    3.65486D-01  0.00D+00  3.65D-01  9.46D-01    0.00000D+00
+         2    3.65816D-01  0.00D+00  3.66D-01  9.50D-01    4.61221D-02
+         3    3.66816D-01  0.00D+00  3.67D-01  9.60D-01    9.22442D-02
+         4    3.68514D-01  0.00D+00  3.69D-01  9.78D-01    1.38366D-01
+         5    3.70964D-01  0.00D+00  3.71D-01  1.00D+00    1.84488D-01
+         6    3.74249D-01  0.00D+00  3.74D-01  1.04D+00    2.30611D-01
+         7    3.78497D-01  0.00D+00  3.78D-01  1.09D+00    2.76733D-01
+         8    3.83903D-01  0.00D+00  3.84D-01  1.15D+00    3.22855D-01
+         9    3.90772D-01  0.00D+00  3.91D-01  1.23D+00    3.68977D-01
+RSPORT:    1 out of    9 new trial vectors linear dependent
+
+ ** RSPCTL MICROITERATION NUMBER    2
+
+       No.  Residual tot.,    conf., and orb.    Bnorm      Frequency 
+      ----------------------------------------------------------------
+         1    1.75497D-03  0.00D+00  1.75D-03  9.51D-01    0.00000D+00
+         2    1.75721D-03  0.00D+00  1.76D-03  9.55D-01    4.61221D-02
+         3    1.76404D-03  0.00D+00  1.76D-03  9.65D-01    9.22442D-02
+         4    1.77584D-03  0.00D+00  1.78D-03  9.83D-01    1.38366D-01
+         5    1.79327D-03  0.00D+00  1.79D-03  1.01D+00    1.84488D-01
+         6    1.81743D-03  0.00D+00  1.82D-03  1.04D+00    2.30611D-01
+         7    1.85000D-03  0.00D+00  1.85D-03  1.09D+00    2.76733D-01
+         8    1.89361D-03  0.00D+00  1.89D-03  1.15D+00    3.22855D-01
+         9    1.95249D-03  0.00D+00  1.95D-03  1.24D+00    3.68977D-01
+RSPORT:    1 out of    9 new trial vectors linear dependent
+
+ ** RSPCTL MICROITERATION NUMBER    3
+
+       No.  Residual tot.,    conf., and orb.    Bnorm      Frequency 
+      ----------------------------------------------------------------
+         1    4.85917D-05  0.00D+00  4.86D-05  9.51D-01    0.00000D+00
+         2    4.90395D-05  0.00D+00  4.90D-05  9.55D-01    4.61221D-02
+         3    5.03790D-05  0.00D+00  5.04D-05  9.65D-01    9.22442D-02
+         4    5.26014D-05  0.00D+00  5.26D-05  9.83D-01    1.38366D-01
+         5    5.57000D-05  0.00D+00  5.57D-05  1.01D+00    1.84488D-01
+         6    5.96799D-05  0.00D+00  5.97D-05  1.04D+00    2.30611D-01
+         7    6.45685D-05  0.00D+00  6.46D-05  1.09D+00    2.76733D-01
+         8    7.04264D-05  0.00D+00  7.04D-05  1.15D+00    3.22855D-01
+         9    7.73621D-05  0.00D+00  7.74D-05  1.24D+00    3.68977D-01
+
+ *** THE REQUESTED    9 SOLUTION VECTORS CONVERGED
+
+ Convergence of RSP solution vectors, threshold = 1.00D-03
+ ---------------------------------------------------------------
+ (dimension of paired reduced space:   48)
+ RSP solution vector no.    1; norm of residual   5.11D-05
+ RSP solution vector no.    2; norm of residual   5.14D-05
+ RSP solution vector no.    3; norm of residual   5.22D-05
+ RSP solution vector no.    4; norm of residual   5.35D-05
+ RSP solution vector no.    5; norm of residual   5.52D-05
+ RSP solution vector no.    6; norm of residual   5.71D-05
+ RSP solution vector no.    7; norm of residual   5.91D-05
+ RSP solution vector no.    8; norm of residual   6.10D-05
+ RSP solution vector no.    9; norm of residual   6.25D-05
+
+ *** RSPCTL MICROITERATIONS CONVERGED
+
+
+           Final output of second order properties from linear response
+           ------------------------------------------------------------
+
+
+@ Spin symmetry of operators: singlet
+
+ Note that minus the linear response function: - << A; B >>(omega) is printed.
+ The results are of quadratic accuracy using Sellers formula.
+
+@ FREQUENCY INDEPENDENT SECOND ORDER PROPERTIES
+
+@ -<< XDIPLEN  ; XDIPLEN  >> =  2.328987686395E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  4.6122125D-02
+@    cm-1:  1.0122636D+04
+@    eV  :  1.2550469D+00
+@  kJ/mol:  1.2109362D+02
+@    nm  :  9.8788495D+02
+
+@ -<< XDIPLEN  ; XDIPLEN  >> =  2.332972198908E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  9.2244250D-02
+@    cm-1:  2.0245273D+04
+@    eV  :  2.5100937D+00
+@  kJ/mol:  2.4218724D+02
+@    nm  :  4.9394247D+02
+
+@ -<< XDIPLEN  ; XDIPLEN  >> =  2.345060911797E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  1.3836637D-01
+@    cm-1:  3.0367909D+04
+@    eV  :  3.7651406D+00
+@  kJ/mol:  3.6328086D+02
+@    nm  :  3.2929498D+02
+
+@ -<< XDIPLEN  ; XDIPLEN  >> =  2.365674243400E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  1.8448850D-01
+@    cm-1:  4.0490545D+04
+@    eV  :  5.0201875D+00
+@  kJ/mol:  4.8437448D+02
+@    nm  :  2.4697124D+02
+
+@ -<< XDIPLEN  ; XDIPLEN  >> =  2.395566000259E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  2.3061063D-01
+@    cm-1:  5.0613181D+04
+@    eV  :  6.2752343D+00
+@  kJ/mol:  6.0546810D+02
+@    nm  :  1.9757699D+02
+
+@ -<< XDIPLEN  ; XDIPLEN  >> =  2.435916574274E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  2.7673275D-01
+@    cm-1:  6.0735818D+04
+@    eV  :  7.5302812D+00
+@  kJ/mol:  7.2656172D+02
+@    nm  :  1.6464749D+02
+
+@ -<< XDIPLEN  ; XDIPLEN  >> =  2.488496376208E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  3.2285487D-01
+@    cm-1:  7.0858454D+04
+@    eV  :  8.7853280D+00
+@  kJ/mol:  8.4765534D+02
+@    nm  :  1.4112642D+02
+
+@ -<< XDIPLEN  ; XDIPLEN  >> =  2.555950215736E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  3.6897700D-01
+@    cm-1:  8.0981090D+04
+@    eV  :  1.0040375D+01
+@  kJ/mol:  9.6874896D+02
+@    nm  :  1.2348562D+02
+
+@ -<< XDIPLEN  ; XDIPLEN  >> =  2.642307546232E+00
+
+
+ Time used in linear response calculation is      0.22 CPU seconds for symmetry 2
+ ----------------------------------------------------------------
+ ----- Linear response calculation
+ ----- Symmetry of excitation/property operator(s)    3  ( B2u)
+ ----------------------------------------------------------------
+
+ Number of excitations of this symmetry            0
+ Number of response properties of this symmetry    1
+ Number of C6/C8 properties of this symmetry       0
+
+
+ Perturbation symmetry.     KSYMOP:           3
+ Perturbation spin symmetry.TRPLET:           F
+ Orbital variables.         KZWOPT:          54
+ Configuration variables.   KZCONF:           0
+ Total number of variables. KZVAR :          54
+
+
+ RSPLR -- linear response calculation for symmetry 3  ( B2u)
+ RSPLR -- operator label : YDIPLEN 
+ RSPLR -- operator spin  :   0
+ RSPLR -- frequencies    :     0.000000  0.046122  0.092244  0.138366  0.184488
+                               0.230611  0.276733  0.322855  0.368977
+
+
+
+ ---  SOLVING SETS OF LINEAR EQUATIONS FOR LINEAR RESPONSE PROPERTIES ---
+
+ Operator symmetry = 3  ( B2u); triplet =   F
+
+RSPORT:    1 out of    9 new trial vectors linear dependent
+
+ ** RSPCTL MICROITERATION NUMBER    1
+
+       No.  Residual tot.,    conf., and orb.    Bnorm      Frequency 
+      ----------------------------------------------------------------
+         1    3.38678D-01  0.00D+00  3.39D-01  9.46D-01    0.00000D+00
+         2    3.38981D-01  0.00D+00  3.39D-01  9.50D-01    4.61221D-02
+         3    3.39901D-01  0.00D+00  3.40D-01  9.60D-01    9.22442D-02
+         4    3.41467D-01  0.00D+00  3.41D-01  9.78D-01    1.38366D-01
+         5    3.43735D-01  0.00D+00  3.44D-01  1.00D+00    1.84488D-01
+         6    3.46791D-01  0.00D+00  3.47D-01  1.04D+00    2.30611D-01
+         7    3.50774D-01  0.00D+00  3.51D-01  1.09D+00    2.76733D-01
+         8    3.55900D-01  0.00D+00  3.56D-01  1.15D+00    3.22855D-01
+         9    3.62519D-01  0.00D+00  3.63D-01  1.23D+00    3.68977D-01
+
+ ** RSPCTL MICROITERATION NUMBER    2
+
+       No.  Residual tot.,    conf., and orb.    Bnorm      Frequency 
+      ----------------------------------------------------------------
+         1    2.05925D-03  0.00D+00  2.06D-03  9.51D-01    0.00000D+00
+         2    2.06126D-03  0.00D+00  2.06D-03  9.55D-01    4.61221D-02
+         3    2.06734D-03  0.00D+00  2.07D-03  9.65D-01    9.22442D-02
+         4    2.07757D-03  0.00D+00  2.08D-03  9.83D-01    1.38366D-01
+         5    2.09221D-03  0.00D+00  2.09D-03  1.01D+00    1.84488D-01
+         6    2.11170D-03  0.00D+00  2.11D-03  1.04D+00    2.30611D-01
+         7    2.13695D-03  0.00D+00  2.14D-03  1.09D+00    2.76733D-01
+         8    2.16980D-03  0.00D+00  2.17D-03  1.15D+00    3.22855D-01
+         9    2.21407D-03  0.00D+00  2.21D-03  1.24D+00    3.68977D-01
+RSPORT:    1 out of    9 new trial vectors linear dependent
+
+ ** RSPCTL MICROITERATION NUMBER    3
+
+       No.  Residual tot.,    conf., and orb.    Bnorm      Frequency 
+      ----------------------------------------------------------------
+         1    5.10648D-05  0.00D+00  5.11D-05  9.51D-01    0.00000D+00
+         2    5.13909D-05  0.00D+00  5.14D-05  9.55D-01    4.61221D-02
+         3    5.23742D-05  0.00D+00  5.24D-05  9.65D-01    9.22442D-02
+         4    5.40312D-05  0.00D+00  5.40D-05  9.83D-01    1.38366D-01
+         5    5.63902D-05  0.00D+00  5.64D-05  1.01D+00    1.84488D-01
+         6    5.94948D-05  0.00D+00  5.95D-05  1.04D+00    2.30611D-01
+         7    6.34062D-05  0.00D+00  6.34D-05  1.09D+00    2.76733D-01
+         8    6.82078D-05  0.00D+00  6.82D-05  1.15D+00    3.22855D-01
+         9    7.40115D-05  0.00D+00  7.40D-05  1.24D+00    3.68977D-01
+
+ *** THE REQUESTED    9 SOLUTION VECTORS CONVERGED
+
+ Convergence of RSP solution vectors, threshold = 1.00D-03
+ ---------------------------------------------------------------
+ (dimension of paired reduced space:   50)
+ RSP solution vector no.    1; norm of residual   5.37D-05
+ RSP solution vector no.    2; norm of residual   5.38D-05
+ RSP solution vector no.    3; norm of residual   5.43D-05
+ RSP solution vector no.    4; norm of residual   5.50D-05
+ RSP solution vector no.    5; norm of residual   5.59D-05
+ RSP solution vector no.    6; norm of residual   5.69D-05
+ RSP solution vector no.    7; norm of residual   5.81D-05
+ RSP solution vector no.    8; norm of residual   5.91D-05
+ RSP solution vector no.    9; norm of residual   5.98D-05
+
+ *** RSPCTL MICROITERATIONS CONVERGED
+
+
+           Final output of second order properties from linear response
+           ------------------------------------------------------------
+
+
+@ Spin symmetry of operators: singlet
+
+ Note that minus the linear response function: - << A; B >>(omega) is printed.
+ The results are of quadratic accuracy using Sellers formula.
+
+@ FREQUENCY INDEPENDENT SECOND ORDER PROPERTIES
+
+@ -<< YDIPLEN  ; YDIPLEN  >> =  2.328987686386E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  4.6122125D-02
+@    cm-1:  1.0122636D+04
+@    eV  :  1.2550469D+00
+@  kJ/mol:  1.2109362D+02
+@    nm  :  9.8788495D+02
+
+@ -<< YDIPLEN  ; YDIPLEN  >> =  2.332972198900E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  9.2244250D-02
+@    cm-1:  2.0245273D+04
+@    eV  :  2.5100937D+00
+@  kJ/mol:  2.4218724D+02
+@    nm  :  4.9394247D+02
+
+@ -<< YDIPLEN  ; YDIPLEN  >> =  2.345060911791E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  1.3836637D-01
+@    cm-1:  3.0367909D+04
+@    eV  :  3.7651406D+00
+@  kJ/mol:  3.6328086D+02
+@    nm  :  3.2929498D+02
+
+@ -<< YDIPLEN  ; YDIPLEN  >> =  2.365674243398E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  1.8448850D-01
+@    cm-1:  4.0490545D+04
+@    eV  :  5.0201875D+00
+@  kJ/mol:  4.8437448D+02
+@    nm  :  2.4697124D+02
+
+@ -<< YDIPLEN  ; YDIPLEN  >> =  2.395566000263E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  2.3061063D-01
+@    cm-1:  5.0613181D+04
+@    eV  :  6.2752343D+00
+@  kJ/mol:  6.0546810D+02
+@    nm  :  1.9757699D+02
+
+@ -<< YDIPLEN  ; YDIPLEN  >> =  2.435916574285E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  2.7673275D-01
+@    cm-1:  6.0735818D+04
+@    eV  :  7.5302812D+00
+@  kJ/mol:  7.2656172D+02
+@    nm  :  1.6464749D+02
+
+@ -<< YDIPLEN  ; YDIPLEN  >> =  2.488496376229E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  3.2285487D-01
+@    cm-1:  7.0858454D+04
+@    eV  :  8.7853280D+00
+@  kJ/mol:  8.4765534D+02
+@    nm  :  1.4112642D+02
+
+@ -<< YDIPLEN  ; YDIPLEN  >> =  2.555950215768E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  3.6897700D-01
+@    cm-1:  8.0981090D+04
+@    eV  :  1.0040375D+01
+@  kJ/mol:  9.6874896D+02
+@    nm  :  1.2348562D+02
+
+@ -<< YDIPLEN  ; YDIPLEN  >> =  2.642307546281E+00
+
+
+ Time used in linear response calculation is      0.23 CPU seconds for symmetry 3
+ ----------------------------------------------------------------
+ ----- Linear response calculation
+ ----- Symmetry of excitation/property operator(s)    5  ( B1u)
+ ----------------------------------------------------------------
+
+ Number of excitations of this symmetry            0
+ Number of response properties of this symmetry    1
+ Number of C6/C8 properties of this symmetry       0
+
+
+ Perturbation symmetry.     KSYMOP:           5
+ Perturbation spin symmetry.TRPLET:           F
+ Orbital variables.         KZWOPT:          54
+ Configuration variables.   KZCONF:           0
+ Total number of variables. KZVAR :          54
+
+
+ RSPLR -- linear response calculation for symmetry 5  ( B1u)
+ RSPLR -- operator label : ZDIPLEN 
+ RSPLR -- operator spin  :   0
+ RSPLR -- frequencies    :     0.000000  0.046122  0.092244  0.138366  0.184488
+                               0.230611  0.276733  0.322855  0.368977
+
+
+
+ ---  SOLVING SETS OF LINEAR EQUATIONS FOR LINEAR RESPONSE PROPERTIES ---
+
+ Operator symmetry = 5  ( B1u); triplet =   F
+
+RSPORT:    1 out of    9 new trial vectors linear dependent
+
+ ** RSPCTL MICROITERATION NUMBER    1
+
+       No.  Residual tot.,    conf., and orb.    Bnorm      Frequency 
+      ----------------------------------------------------------------
+         1    3.07149D-01  0.00D+00  3.07D-01  9.46D-01    0.00000D+00
+         2    3.07422D-01  0.00D+00  3.07D-01  9.50D-01    4.61221D-02
+         3    3.08249D-01  0.00D+00  3.08D-01  9.60D-01    9.22442D-02
+         4    3.09657D-01  0.00D+00  3.10D-01  9.78D-01    1.38366D-01
+         5    3.11690D-01  0.00D+00  3.12D-01  1.00D+00    1.84488D-01
+         6    3.14424D-01  0.00D+00  3.14D-01  1.04D+00    2.30611D-01
+         7    3.17972D-01  0.00D+00  3.18D-01  1.09D+00    2.76733D-01
+         8    3.22511D-01  0.00D+00  3.23D-01  1.15D+00    3.22855D-01
+         9    3.28322D-01  0.00D+00  3.28D-01  1.23D+00    3.68977D-01
+
+ ** RSPCTL MICROITERATION NUMBER    2
+
+       No.  Residual tot.,    conf., and orb.    Bnorm      Frequency 
+      ----------------------------------------------------------------
+         1    1.00443D-03  0.00D+00  1.00D-03  9.51D-01    0.00000D+00
+         2    1.00710D-03  0.00D+00  1.01D-03  9.55D-01    4.61221D-02
+         3    1.01522D-03  0.00D+00  1.02D-03  9.65D-01    9.22442D-02
+         4    1.02911D-03  0.00D+00  1.03D-03  9.83D-01    1.38366D-01
+         5    1.04936D-03  0.00D+00  1.05D-03  1.01D+00    1.84488D-01
+         6    1.07690D-03  0.00D+00  1.08D-03  1.04D+00    2.30611D-01
+         7    1.11316D-03  0.00D+00  1.11D-03  1.09D+00    2.76733D-01
+         8    1.16033D-03  0.00D+00  1.16D-03  1.15D+00    3.22855D-01
+         9    1.22189D-03  0.00D+00  1.22D-03  1.24D+00    3.68977D-01
+RSPORT:    1 out of    8 new trial vectors linear dependent
+
+ ** RSPCTL MICROITERATION NUMBER    3
+
+       No.  Residual tot.,    conf., and orb.    Bnorm      Frequency 
+      ----------------------------------------------------------------
+         1    2.08213D-05  0.00D+00  2.08D-05  9.51D-01    0.00000D+00
+         2    2.11891D-05  0.00D+00  2.12D-05  9.55D-01    4.61221D-02
+         3    2.22787D-05  0.00D+00  2.23D-05  9.65D-01    9.22442D-02
+         4    2.40573D-05  0.00D+00  2.41D-05  9.83D-01    1.38366D-01
+         5    2.64948D-05  0.00D+00  2.65D-05  1.01D+00    1.84488D-01
+         6    2.95850D-05  0.00D+00  2.96D-05  1.04D+00    2.30611D-01
+         7    3.33630D-05  0.00D+00  3.34D-05  1.09D+00    2.76733D-01
+         8    3.79219D-05  0.00D+00  3.79D-05  1.15D+00    3.22855D-01
+         9    4.34377D-05  0.00D+00  4.34D-05  1.24D+00    3.68977D-01
+
+ *** THE REQUESTED    9 SOLUTION VECTORS CONVERGED
+
+ Convergence of RSP solution vectors, threshold = 1.00D-03
+ ---------------------------------------------------------------
+ (dimension of paired reduced space:   48)
+ RSP solution vector no.    1; norm of residual   2.19D-05
+ RSP solution vector no.    2; norm of residual   2.22D-05
+ RSP solution vector no.    3; norm of residual   2.31D-05
+ RSP solution vector no.    4; norm of residual   2.45D-05
+ RSP solution vector no.    5; norm of residual   2.63D-05
+ RSP solution vector no.    6; norm of residual   2.83D-05
+ RSP solution vector no.    7; norm of residual   3.05D-05
+ RSP solution vector no.    8; norm of residual   3.28D-05
+ RSP solution vector no.    9; norm of residual   3.51D-05
+
+ *** RSPCTL MICROITERATIONS CONVERGED
+
+
+           Final output of second order properties from linear response
+           ------------------------------------------------------------
+
+
+@ Spin symmetry of operators: singlet
+
+ Note that minus the linear response function: - << A; B >>(omega) is printed.
+ The results are of quadratic accuracy using Sellers formula.
+
+@ FREQUENCY INDEPENDENT SECOND ORDER PROPERTIES
+
+@ -<< ZDIPLEN  ; ZDIPLEN  >> =  2.328987686465E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  4.6122125D-02
+@    cm-1:  1.0122636D+04
+@    eV  :  1.2550469D+00
+@  kJ/mol:  1.2109362D+02
+@    nm  :  9.8788495D+02
+
+@ -<< ZDIPLEN  ; ZDIPLEN  >> =  2.332972198979E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  9.2244250D-02
+@    cm-1:  2.0245273D+04
+@    eV  :  2.5100937D+00
+@  kJ/mol:  2.4218724D+02
+@    nm  :  4.9394247D+02
+
+@ -<< ZDIPLEN  ; ZDIPLEN  >> =  2.345060911872E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  1.3836637D-01
+@    cm-1:  3.0367909D+04
+@    eV  :  3.7651406D+00
+@  kJ/mol:  3.6328086D+02
+@    nm  :  3.2929498D+02
+
+@ -<< ZDIPLEN  ; ZDIPLEN  >> =  2.365674243483E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  1.8448850D-01
+@    cm-1:  4.0490545D+04
+@    eV  :  5.0201875D+00
+@  kJ/mol:  4.8437448D+02
+@    nm  :  2.4697124D+02
+
+@ -<< ZDIPLEN  ; ZDIPLEN  >> =  2.395566000354E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  2.3061063D-01
+@    cm-1:  5.0613181D+04
+@    eV  :  6.2752343D+00
+@  kJ/mol:  6.0546810D+02
+@    nm  :  1.9757699D+02
+
+@ -<< ZDIPLEN  ; ZDIPLEN  >> =  2.435916574385E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  2.7673275D-01
+@    cm-1:  6.0735818D+04
+@    eV  :  7.5302812D+00
+@  kJ/mol:  7.2656172D+02
+@    nm  :  1.6464749D+02
+
+@ -<< ZDIPLEN  ; ZDIPLEN  >> =  2.488496376339E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  3.2285487D-01
+@    cm-1:  7.0858454D+04
+@    eV  :  8.7853280D+00
+@  kJ/mol:  8.4765534D+02
+@    nm  :  1.4112642D+02
+
+@ -<< ZDIPLEN  ; ZDIPLEN  >> =  2.555950215891E+00
+
+@ FREQUENCY DEPENDENT SECOND ORDER PROPERTIES WITH FREQUENCY :
+
+@    a.u.:  3.6897700D-01
+@    cm-1:  8.0981090D+04
+@    eV  :  1.0040375D+01
+@  kJ/mol:  9.6874896D+02
+@    nm  :  1.2348562D+02
+
+@ -<< ZDIPLEN  ; ZDIPLEN  >> =  2.642307546421E+00
+
+
+ Time used in linear response calculation is      0.21 CPU seconds for symmetry 5
+
+  Total CPU  time used in RESPONSE:   0.66 seconds
+  Total wall time used in RESPONSE:   0.67 seconds
+
+
+                   .-------------------------------------------.
+                   | End of Dynamic Property Section (RESPONS) |
+                   `-------------------------------------------'
+
+  Total CPU  time used in DALTON:   0.86 seconds
+  Total wall time used in DALTON:   0.89 seconds
+
+ 
+     Date and time (Linux)  : Wed Jan 11 14:14:25 2023
+     Host name              : cn027                                   
