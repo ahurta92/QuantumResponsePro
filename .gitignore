@@ -14,3 +14,9 @@ moldft.scf_info.json
 moldft.restartaodata
 response_base.json
 moldft.energies.dat
+*.mol
+*.dal
+*.json
+*.gz
+*.out
+*.gz.*

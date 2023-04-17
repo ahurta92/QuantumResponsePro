@@ -4,16 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7af674dd-5e62-47db-810a-177fa0259216" name="Changes" comment="clean up the example database">
-      <change afterPath="$PROJECT_DIR$/src/quantumresponsepro/utils/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/quantumresponsepro/utils/generate_data.py" afterDir="false" />
+    <list default="true" id="7af674dd-5e62-47db-810a-177fa0259216" name="Changes" comment="Database Generator">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/create_json_files.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/create_json_files.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/dalton/daltonrunner.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/dalton/daltonrunner.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/generate_data.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,7 +37,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -91,7 +84,7 @@
       <option name="presentableId" value="Default" />
       <updated>1681730602812</updated>
       <workItem from="1681730604361" duration="7268000" />
-      <workItem from="1681738079027" duration="9407000" />
+      <workItem from="1681738079027" duration="9935000" />
     </task>
     <task id="LOCAL-00001" summary="using Path instead of bare strings for file management">
       <created>1681736371953</created>
@@ -107,7 +100,14 @@
       <option name="project" value="LOCAL" />
       <updated>1681738013390</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Database Generator">
+      <created>1681751172011</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1681751172011</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -116,7 +116,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="using Path instead of bare strings for file management" />
     <MESSAGE value="clean up the example database" />
-    <option name="LAST_COMMIT_MESSAGE" value="clean up the example database" />
+    <MESSAGE value="Database Generator" />
+    <option name="LAST_COMMIT_MESSAGE" value="Database Generator" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/QuantumResponsePro$create_json_files.coverage" NAME="create_json_files Coverage Results" MODIFIED="1681749656493" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
