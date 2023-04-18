@@ -18,7 +18,8 @@ class GenerateDatabasePaths:
         self.json_path = database_path.joinpath("json_data")
         self.dalton_excited = self.json_path.joinpath('dalton_excited.json')
         self.frequency_json = self.json_path.joinpath('frequency.json')
-        self.excited_keys = self.json_path.joinpath('molecule_excited_state_keys.json')
+        self.excited_keys = self.json_path.joinpath(
+            'molecule_excited_state_keys.json')
 
 
 class DatabaseGenerator:
@@ -30,7 +31,7 @@ class DatabaseGenerator:
 
         mol_p = glob.glob('*mol', root_dir=self.molecule_path)
         molecule_list = [mol.split('.')[0] for mol in mol_p]
-        print(molecule_list)
+        # print(molecule_list)
 
         return molecule_list
 
@@ -41,7 +42,8 @@ class DatabaseGenerator:
         self.molecule_path = self.paths.molecule_path
         self.json_path = self.paths.json_path
 
-    def __generate_molecule_excited_state_keys(self, num_states, overwrite: bool = False):
+    def __generate_molecule_excited_state_keys(self, num_states,
+                                               overwrite: bool = False):
         """
         Generate excited state keys for a given molecule, xc functional
         and basis set. Reads data from dalton directory in database_path.
@@ -65,7 +67,8 @@ class DatabaseGenerator:
                     f.write(json.dumps(mol_excited_dict, indent=4))
             return mol_excited_dict
 
-    def generate_dalton_excited_state_json(self, xc, basis_list, run: bool = False):
+    def generate_dalton_excited_state_json(self, xc, basis_list,
+                                           run: bool = False):
         """
         Generate excited state json files for a given xc functional
         and basis set list. Reads data from dalton directory in database_path.
@@ -81,14 +84,18 @@ class DatabaseGenerator:
             with open(self.paths.excited_keys, 'r') as f:
                 excited_json_keys = json.load(f)
         else:
-            excited_json_keys = self.__generate_molecule_excited_state_keys(4, True)
+            excited_json_keys = self.__generate_molecule_excited_state_keys(4,
+                                                                            True)
 
         data_dict = {xc: {}}
         for molecule in molecule_list:
             data_dict[xc][molecule] = {}
             for basis in basis_list:
-                data_dict[xc][molecule] = dal_runner.get_excited_json(molecule, xc, basis, run,
-                                                                      excited_json_keys[molecule])
+                data_dict[xc][molecule] = dal_runner.get_excited_json(molecule,
+                                                                      xc, basis,
+                                                                      run,
+                                                                      excited_json_keys[
+                                                                          molecule])
 
         return data_dict
 
@@ -96,7 +103,8 @@ class DatabaseGenerator:
 
         if not self.json_path.exists():
             self.json_path.mkdir()
-        excited_json = self.generate_dalton_excited_state_json(xc, basis_list, run)
+        excited_json = self.generate_dalton_excited_state_json(xc, basis_list,
+                                                               run)
 
         if self.paths.dalton_excited.exists():
             with open(self.paths.dalton_excited, 'r') as f:
@@ -109,7 +117,8 @@ class DatabaseGenerator:
                 json.dump(excited_json, f, indent=4)
         return excited_json
 
-    def get_frequency_json(self, num_steps_to_max: int, xc: str, op: str, basis: str):
+    def get_frequency_json(self, num_steps_to_max: int, xc: str, op: str,
+                           basis: str):
         """
         Generate frequency json files for a given xc functional
         and basis set list. Reads data from dalton directory in database_path.
@@ -121,9 +130,11 @@ class DatabaseGenerator:
                 excited_json = json.load(f)
                 freq_j = {}
                 for molecule in self.get_molecule_list():
-                    omega_max = excited_json[xc][molecule][basis]['response']['freq'][0]
+                    omega_max = \
+                        excited_json[xc][molecule][basis]['response']['freq'][0]
                     omega_max = omega_max / 2.0
-                    freqs = [float(i) * omega_max / num_steps_to_max for i in range(num_steps_to_max + 1)]
+                    freqs = [float(i) * omega_max / num_steps_to_max for i in
+                             range(num_steps_to_max + 1)]
                     freq_j[molecule] = {xc: {op: freqs}}
 
         except FileNotFoundError as f:
