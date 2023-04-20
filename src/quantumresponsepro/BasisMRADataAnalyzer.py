@@ -117,11 +117,11 @@ class BasisMRADataAnalyzer:
         if iso_type == 'alpha' or iso_type == 'gamma':
             iso_data = self.data_collection.detailed_iso_diff.query('omega==@frequency')
             if iso_type == 'alpha':
-                aQ = self.get_basis_iso_data(self.all_basis)[0][basis].quantile(Q)
-                outer = set(iso_data.query('basis==@basis & alpha > @aQ').molecule.unique())
+                aQ = self.get_basis_iso_data(self.all_basis)[0][basis].abs().quantile(Q)
+                outer = set(iso_data.query('basis==@basis & alpha.abs() > @aQ').molecule.unique())
             else:
-                aQ = self.get_basis_iso_data(self.all_basis)[1][basis].quantile(Q)
-                outer = set(iso_data.query('basis==@basis & gamma > @aQ').molecule.unique())
+                aQ = self.get_basis_iso_data(self.all_basis)[1][basis].abs().quantile(Q)
+                outer = set(iso_data.query('basis==@basis & gamma.abs() > @aQ').molecule.unique())
         else:
             iso_data = self.data_collection.detailed_energy_diff.copy()
             aQ = self.get_basis_energy_data(self.all_basis)[basis].quantile(Q)
@@ -149,10 +149,11 @@ class BasisMRADataAnalyzer:
         ax.set(xlabel='Percent Error')
 
         ax.axvline(x=0.0, color='k', ls='--', alpha=.5)
-        ax.axvline(x=self.mra_ref, color='k', ls='--', alpha=.5)
-        ax.axvline(x=-self.mra_ref, color='k', ls='--', alpha=.5)
-        ax.axvline(x=outer_boundary, color='k', ls='--', alpha=.5)
-        ax.axvline(x=-outer_boundary, color='k', ls='--', alpha=.5)
+        ax.axvline(x=self.mra_ref, color='k', ls='--', alpha=.9, )
+        ax.axvline(x=-self.mra_ref, color='k', ls='--', alpha=.9, )
+        if outer_boundary != 0:
+            ax.axvline(x=outer_boundary, color='red', ls='--', alpha=.3, )
+            ax.axvline(x=-outer_boundary, color='red', ls='--', alpha=.3, )
 
         sns.histplot(data=dm, y='molecule', hue='mol_system', weights=iso_type, ax=ax,
                      discrete=True,
@@ -189,10 +190,17 @@ class BasisMRADataAnalyzer:
                                     title=None,
                                     frameon=False)
                 z += 1
+        if iso_type == 'energy':
+            fig.suptitle(r'Outliers for $E$', )
+        elif iso_type == 'alpha':
+            fig.suptitle(r'Outliers for $\alpha_{}$'.format(frequency))
+        else:
+            fig.suptitle(r'Outliers for $\gamma_{}$'.format(frequency))
+
         return fig
 
     def freq_iso_plot(self, v_level, iso_type, mol_set="all", sharey=False,
-                      thresh=.1, omegas=[0, 1, 2, 3, 4, 5, 6, 7, 8]
+                      thresh=.1, omegas=[0, 1, 2, 3, 4, 5, 6, 7, 8], border=0.0
                       ):
         iso_diff_detailed = self.data_collection.detailed_iso_diff.copy()
         if mol_set == "all":
@@ -248,10 +256,15 @@ class BasisMRADataAnalyzer:
                 set_titles("{col_name}-cc-p{row_name}" + "{}Z".format(v_level)).tight_layout(
                 w_pad=0)
             g.fig.suptitle(iso_type)
-        g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0). \
+        g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=1). \
+            map(plt.axhline, y=border, color='r', dashes=(2, 1), zorder=0). \
+            map(plt.axhline, y=-border, color='r', dashes=(2, 1), zorder=0). \
             set_axis_labels(r"$\omega_i$", "Percent Error"). \
             set_titles("{col_name}-cc-p{row_name}" + "{}Z".format(v_level)).tight_layout(w_pad=0)
-        g.fig.suptitle(iso_type)
+        if iso_type == 'alpha':
+            g.fig.suptitle(r'Error in $\alpha(\omega)$ at {}Z'.format(v_level), )
+        else:
+            g.fig.suptitle(r'Error in $\gamma(\omega)$ at {}Z'.format(v_level), )
 
         return g
 
@@ -333,126 +346,47 @@ def select_basis_outliers(data, basis, thresh):
     return out_mols
 
 
-class HFDatabasePlots:
-    def mol_iso_convergence(self, iso_data, mol, basis):
-        width = 2 * 5
-        height = 2 * 4
-        g = plt.subplots(nrows=2, ncols=2, figsize=(width, height), constrained_layout=True,
-                         sharey=False)
-        fig = g[0]
-        ax = g[1]
-        data = get_frequency_compare(iso_data, mol, basis)
-        title = [r'$\alpha(\omega)$', r'$\gamma(\omega)$']
+def plot_violin_swarm(data, iso_type, xdata, hdata, pals, ax):
+    dotsize = 1.5
 
-        for i, axi in enumerate(ax):
-            for j, axij in enumerate(axi):
-                dij = data[i][j]
-                axij.set_title(title[j])
-                dij.plot(ax=axij, ls='dashdot')
-                axij.set_xlabel(r'$\omega_i$')
-        return g
+    if iso_type == 'alpha':
+        ydata = data.alpha
+    else:
+        ydata = data.gamma
+    color1 = pals[0]
+    color2 = pals[1]
 
-    def mol_component_convergence(self, mol, ij_diff_detailed):
-        ij = ['xx', 'yy', 'zz']
-        mol_data = ij_diff_detailed.query(' molecule == @mol & ij==@ij')
-        g = sns.relplot(data=mol_data,
-                        x=mol_data.valence,
-                        y='alpha',
-                        hue='ij',
-                        col='augmentation',
-                        style='polarization',
-                        kind='line',
-                        markers=True,
-                        facet_kws={'sharey': False},
-                        dashes=True,
-                        )
-        for i, ax in enumerate(g.axes):
-            for j, axi in enumerate(ax):
-                axi.tick_params(axis='x', rotation=0)
-                axi.grid(which="both")
-                axi.tick_params(which="both", top="on", left="on", right="on", bottom="on", )
-                axi.minorticks_on()
-        g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0).set_axis_labels("Valence",
-                                                                                    "Percent Error").set_titles(
-            "{col_name}-cc-pV(C)nZ").tight_layout(w_pad=0)
-        g.fig.suptitle(mol)
-        return g
+    p1 = sns.violinplot(x=xdata, y=ydata, ax=ax, split=False, scale="count", hue=hdata,
+                        inner='quartile', cut=0, palette=color1, )
 
-    def plot_violin_swarm(self, data, iso_type, xdata, hdata, pals, ax):
-        dotsize = 1.5
+    p11 = sns.stripplot(x=data.valence, y=ydata, ax=ax, size=dotsize, hue=hdata,
+                        dodge=True, palette=color2)
 
-        if iso_type == 'alpha':
-            ydata = data.alpha
-        else:
-            ydata = data.gamma
-        color1 = pals[0]
-        color2 = pals[1]
 
-        p1 = sns.violinplot(x=xdata, y=ydata, ax=ax, split=False, scale="count", hue=hdata,
-                            inner='quartile', cut=0, palette=color1, )
+def make_plots(datas, xdata, hdata, pals, outliers, axes):
+    iso_types = ['alpha', 'gamma']
+    titles = [r'$\alpha(\omega)$', r'$\gamma(\omega)$']
 
-        p11 = sns.stripplot(x=data.valence, y=ydata, ax=ax, size=dotsize, hue=hdata,
-                            dodge=True, palette=color2)
-
-    def make_plots(self, datas, xdata, hdata, pals, outliers, axes):
-        iso_types = ['alpha', 'gamma']
-        titles = [r'$\alpha(\omega)$', r'$\gamma(\omega)$']
-
-        for i, axi in enumerate(axes):
-            out_mols = outliers[i]
-            data = datas.query("not molecule.isin(@out_mols)")
-            self.plot_violin_swarm(data, iso_types[i], xdata, hdata, pals, axi)
-            axi.tick_params(axis='x', rotation=0)
-            axi.grid(which="both")
-            axi.tick_params(which="both", top="on", left="on", right="on", bottom="on", )
-            axi.minorticks_on()
-            axi.set_title(titles[i])
-            axi.set_ylabel('Percentage Error')
-            axi.set_xlabel('[n]')
-            handles, labels = axi.get_legend_handles_labels()
-            nlabels = ['D', 'T', 'Q']
-            labels = nlabels
-            # axi.legend(handles[:2], hdata.unique(), title=hdata.name)
-            if i == 0:
-                axi.set_ylabel('Percentage Error')
-            else:
-                axi.legend('', frameon=False)
-                axi.set_ylabel(None)
-            for l in axi.lines:
-                l.set_linestyle('--')
-                l.set_linewidth(1.2)
-                l.set_color('green')
-                l.set_alpha(0.8)
-            for l in axi.lines[1::3]:
-                l.set_linestyle('-')
-                l.set_linewidth(1.5)
-                l.set_color('black')
-                l.set_alpha(0.8)
-            axi.axhline(y=0, linewidth=1.2, ls="--", color="r")
-
-    def make_plot(self, datas, xdata, hdata, pals, out_mols, iso_type, axes):
-        iso_types = ['alpha', 'gamma']
-        titles = [r'$\alpha(\omega)$', r'$\gamma(\omega)$']
-        if iso_type == 'alpha':
-            title = titles[0]
-        else:
-            title = titles[1]
-
+    for i, axi in enumerate(axes):
+        out_mols = outliers[i]
         data = datas.query("not molecule.isin(@out_mols)")
-        axi = axes
-        self.plot_violin_swarm(data, iso_type, xdata, hdata, pals, axi)
+        plot_violin_swarm(data, iso_types[i], xdata, hdata, pals, axi)
         axi.tick_params(axis='x', rotation=0)
         axi.grid(which="both")
         axi.tick_params(which="both", top="on", left="on", right="on", bottom="on", )
         axi.minorticks_on()
-        axi.set_title(title)
+        axi.set_title(titles[i])
         axi.set_ylabel('Percentage Error')
         axi.set_xlabel('[n]')
         handles, labels = axi.get_legend_handles_labels()
         nlabels = ['D', 'T', 'Q']
         labels = nlabels
-        axi.legend(handles[:4], hdata.unique(), title=hdata.name)
-        axi.set_ylabel('Percentage Error')
+        # axi.legend(handles[:2], hdata.unique(), title=hdata.name)
+        if i == 0:
+            axi.set_ylabel('Percentage Error')
+        else:
+            axi.legend('', frameon=False)
+            axi.set_ylabel(None)
         for l in axi.lines:
             l.set_linestyle('--')
             l.set_linewidth(1.2)
@@ -464,61 +398,3 @@ class HFDatabasePlots:
             l.set_color('black')
             l.set_alpha(0.8)
         axi.axhline(y=0, linewidth=1.2, ls="--", color="r")
-
-    def freq_iso_plot(data, iso_diff_detailed, v_level, iso_type, mol_set="all", sharey=False,
-                      thresh=.1):
-        all_o = [0, 1, 2, 3, 4, 5, 6, 7, 8]
-        omegas = all_o
-        if mol_set == "all":
-            data = iso_diff_detailed.query('omega.isin(@omegas) & valence==@v_level')
-        else:
-            data = iso_diff_detailed.query(
-                'omega.isin(@omegas) & valence==@v_level & mol_system.isin(@mol_set)')
-
-        mdata = data.query('valence==@v_level')
-        sns.set(rc={"xtick.bottom": True, "ytick.left": True})
-        aspect = 1.3
-        if mol_set == 'all':
-            g = sns.catplot(data=mdata,
-                            x="omega",
-                            row="polarization",
-                            y=iso_type,
-                            hue="mol_system",
-                            col="augmentation",
-                            kind='strip',
-                            sharey=sharey,
-                            dodge=True,
-                            aspect=aspect
-                            )
-        else:
-            aspect = 1.0
-            set1 = select_basis_outliers(mdata, 'aug-cc-pV{}Z'.format(v_level), thresh)
-            set2 = select_basis_outliers(mdata, 'd-aug-cc-pCV{}Z'.format(v_level), thresh * .1)
-            set1 = set1.union(set2)
-            mdata = mdata.query('molecule.isin(@set1)')
-            mdata.dropna()
-            fwk = {"sharey": sharey, 'despine': True, }
-            if iso_type == 'alpha':
-                sizes = mdata.alpha
-            else:
-                sizes = mdata.gamma
-
-            g = sns.relplot(data=mdata,
-                            x="omega",
-                            row="polarization",
-                            y=iso_type,
-                            hue="molecule",
-                            style="molecule",
-                            col="augmentation",
-                            kind='line',
-                            markers=True,
-                            facet_kws=fwk,
-                            palette='Paired',
-                            aspect=aspect,
-                            # sizes="abs"
-                            )
-        g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0). \
-            set_axis_labels(r"$\omega_i$", "Percent Error"). \
-            set_titles("{col_name}-cc-p{row_name}" + "{}Z".format(v_level)).tight_layout(w_pad=0)
-        g.fig.suptitle(iso_type)
-        return g

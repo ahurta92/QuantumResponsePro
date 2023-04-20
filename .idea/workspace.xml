@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7af674dd-5e62-47db-810a-177fa0259216" name="Changes" comment="plotting function">
+    <list default="true" id="7af674dd-5e62-47db-810a-177fa0259216" name="Changes" comment="gitignore extra output files">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/examples/testing_analyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/testing_analyzer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataAnalyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataAnalyzer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataAssembler.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataAssembler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataCollection.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataCollection.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -194,7 +193,7 @@
       <workItem from="1681918734977" duration="2561000" />
       <workItem from="1681921983245" duration="2684000" />
       <workItem from="1681937558062" duration="7756000" />
-      <workItem from="1681994914980" duration="3573000" />
+      <workItem from="1681994914980" duration="8598000" />
     </task>
     <task id="LOCAL-00001" summary="using Path instead of bare strings for file management">
       <created>1681736371953</created>
@@ -287,7 +286,21 @@
       <option name="project" value="LOCAL" />
       <updated>1681949634028</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="finished frequency and outlier plots">
+      <created>1681998557479</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1681998557479</updated>
+    </task>
+    <task id="LOCAL-00015" summary="gitignore extra output files">
+      <created>1681998801304</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1681998801304</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -306,12 +319,14 @@
     <MESSAGE value="edits to README.md" />
     <MESSAGE value="formatting" />
     <MESSAGE value="plotting function" />
-    <option name="LAST_COMMIT_MESSAGE" value="plotting function" />
+    <MESSAGE value="finished frequency and outlier plots" />
+    <MESSAGE value="gitignore extra output files" />
+    <option name="LAST_COMMIT_MESSAGE" value="gitignore extra output files" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/QuantumResponsePro$pytest_for_test_DatabaseGenerator_test_generate_frequeny_json.coverage" NAME="pytest for test_DatabaseGenerator.test_generate_frequeny_json Coverage Results" MODIFIED="1681834497169" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$run_get_dalton_frequency_json.coverage" NAME="run_get_dalton_frequency_json Coverage Results" MODIFIED="1681837658301" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/QuantumResponsePro$testing_analyzer.coverage" NAME="testing_analyzer Coverage Results" MODIFIED="1681998195056" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$testing_analyzer.coverage" NAME="testing_analyzer Coverage Results" MODIFIED="1682001417580" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$pytest_for_test_DatabaseGenerator_test_get_dalton_dipole_json.coverage" NAME="pytest for test_DatabaseGenerator.test_get_dalton_dipole_json Coverage Results" MODIFIED="1681836393187" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$create_json_files.coverage" NAME="create_json_files Coverage Results" MODIFIED="1681824638071" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
   </component>

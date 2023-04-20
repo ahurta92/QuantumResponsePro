@@ -23,11 +23,11 @@ a_fig = analyzer.plot_violin_strip('response', 'alpha', ['T', 'Q'])
 a_fig.fig.show()
 
 size = (13, 11)
-fig = analyzer.plot_valence_outliers_large('alpha', 0, ['D', 'T', 'Q'], .85, False, size)
+fig = analyzer.plot_valence_outliers_large('alpha', 0, ['D', 'T', 'Q'], .85, False, size, .5)
 sns.despine(fig)
 fig.show()
 
-g = analyzer.freq_iso_plot('Q', 'alpha', 'all', False)
+g = analyzer.freq_iso_plot('Q', 'alpha', 'all', False, border=0.5)
 g.fig.show()
 
 # g_fig = analyzer.plot_violin_strip('response', 'gamma', ['D', 'T', 'Q'])
