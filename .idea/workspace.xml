@@ -4,10 +4,30 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7af674dd-5e62-47db-810a-177fa0259216" name="Changes" comment="edits to README.md">
+    <list default="true" id="7af674dd-5e62-47db-810a-177fa0259216" name="Changes" comment="formatting">
+      <change afterPath="$PROJECT_DIR$/examples/run_get_dalton_frequency_json.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/examples/testing_analyzer.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataAnalyzer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example_database/dalton/hf/CO/dipole/freq.dal" beforeDir="false" afterPath="$PROJECT_DIR$/example_database/dalton/hf/CO/dipole/freq.dal" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example_database/dalton/hf/F2/dipole/freq.dal" beforeDir="false" afterPath="$PROJECT_DIR$/example_database/dalton/hf/F2/dipole/freq.dal" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example_database/dalton/hf/LiCl/dipole/freq.dal" beforeDir="false" afterPath="$PROJECT_DIR$/example_database/dalton/hf/LiCl/dipole/freq.dal" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example_database/dalton/hf/N2/dipole/freq.dal" beforeDir="false" afterPath="$PROJECT_DIR$/example_database/dalton/hf/N2/dipole/freq.dal" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example_database/dalton/hf/NaCl/dipole/freq.dal" beforeDir="false" afterPath="$PROJECT_DIR$/example_database/dalton/hf/NaCl/dipole/freq.dal" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example_database/dalton/hf/NaCl/dipole/freq_NaCl-aug-cc-pVDZ.out" beforeDir="false" afterPath="$PROJECT_DIR$/example_database/dalton/hf/NaCl/dipole/freq_NaCl-aug-cc-pVDZ.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example_database/dalton/hf/Ne/dipole/freq_Ne-aug-cc-pCVDZ.out" beforeDir="false" afterPath="$PROJECT_DIR$/example_database/dalton/hf/Ne/dipole/freq_Ne-aug-cc-pCVDZ.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example_database/dalton/hf/Ne/dipole/freq_Ne-aug-cc-pCVDZ.out.0" beforeDir="false" afterPath="$PROJECT_DIR$/example_database/dalton/hf/Ne/dipole/freq_Ne-aug-cc-pCVDZ.out.0" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example_database/dalton/hf/Ne/dipole/freq_Ne-aug-cc-pCVDZ.out.1" beforeDir="false" afterPath="$PROJECT_DIR$/example_database/dalton/hf/Ne/dipole/freq_Ne-aug-cc-pCVDZ.out.1" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/create_json_files.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/create_json_files.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/notebooks/create_database.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/examples/notebooks/create_database.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataAssembler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/dalton/daltonrunner.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/dalton/daltonrunner.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/response_properties_dataframe.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataCollection.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/utils/generate_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/utils/generate_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_DatabaseGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_DatabaseGenerator.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,26 +58,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/adrianhurtado/projects/madness-test-suite&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/quantumresponsepro" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.pytest for test_DatabaseGenerator.test_generate_frequeny_json">
+  <component name="RunManager" selected="Python.testing_analyzer">
     <configuration name="create_json_files" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="QuantumResponsePro" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -72,7 +93,51 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/create_json_files.py" />
-      <option name="PARAMETERS" value="$PROJECT_DIR$/example_database" />
+      <option name="PARAMETERS" value="/mnt/data/madness_data/example_database" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="run_get_dalton_frequency_json" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="QuantumResponsePro" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/run_get_dalton_frequency_json.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="testing_analyzer" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="QuantumResponsePro" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/testing_analyzer.py" />
+      <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -97,9 +162,36 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
+    <configuration name="pytest for test_DatabaseGenerator.test_get_dalton_dipole_json" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="QuantumResponsePro" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_DatabaseGenerator.test_get_dalton_dipole_json&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.testing_analyzer" />
+      <item itemvalue="Python.run_get_dalton_frequency_json" />
+      <item itemvalue="Python.create_json_files" />
+      <item itemvalue="Python tests.pytest for test_DatabaseGenerator.test_get_dalton_dipole_json" />
+      <item itemvalue="Python tests.pytest for test_DatabaseGenerator.test_generate_frequeny_json" />
+    </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.testing_analyzer" />
+        <item itemvalue="Python tests.pytest for test_DatabaseGenerator.test_get_dalton_dipole_json" />
         <item itemvalue="Python tests.pytest for test_DatabaseGenerator.test_generate_frequeny_json" />
+        <item itemvalue="Python.run_get_dalton_frequency_json" />
         <item itemvalue="Python.create_json_files" />
       </list>
     </recent_temporary>
@@ -115,7 +207,11 @@
       <workItem from="1681730604361" duration="7268000" />
       <workItem from="1681738079027" duration="11445000" />
       <workItem from="1681754273084" duration="736000" />
-      <workItem from="1681755017445" duration="11739000" />
+      <workItem from="1681755017445" duration="14326000" />
+      <workItem from="1681823443883" duration="10610000" />
+      <workItem from="1681918734977" duration="2561000" />
+      <workItem from="1681921983245" duration="2684000" />
+      <workItem from="1681937558062" duration="6253000" />
     </task>
     <task id="LOCAL-00001" summary="using Path instead of bare strings for file management">
       <created>1681736371953</created>
@@ -194,7 +290,14 @@
       <option name="project" value="LOCAL" />
       <updated>1681766060148</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="formatting">
+      <created>1681815791895</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1681815791895</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -211,10 +314,14 @@
     <MESSAGE value="Include a test script for generate data" />
     <MESSAGE value="some more basic usage" />
     <MESSAGE value="edits to README.md" />
-    <option name="LAST_COMMIT_MESSAGE" value="edits to README.md" />
+    <MESSAGE value="formatting" />
+    <option name="LAST_COMMIT_MESSAGE" value="formatting" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/QuantumResponsePro$pytest_for_test_DatabaseGenerator_test_generate_frequeny_json.coverage" NAME="pytest for test_DatabaseGenerator.test_generate_frequeny_json Coverage Results" MODIFIED="1681765303993" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
-    <SUITE FILE_PATH="coverage/QuantumResponsePro$create_json_files.coverage" NAME="create_json_files Coverage Results" MODIFIED="1681764475153" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$pytest_for_test_DatabaseGenerator_test_generate_frequeny_json.coverage" NAME="pytest for test_DatabaseGenerator.test_generate_frequeny_json Coverage Results" MODIFIED="1681834497169" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$run_get_dalton_frequency_json.coverage" NAME="run_get_dalton_frequency_json Coverage Results" MODIFIED="1681837658301" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$testing_analyzer.coverage" NAME="testing_analyzer Coverage Results" MODIFIED="1681949500086" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$pytest_for_test_DatabaseGenerator_test_get_dalton_dipole_json.coverage" NAME="pytest for test_DatabaseGenerator.test_get_dalton_dipole_json Coverage Results" MODIFIED="1681836393187" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$create_json_files.coverage" NAME="create_json_files Coverage Results" MODIFIED="1681824638071" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
   </component>
 </project>

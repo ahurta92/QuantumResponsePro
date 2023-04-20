@@ -17,9 +17,8 @@ if __name__ == "__main__":
     dg = DatabaseGenerator(database_path)
     excited_json = dg.get_dalton_excited_json('hf', ['aug-cc-pVDZ'], run=True)
     try:
-        freq_json = dg.get_frequency_json('hf', 'dipole', 'aug-cc-pVTZ')
+        freq_json = dg.get_frequency_json(8, 'hf', 'dipole', 'aug-cc-pVTZ', .5)
     except KeyError as k:
         excited_json = dg.get_dalton_excited_json('hf', ['aug-cc-pVTZ'], run=True)
-        freq_json = dg.get_frequency_json('hf', 'dipole', 'aug-cc-pVTZ')
+        freq_json = dg.get_frequency_json(8, 'hf', 'dipole', 'aug-cc-pVTZ', .5)
     excited_json = dg.get_dalton_excited_json('hf', ['aug-cc-pVDZ'], run=True)
-

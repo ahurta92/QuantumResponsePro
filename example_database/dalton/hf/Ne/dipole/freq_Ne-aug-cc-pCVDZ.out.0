@@ -4,7 +4,7 @@
      *************** Dalton - An Electronic Structure Program ***************
      ************************************************************************
 
-    This is output from DALTON release Dalton2020.0 (2020)
+    This is output from DALTON release Dalton2020.1 (2022)
          ( Web site: http://daltonprogram.org )
 
    ----------------------------------------------------------------------------
@@ -53,7 +53,7 @@
     and
      
        Dalton, a molecular electronic structure program,
-       Release Dalton2020.0 (2020), see http://daltonprogram.org
+       Release Dalton2020.1 (2022), see http://daltonprogram.org
    ----------------------------------------------------------------------------
 
     Authors in alphabetical order (Major contribution(s) in parenthesis):
@@ -152,51 +152,47 @@
   Hans Agren,               KTH Stockholm,                Sweden      (SIRIUS module, RESPONS, MC-SCRF solvation)
  --------------------------------------------------------------------------------
 
-     Date and time (Linux)  : Wed Jan 11 14:15:01 2023
-     Host name              : cn027                                   
+     Date and time (Linux)  : Tue Apr 18 12:46:44 2023
+     Host name              : pop                                     
 
  * Work memory size             :    64000000 =  488.28 megabytes.
 
  * Directories for basis set searches:
-   1) /gpfs/projects/rjh/adrian/fd_compare/dalton/hf/Ne/dipole
-   2) /gpfs/projects/rjh/adrian/dalton/build/basis
+   1) /home/adrianhurtado/projects/QuantumResponsePro/example_database/dalton/hf/Ne/dipole
+   2) /home/adrianhurtado/projects/dalton/build/basis
 
 
 Compilation information
 -----------------------
 
- Who compiled             | ahurtado
- Host                     | sn-mem
- System                   | Linux-3.10.0-1160.24.1.el7.x86_64
+ Who compiled             | adrianhurtado
+ Host                     | pop
+ System                   | Linux-6.0.6-76060006-generic
  CMake generator          | Unix Makefiles
  Processor                | x86_64
  64-bit integers          | OFF
  MPI                      | ON
- Fortran compiler         | /gpfs/software/intel/oneAPI/2021_4/mpi/2021.4.0/bi
-                          | n/mpif90
- Fortran compiler version | GNU Fortran (GCC) 11.2.0
- C compiler               | /gpfs/software/intel/oneAPI/2021_4/mpi/2021.4.0/bi
-                          | n/mpicc
- C compiler version       | gcc (GCC) 11.2.0
- C++ compiler             | /gpfs/software/intel/oneAPI/2021_4/mpi/2021.4.0/bi
-                          | n/mpicxx
+ Fortran compiler         | /opt/intel/oneapi/mpi/2021.4.0/bin/mpif90
+ Fortran compiler version | unknown
+ C compiler               | /opt/intel/oneapi/mpi/2021.4.0/bin/mpicc
+ C compiler version       | unknown
+ C++ compiler             | /opt/intel/oneapi/mpi/2021.4.0/bin/mpicxx
  C++ compiler version     | unknown
- BLAS                     | /gpfs/software/intel/oneAPI/2021_4/mkl/2021.4.0/li
-                          | b/intel64/libmkl_gf_lp64.so;/gpfs/software/intel/o
-                          | neAPI/2021_4/mkl/2021.4.0/lib/intel64/libmkl_seque
-                          | ntial.so;/gpfs/software/intel/oneAPI/2021_4/mkl/20
-                          | 21.4.0/lib/intel64/libmkl_core.so;/usr/lib64/libpt
-                          | hread.so;/usr/lib64/libm.so
- LAPACK                   | /gpfs/software/intel/oneAPI/2021_4/mkl/2021.4.0/li
-                          | b/intel64/libmkl_lapack95_lp64.a;/gpfs/software/in
-                          | tel/oneAPI/2021_4/mkl/2021.4.0/lib/intel64/libmkl_
-                          | gf_lp64.so
+ BLAS                     | /opt/intel/oneapi/mkl/2021.4.0/lib/intel64/libmkl_
+                          | gf_lp64.so;/opt/intel/oneapi/mkl/2021.4.0/lib/inte
+                          | l64/libmkl_sequential.so;/opt/intel/oneapi/mkl/202
+                          | 1.4.0/lib/intel64/libmkl_core.so;/usr/lib/x86_64-l
+                          | inux-gnu/libpthread.a;/usr/lib/x86_64-linux-gnu/li
+                          | bm.so
+ LAPACK                   | /opt/intel/oneapi/mkl/2021.4.0/lib/intel64/libmkl_
+                          | lapack95_lp64.a;/opt/intel/oneapi/mkl/2021.4.0/lib
+                          | /intel64/libmkl_gf_lp64.so
  Static linking           | OFF
- Last Git revision        | 66052b3af5ea7225e31178bf9a8b031913c72190
- Git branch               | (HEAD detached at Dalton2020.0)
- Configuration time       | 2023-01-11 13:33:37.731835
+ Last Git revision        | 9d7c5e435b75a9695d5ac8714121d12e6486149f
+ Git branch               | (HEAD detached at 9d7c5e435)
+ Configuration time       | 2022-11-28 15:52:49.952811
 
- * MPI parallel run using 20 processes.
+ * MPI parallel run using 2 processes.
 
 
    Content of the .dal input file
@@ -265,7 +261,7 @@ Ne_a 0.000000000000 0.000000000000 0.000000000000
   Number of symmetry independent centers:    1
   Number of basis sets to read;    2
   Basis set file used for this atomic type with Z =  10 :
-     "/gpfs/projects/rjh/adrian/dalton/build/basis/aug-cc-pCVDZ"
+     "/home/adrianhurtado/projects/dalton/build/basis/aug-cc-pCVDZ"
 
 
  ERROR: Nuclear charge   10 is an unsupported element for basis aug-cc-pCVDZ
@@ -274,14 +270,14 @@ Ne_a 0.000000000000 0.000000000000 0.000000000000
 
 
   --- SEVERE ERROR, PROGRAM WILL BE ABORTED ---
-     Date and time (Linux)  : Wed Jan 11 14:15:01 2023
-     Host name              : cn027                                   
+     Date and time (Linux)  : Tue Apr 18 12:46:44 2023
+     Host name              : pop                                     
 
 @ MPI MASTER, node no.:     0
 @ Reason: BASLIB: Unsupported element in specified basis set file
 
-  Total CPU  time used in DALTON:   0.01 seconds
-  Total wall time used in DALTON:   0.01 seconds
+  Total CPU  time used in DALTON:   0.00 seconds
+  Total wall time used in DALTON:   0.00 seconds
 
 
  QTRACE dump of internal trace stack

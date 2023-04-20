@@ -1,4 +1,4 @@
-from .analysis import *
+from .BasisMRADataAssembler import *
 from pathlib import Path
 import glob
 import json
@@ -33,64 +33,24 @@ august = "/mnt/data/madness_data/post_watoc/august"
 # create a Path object with the path to the file
 
 
-class ResponseDataBundle:
+class BasisMRADataCollection:
     """
     ResponseDataBundle: A class designed to manage and organize a collection of DataFrames related to response properties for molecules. This class simplifies the process of comparing and analyzing data from various sources, such as MADNESS and Dalton quantum chemistry packages, by consolidating the response properties information into a single, easy-to-use structure.
     """
-
-    def __report_convergence(self):
-        converged = []
-        not_converged = []
-        not_found = []
-        type_error = []
-        json_error = []
-        for mol in self.mol_list:
-            try:
-                check_mol = FrequencyData(mol, self.xc, self.op, self.database_dir)
-                if check_mol.converged.all() and check_mol.converged.sum() == self.num_freq:
-                    converged.append(mol)
-                else:
-                    not_converged.append(mol)
-            except FileNotFoundError as f:
-                not_found.append(mol)
-            except TypeError as f:
-                type_error.append(mol)
-            except json.decoder.JSONDecodeError as j:
-                json_error.append(mol)
-
-        num_c = len(converged)
-        num_n = len(not_converged)
-        num_nf = len(not_found)
-        num_json_e = len(json_error)
-        num_type_e = len(type_error)
-        total = num_c + num_n + num_nf + num_json_e + num_type_e
-        not_converged = []
-        part_converged = []
-        if True:
-            for mol in not_converged:
-                check = FrequencyData(mol, self.xc, self.op, self.database_dir)
-                if check.converged.any():
-                    # print(mol,'\n',check.converged)
-                    part_converged.append(mol)
-                else:
-                    not_converged.append(mol)
-        num_not_converged = len(not_converged)
-        num_part_converged = len(part_converged)
-        print("converged : ", num_c)
-        return converged, part_converged, not_converged, not_found, type_error, json_error
 
     def __init__(self, data_dir):
         self.data_dir = data_dir
         self.xc = 'hf'
         self.op = 'dipole'
+        self.molecules = []
 
-        all_data_path = Path(data_dir + '/all_polar_data.feather')
+        all_data_path = self.data_dir.joinpath('all_polar_data.feather')
 
         if all_data_path.is_file():
             self.all_polar_data = pd.read_feather(all_data_path)
             self.molecules = list(self.all_polar_data.molecule.unique())
         else:
-            for g in glob.glob(self.mol_dir + '/*.mol'):
+            for g in glob.glob('/*.mol', root_dir=self.data_dir.joinpath('molecules')):
                 m = g.split('/')
                 mol = m[-1].split('.')[0]
                 self.molecules.append(mol)
@@ -135,6 +95,47 @@ class ResponseDataBundle:
         self.detailed_ij_diff = make_detailed_df(self.ij_diff)
         self.detailed_energy_diff = make_detailed_df(self.energy_df)
 
+    def __report_convergence(self):
+        converged = []
+        not_converged = []
+        not_found = []
+        type_error = []
+        json_error = []
+        for mol in self.molecules:
+            try:
+                check_mol = FrequencyData(mol, self.xc, self.op, self.database_dir)
+                if check_mol.converged.all() and check_mol.converged.sum() == self.num_freq:
+                    converged.append(mol)
+                else:
+                    not_converged.append(mol)
+            except FileNotFoundError as f:
+                not_found.append(mol)
+            except TypeError as f:
+                type_error.append(mol)
+            except json.decoder.JSONDecodeError as j:
+                json_error.append(mol)
+
+        num_c = len(converged)
+        num_n = len(not_converged)
+        num_nf = len(not_found)
+        num_json_e = len(json_error)
+        num_type_e = len(type_error)
+        total = num_c + num_n + num_nf + num_json_e + num_type_e
+        not_converged = []
+        part_converged = []
+        if True:
+            for mol in not_converged:
+                check = FrequencyData(mol, self.xc, self.op, self.database_dir)
+                if check.converged.any():
+                    # print(mol,'\n',check.converged)
+                    part_converged.append(mol)
+                else:
+                    not_converged.append(mol)
+        num_not_converged = len(not_converged)
+        num_part_converged = len(part_converged)
+        print("converged : ", num_c)
+        return converged, part_converged, not_converged, not_found, type_error, json_error
+
 
 # selects outliers by change in percent error from the static to the
 def select_basis_outliers(data, basis, thresh):
@@ -157,7 +158,8 @@ class HFDatabasePlots:
     def mol_iso_convergence(self, iso_data, mol, basis):
         width = 2 * 5
         height = 2 * 4
-        g = plt.subplots(nrows=2, ncols=2, figsize=(width, height), constrained_layout=True, sharey=False)
+        g = plt.subplots(nrows=2, ncols=2, figsize=(width, height), constrained_layout=True,
+                         sharey=False)
         fig = g[0]
         ax = g[1]
         data = get_frequency_compare(iso_data, mol, basis)
@@ -291,7 +293,8 @@ class HFDatabasePlots:
         if mol_set == "all":
             data = iso_diff_detailed.query('omega.isin(@omegas) & valence==@v_level')
         else:
-            data = iso_diff_detailed.query('omega.isin(@omegas) & valence==@v_level & mol_system.isin(@mol_set)')
+            data = iso_diff_detailed.query(
+                'omega.isin(@omegas) & valence==@v_level & mol_system.isin(@mol_set)')
 
         mdata = data.query('valence==@v_level')
         sns.set(rc={"xtick.bottom": True, "ytick.left": True})

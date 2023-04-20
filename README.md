@@ -1,8 +1,8 @@
 # QuantumResponsePro
 
 QuantumResponsePro is a Python package for computing and analyzing dynamic
-response properties of molecules in TDDFT and  TDHF formalisms with 
-arbitrary accuracy. It enables comparison of results computed using the 
+response properties of molecules in TDDFT and TDHF formalisms with
+arbitrary accuracy. It enables comparison of results computed using the
 MADNESS and Dalton quantum
 chemistry packages by translating generic inputs into specific MADNESS and
 Dalton input files, and processing Dalton
@@ -88,11 +88,11 @@ database_path = Path('path/to/directory')
 dg = DatabaseGenerator(database_path)
 excited_json = dg.get_dalton_excited_json('hf', ['aug-cc-pVDZ'], run=True)
 try:
-    freq_json = dg.get_frequency_json('hf', 'dipole', 'aug-cc-pVTZ')
+    freq_json = dg.get_frequency_json('hf', 'dipole', 'aug-cc-pVTZ', ), .5
 except KeyError as k:
     excited_json = dg.get_dalton_excited_json('hf', ['aug-cc-pVTZ'], run=True)
-    freq_json = dg.get_frequency_json('hf', 'dipole', 'aug-cc-pVTZ')
-excited_json = dg.get_dalton_excited_json('hf', ['aug-cc-pVDZ'], run=True)
+    freq_json = dg.get_frequency_json('hf', 'dipole', 'aug-cc-pVTZ', ), .5
+    excited_json = dg.get_dalton_excited_json('hf', ['aug-cc-pVDZ'], run=True)
 ```
 
 In this example, we generate a `frequency.json` file for the **HF** functional,
@@ -113,7 +113,14 @@ the `get_dalton_excited_json` function for the
 desired
 functional and basis set, as shown in the example.
 
-### Run MADNESS and Dalton calculations with `frequency.json` file
+## Running Response Calculations
+
+Now that a `frequency.json` file is generated you are ready to compute response properties
+with MADNESS or Dalton.
+
+### Running MADNESS Response Calculations with `mad_freq`
+
+To run MADNESS response calculations, use the `mad_freq` executable. The
 
 1. Create a json file for the database properties. The json file should contain
    the following properties:
@@ -123,10 +130,10 @@ generate the output response dataframe:
 
 ```python
 from quantumresponsepro import (
-    ResponseDataBundle,
+    BasisMRADataCollection,
 )
 
-response_dataframes = ResponseDataBundle(dir)
+response_dataframes = BasisMRADataCollection(dir)
 
 ```
 

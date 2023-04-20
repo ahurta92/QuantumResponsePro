@@ -33,7 +33,7 @@ class DaltonRunner:
         if not os.path.exists("dalton"):
             os.mkdir("dalton")
         try:
-            with open(self.base_dir.joinpath("molecules/frequency.json")) as json_file:
+            with open(self.base_dir.joinpath("json_data/frequency.json")) as json_file:
                 self.freq_json = json.loads(json_file.read())
         except FileNotFoundError as f_error:
             print("No frequency.json found. Run generate_data.py to generate it.")
@@ -46,10 +46,10 @@ class DaltonRunner:
         #    self.excited_json = json.loads(json_file.read())
 
     @staticmethod
-    def __write_polar_input(self, madmol, xc, operator, basis):
+    def __write_polar_input(self, madness_molecule, xc, operator, basis):
         """writes the polar input to folder"""
         # DALTON INPUT
-        molecule_input = madmol.split(".")[0]
+        molecule_input = madness_molecule.split(".")[0]
         dalton_inp = []
         dalton_inp.append("**DALTON INPUT")
         dalton_inp.append(".RUN RESPONSE")
@@ -83,24 +83,32 @@ class DaltonRunner:
 
         dalton_inp.append("**END OF DALTON INPUT")
         dalton_inp = "\n".join(dalton_inp)
-        run_dir = self.dalton_dir + "/" + xc + "/" + molecule_input + "/" + operator
+        print(dalton_inp)
+        print(molecule_input)
+        print(operator)
+        print("self.dalton", self.dalton_dir)
+
+        run_dir = self.dalton_dir.joinpath(xc).joinpath(molecule_input).joinpath(operator)
         if not os.path.exists(run_dir):
             os.makedirs(run_dir)
         # Here I read the madness mol file from the molecules directory
-        madmolfile = self.base_dir + "/molecules/" + madmol + ".mol"
+        madness_molecule_file = self.base_dir.joinpath('molecules').joinpath(
+            madness_molecule + '.mol')
         mad_to_dal = madnessToDalton(self.base_dir)
         if basis.split("-")[-1] == "uc":
-            mol_input = mad_to_dal.madmol_to_dalmol(madmolfile, "-".join(basis.split("-")[:-1]))
+            mol_input = mad_to_dal.madmol_to_dalmol(madness_molecule_file,
+                                                    "-".join(basis.split("-")[:-1]))
         else:
-            mol_input = mad_to_dal.madmol_to_dalmol(madmolfile, basis)
-        dal_run_file = run_dir + "/freq.dal"
+            mol_input = mad_to_dal.madmol_to_dalmol(madness_molecule_file, basis)
+        dal_run_file = run_dir.joinpath('freq.dal')
         with open(dal_run_file, "w") as file:  # Use file to refer to the file object
             file.write(dalton_inp)
-        mol_file = run_dir + "/" + molecule_input + "-" + basis.replace("*", "S") + ".mol"
-        with open(mol_file, "w") as file:  # Use file to refer to the file object
+        dalton_molecule_file = run_dir.joinpath(
+            molecule_input + '-' + basis.replace("*", "S") + ".mol")
+        with open(dalton_molecule_file, "w") as file:  # Use file to refer to the file object
             file.write(mol_input)
-        molecule_input = mol_file.split("/")[-1]
-        dalton_input = dal_run_file.split("/")[-1]
+        molecule_input = dalton_molecule_file.stem
+        dalton_input = dal_run_file.stem
         return run_dir, dalton_input, molecule_input
 
     def __run_dalton(self, rdir, dfile, mfile):
@@ -178,7 +186,7 @@ class DaltonRunner:
         return run_dir, dalname, molname
 
     @staticmethod
-    def __create_frequency_json(outfile, basis):
+    def __create_frequency_json(output_json, basis):
 
         rdata = {
             "xx": [],
@@ -191,12 +199,20 @@ class DaltonRunner:
             "zy": [],
             "zz": [],
         }
+
+        calcs = {}
+        for cals in output_json['simulation']['calculations']:
+            calc_type = cals['calculationType']
+            calcs[calc_type] = cals
+            print(calc_type)
+        print(calcs)
+
         r_dict = {}
         r_dict["frequencies"] = []
-        e_data = json.loads(outfile)["simulation"]["calculations"][1]
-        r_data = json.loads(outfile)["simulation"]["calculations"][2]
 
-        dipole_data = json.loads(outfile)["simulation"]["calculations"][0]
+        e_data = calcs['energyCalculation']
+        dipole_data = calcs['Dipole']
+        r_data = calcs['LinearResponse']
 
         p_data = r_data["calculationResults"]
         f_data = r_data["calculationSetup"]["frequencies"]
@@ -263,7 +279,8 @@ class DaltonRunner:
             with open(outfile, "r") as daltonOutput:
                 dipole_j = self.get_polar_json(mol, xc, operator, basis)
                 if dipole_j is None:
-                    raise TypeError('polar json does not exist for ' + mol + ' ' + xc + ' ' + operator + ' ' + basis)
+                    raise TypeError(
+                        'polar json does not exist for ' + mol + ' ' + xc + ' ' + operator + ' ' + basis)
                 return True
         except (FileNotFoundError, KeyError, IndexError, TypeError) as e:
             print(e)
@@ -273,160 +290,180 @@ class DaltonRunner:
         run_directory, dal_input, mol_input = self.__write_polar_input(self,
                                                                        mol, xc, operator, basis
                                                                        )
-        outfile = "/freq_" + "-".join([mol, basis]) + ".out"
-        outfile = run_directory + outfile
+        print('dal_input:', dal_input)
+        print('mol_input:', mol_input)
+        print('run_directory:', run_directory)
+        output_stem = "freq_" + "-".join([mol, basis])
+        output_file = run_directory.joinpath(output_stem + ".out")
+        output_json = run_directory.joinpath(output_stem + ".json")
+        print('output_file:', output_file)
+        print('output_json:', output_json)
+
+        d_out, d_error = None, None
         data = None
         try:
-            with open(outfile, "r") as daltonOutput:
+            with open(output_file, "r") as daltonOutput:
                 dj = daltonToJson()
-                data = self.__create_frequency_json(dj.convert(daltonOutput), basis)
-        except (FileNotFoundError, KeyError, IndexError) as e:
-            print(e)
+                dalton_json = json.loads(dj.convert(daltonOutput))
+                with(open(output_json, "w")) as f:
+                    f.write(json.dumps(dalton_json, indent=4))
+                data = self.__create_frequency_json(dalton_json, basis)
+        except (FileNotFoundError, IndexError) as e:
             if self.run:
-                print("Try and run molecule ", mol)
+                print("Trying to run ", output_stem, " in ", run_directory)
                 d_out, d_error = self.__run_dalton(run_directory, dal_input, mol_input)
-                print("Finshed running  ", mol, " in ", run_directory)
-                print(d_error)
-                try:
-
-                    with open(outfile, "r") as daltonOutput:
-                        dj = daltonToJson()
-                        data = self.__create_frequency_json(dj.convert(daltonOutput), basis)
-                except (IndexError) as e:
-                    print("most likely BASIS not found", d_out)
-                    pass
+                # print(d_out, d_error)
+                print("Finished running  ", mol, " in ", run_directory)
+                print("Trying to open ", output_file)
+                with open(output_file, "r") as daltonOutput:
+                    dj = daltonToJson()
+                    dalton_json = json.loads(dj.convert(daltonOutput))
+                    with(open(output_json, "w")) as f:
+                        f.write(json.dumps(dalton_json, indent=4))
+                    data = self.__create_frequency_json(dalton_json, basis)
+                pass
             else:
-
                 print("Did not find ", basis, " data for", mol, "and dalton is not set to run")
                 pass
+        except KeyError as e:
+            print(d_out, d_error)
+            print("KeyError: ", e)
+            print(output_stem, " in ", run_directory, " did not run correctly")
+            print('most likely the basis set is not available')
+            pass
+
         return data
 
-    def get_excited_json(self, mol, xc, basis, run, num_states):
-        """
-        Get the excited state json data for a molecule
-        :param mol:
-        :param xc:
-        :param basis: str
-        :param run: bool
 
-        :param run:
-        """
-        run_directory, dal_input, mol_input = self.__write_excited_input(self,
-                                                                         mol, xc, basis, num_states
-                                                                         )
-        print('run_directory:', run_directory)
-        run_name = "excited_" + "-".join([mol, basis]) + ".out"
-        json_name = "excited_" + "-".join([mol, basis]) + ".json"
-        # First look for the output file and try and convert it to a json
-        outfile = run_directory.joinpath(run_name)
-        outJSON = run_directory.joinpath(json_name)
-        print('outfile:', outfile)
-        data = None
-        try:
-            # open the output file
+def get_excited_json(self, mol, xc, basis, num_states):
+    """
+    Get the excited state json data for a molecule
+    :param mol:
+    :param xc:
+    :param basis: str
+    :param run: bool
+
+    :param run:
+    """
+    run_directory, dal_input, mol_input = self.__write_excited_input(self,
+                                                                     mol, xc, basis, num_states
+                                                                     )
+
+    print('dal_input:', dal_input)
+    print('mol_input:', mol_input)
+    print('run_directory:', run_directory)
+    run_name = "excited_" + "-".join([mol, basis]) + ".out"
+    json_name = "excited_" + "-".join([mol, basis]) + ".json"
+    # First look for the output file and try and convert it to a json
+    outfile = run_directory.joinpath(run_name)
+    outJSON = run_directory.joinpath(json_name)
+    print('outfile:', outfile)
+    data = None
+    try:
+        # open the output file
+        with open(outfile, "r") as daltonOutput:
+            dj = daltonToJson()
+            dalton_json = json.loads(dj.convert(daltonOutput))
+            with(open(outJSON, "w")) as f:
+                f.write(json.dumps(dalton_json, indent=4))
+        data = self.__create_excited_json(dalton_json, basis)
+    except FileNotFoundError as e:
+        print("did not find output file", e)
+        if self.run:
+            print("Try and run molecule ", mol)
+            d_out, d_error = self.__run_dalton(run_directory, dal_input, mol_input)
+            # print(d_out, d_error)
+            print("Finished running  ", mol, " in ", run_directory)
+            print("Trying to open ", outfile)
             with open(outfile, "r") as daltonOutput:
                 dj = daltonToJson()
                 dalton_json = json.loads(dj.convert(daltonOutput))
                 with(open(outJSON, "w")) as f:
                     f.write(json.dumps(dalton_json, indent=4))
-            data = self.__create_excited_json(dalton_json, basis)
-        except FileNotFoundError as e:
-            print("did not find output file", e)
-            if run:
-                print("Try and run molecule ", mol)
-                d_out, d_error = self.__run_dalton(run_directory, dal_input, mol_input)
-                # print(d_out, d_error)
-                print("Finished running  ", mol, " in ", run_directory)
-                print("Trying to open ", outfile)
-                with open(outfile, "r") as daltonOutput:
-                    dj = daltonToJson()
-                    dalton_json = json.loads(dj.convert(daltonOutput))
-                    with(open(outJSON, "w")) as f:
-                        f.write(json.dumps(dalton_json, indent=4))
-                    data = self.__create_excited_json(dalton_json, basis)
-                pass
-            else:
-                print("Not trying to run dalton for ", mol)
-                pass
-        return data
-
-    def get_excited_result(self, mol, xc, basis, run):
-
-        excited_j = self.get_excited_json(mol, xc, basis, run, 4)
-        if excited_j is not None:
-
-            time = excited_j[basis]["ground"]["calculationTime"]
-            results = excited_j[basis]["ground"]["calculationResults"]
-            gR = {}
-            gR["basis"] = basis
-            # results
-            gkeys = ["totalEnergy", "nuclearRepulsionEnergy", "electronEnergy"]
-            for g in gkeys:
-                gR[g] = float(results[g]["value"])
-            # timings
-            tkeys = ["cpuTime", "wallTime"]
-
-            for t in tkeys:
-                gR["g" + t] = float(time[t])
-            rtime = excited_j[basis]["response"]["calculationTime"]
-            for t in tkeys:
-                gR["r" + t] = float(rtime[t])
-
-            # number of electrons
-            skeys = ["numberOfElectrons"]
-            setup = excited_j[basis]["ground"]["calculationSetup"]
-            for s in skeys:
-                gR[s] = setup[s]
-
-            gSeries = pd.Series(gR)
-            rresults = excited_j[basis]["response"]
-            ekeys = ["Sym", "Mode", "freq"]
-
-            rR = {}
-            for e in ekeys:
-                rR[e] = rresults[e]
-            rDf = pd.DataFrame.from_dict(rR)
-
-            return gSeries, rDf
+                data = self.__create_excited_json(dalton_json, basis)
+            pass
         else:
-            return None
+            print("Not trying to run dalton for ", mol)
+            pass
+    return data
 
-    def get_frequency_result(self, mol, xc, operator, basis):
 
-        dipole_j = self.get_polar_json(mol, xc, operator, basis)[basis]
-        time = dipole_j["ground"]["calculationTime"]
-        results = dipole_j["ground"]["calculationResults"]
-        ground_dipole = dipole_j["dipole"]["calculationResults"]
+def get_excited_result(self, mol, xc, basis, run):
+    excited_j = self.get_excited_json(mol, xc, basis, 4)
+    if excited_j is not None:
+
+        time = excited_j[basis]["ground"]["calculationTime"]
+        results = excited_j[basis]["ground"]["calculationResults"]
         gR = {}
         gR["basis"] = basis
-        gR["dipole"] = pd.Series(ground_dipole)
         # results
         gkeys = ["totalEnergy", "nuclearRepulsionEnergy", "electronEnergy"]
         for g in gkeys:
             gR[g] = float(results[g]["value"])
         # timings
         tkeys = ["cpuTime", "wallTime"]
+
         for t in tkeys:
             gR["g" + t] = float(time[t])
-        rtime = dipole_j["response"]["calculationTime"]
+        rtime = excited_j[basis]["response"]["calculationTime"]
         for t in tkeys:
             gR["r" + t] = float(rtime[t])
+
         # number of electrons
         skeys = ["numberOfElectrons"]
-        setup = dipole_j["ground"]["calculationSetup"]
+        setup = excited_j[basis]["ground"]["calculationSetup"]
         for s in skeys:
             gR[s] = setup[s]
-        # ground results
+
         gSeries = pd.Series(gR)
+        rresults = excited_j[basis]["response"]
+        ekeys = ["Sym", "Mode", "freq"]
 
-        # response results
-        rresults = dipole_j["response"]
-        rkeys = ["xx", "xy", "xz", "yx", "yy", "yz", "zx", "zy", "zz"]
-        rdict = {}
-        rdict["frequencies"] = rresults["frequencies"]
+        rR = {}
+        for e in ekeys:
+            rR[e] = rresults[e]
+        rDf = pd.DataFrame.from_dict(rR)
 
-        for r in rkeys:
-            rdict[r] = rresults["values"][r]
-        rdf = pd.DataFrame(rdict)
+        return gSeries, rDf
+    else:
+        return None
 
-        return gSeries, rdf
+
+def get_frequency_result(self, mol, xc, operator, basis):
+    dipole_j = self.get_polar_json(mol, xc, operator, basis)[basis]
+    time = dipole_j["ground"]["calculationTime"]
+    results = dipole_j["ground"]["calculationResults"]
+    ground_dipole = dipole_j["dipole"]["calculationResults"]
+    gR = {}
+    gR["basis"] = basis
+    gR["dipole"] = pd.Series(ground_dipole)
+    # results
+    gkeys = ["totalEnergy", "nuclearRepulsionEnergy", "electronEnergy"]
+    for g in gkeys:
+        gR[g] = float(results[g]["value"])
+    # timings
+    tkeys = ["cpuTime", "wallTime"]
+    for t in tkeys:
+        gR["g" + t] = float(time[t])
+    rtime = dipole_j["response"]["calculationTime"]
+    for t in tkeys:
+        gR["r" + t] = float(rtime[t])
+    # number of electrons
+    skeys = ["numberOfElectrons"]
+    setup = dipole_j["ground"]["calculationSetup"]
+    for s in skeys:
+        gR[s] = setup[s]
+    # ground results
+    gSeries = pd.Series(gR)
+
+    # response results
+    rresults = dipole_j["response"]
+    rkeys = ["xx", "xy", "xz", "yx", "yy", "yz", "zx", "zy", "zz"]
+    rdict = {}
+    rdict["frequencies"] = rresults["frequencies"]
+
+    for r in rkeys:
+        rdict[r] = rresults["values"][r]
+    rdf = pd.DataFrame(rdict)
+
+    return gSeries, rdf
