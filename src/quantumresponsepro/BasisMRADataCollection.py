@@ -343,3 +343,5 @@ class HFDatabasePlots:
             set_titles("{col_name}-cc-p{row_name}" + "{}Z".format(v_level)).tight_layout(w_pad=0)
         g.fig.suptitle(iso_type)
         return g
+
+

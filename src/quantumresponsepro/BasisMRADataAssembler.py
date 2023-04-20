@@ -160,11 +160,14 @@ def get_frequency_compare(iso_data, mol, basis):
     b_mol = iso_data.query('basis==@basis & molecule == @mol')
     o = mra_mol.omega.reset_index(drop=True)
     a1 = pd.concat([o, mra_alpha] + \
-                   [iso_data.query('basis==@ba & molecule == @mol').alpha.reset_index(drop=True).rename(ba) for ba in
+                   [iso_data.query('basis==@ba & molecule == @mol').alpha.reset_index(
+                       drop=True).rename(ba) for ba in
                     basis], axis=1)
     g1 = pd.concat(
-        [o, mra_gamma] + [iso_data.query('basis==@ba & molecule == @mol').gamma.reset_index(drop=True).rename(ba) for ba
-                          in basis], axis=1)
+        [o, mra_gamma] + [
+            iso_data.query('basis==@ba & molecule == @mol').gamma.reset_index(drop=True).rename(ba)
+            for ba
+            in basis], axis=1)
     a1 = a1.set_index('omega')
     g1 = g1.set_index('omega')
     return [[a1, g1], [percent_error(a1), absolute_error(g1)]]
@@ -173,7 +176,8 @@ def get_frequency_compare(iso_data, mol, basis):
 def mol_iso_convergence(iso_data, mol, basis):
     width = 2 * 5
     height = 2 * 4
-    g = plt.subplots(nrows=2, ncols=2, figsize=(width, height), constrained_layout=True, sharey=False)
+    g = plt.subplots(nrows=2, ncols=2, figsize=(width, height), constrained_layout=True,
+                     sharey=False)
     fig = g[0]
     ax = g[1]
     data = get_frequency_compare(iso_data, mol, basis)
@@ -207,7 +211,8 @@ def mol_component_convergence(mol, ij_diff_detailed):
             axi.grid(which="both")
             axi.tick_params(which="both", top="on", left="on", right="on", bottom="on", )
             axi.minorticks_on()
-    g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0).set_axis_labels("Valence", "Percent Error").set_titles(
+    g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0).set_axis_labels("Valence",
+                                                                                "Percent Error").set_titles(
         "{col_name}-cc-pV(C)nZ").tight_layout(w_pad=0)
     g.fig.suptitle(mol)
     return g
@@ -266,9 +271,11 @@ def make_detailed_df(data):
 
     row1, row2, flist = partition_molecule_list(mols)
 
-    single = ['aug-cc-pVDZ', 'aug-cc-pVTZ', 'aug-cc-pVQZ', 'aug-cc-pCVDZ', 'aug-cc-pCVTZ', 'aug-cc-pCVQZ', ]
+    single = ['aug-cc-pVDZ', 'aug-cc-pVTZ', 'aug-cc-pVQZ', 'aug-cc-pCVDZ', 'aug-cc-pCVTZ',
+              'aug-cc-pCVQZ', ]
 
-    double = ['d-aug-cc-pVDZ', 'd-aug-cc-pVTZ', 'd-aug-cc-pVQZ', 'd-aug-cc-pCVDZ', 'd-aug-cc-pCVTZ', 'd-aug-cc-pCVQZ', ]
+    double = ['d-aug-cc-pVDZ', 'd-aug-cc-pVTZ', 'd-aug-cc-pVQZ', 'd-aug-cc-pCVDZ', 'd-aug-cc-pCVTZ',
+              'd-aug-cc-pCVQZ', ]
     single_polarized = ['aug-cc-pCVDZ', 'aug-cc-pCVTZ', 'aug-cc-pCVQZ', ]
     double_polarized = ['d-aug-cc-pCVDZ', 'd-aug-cc-pCVTZ', 'd-aug-cc-pCVQZ', ]
 
@@ -297,7 +304,8 @@ def make_detailed_df(data):
     data["valence"] = data['valence'].cat.reorder_categories(['D', 'T', 'Q'])
     data['polarization'].cat.reorder_categories(['V', 'CV', ])
 
-    data['Type'] = data[['augmentation', 'polarization']].apply(lambda x: "-cc-p".join(x) + 'nZ', axis=1)
+    data['Type'] = data[['augmentation', 'polarization']].apply(lambda x: "-cc-p".join(x) + 'nZ',
+                                                                axis=1)
     data["Type"] = data["Type"].astype("category")
     data['Type'] = data['Type'].cat.reorder_categories(
         ['aug-cc-pVnZ', 'aug-cc-pCVnZ', 'd-aug-cc-pVnZ', 'd-aug-cc-pCVnZ'])
@@ -319,7 +327,8 @@ def get_invariant_polar(azero):
     azx = azero.query('ij=="zx"').alpha.to_numpy()
     a0 = (axx + ayy + azz) / 3
     g0 = 1 * np.sqrt(
-        (axx - ayy) ** 2 + (ayy - azz) ** 2 + (azz - axx) ** 2 + 6 * (axy ** 2 + ayz ** 2 + azx ** 2)) / np.sqrt(2)
+        (axx - ayy) ** 2 + (ayy - azz) ** 2 + (azz - axx) ** 2 + 6 * (
+                    axy ** 2 + ayz ** 2 + azx ** 2)) / np.sqrt(2)
     return a0, g0
 
 

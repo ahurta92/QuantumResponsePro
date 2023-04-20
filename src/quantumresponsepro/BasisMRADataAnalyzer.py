@@ -1,4 +1,5 @@
 from quantumresponsepro import BasisMRADataCollection
+from quantumresponsepro.BasisMRADataAssembler import get_frequency_compare
 import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
@@ -112,48 +113,54 @@ class BasisMRADataAnalyzer:
                 set_titles("{col_name}Z")
         return g
 
-    def iso_quartile_plot(self, iso_type, frequency, basis, ax, Q):
-        iso_data = self.data_collection.detailed_iso_diff.query('omega==@frequency')
-        a1, g1 = self.get_basis_iso_data(self.all_basis)
+    def iso_quartile_plot(self, iso_type, frequency, basis, ax, Q, outer_boundary=0):
+        if iso_type == 'alpha' or iso_type == 'gamma':
+            iso_data = self.data_collection.detailed_iso_diff.query('omega==@frequency')
+            if iso_type == 'alpha':
+                aQ = self.get_basis_iso_data(self.all_basis)[0][basis].quantile(Q)
+                outer = set(iso_data.query('basis==@basis & alpha > @aQ').molecule.unique())
+            else:
+                aQ = self.get_basis_iso_data(self.all_basis)[1][basis].quantile(Q)
+                outer = set(iso_data.query('basis==@basis & gamma > @aQ').molecule.unique())
+        else:
+            iso_data = self.data_collection.detailed_energy_diff.copy()
+            aQ = self.get_basis_energy_data(self.all_basis)[basis].quantile(Q)
+            iso_type = 'error'
+            outer = set(iso_data.query('basis==@basis & error > @aQ').molecule.unique())
 
-        a75 = a1.abs().quantile(q=Q)[basis]
-        inner = set(iso_data.query('basis==@basis & alpha.abs() < @a75').molecule.unique())
-        outer = set(iso_data.query('basis==@basis & alpha.abs() > @a75').molecule.unique())
-        q4 = inner.union(outer)
         data = iso_data.query('basis==@basis').copy()
         data["dist_region"] = np.nan
         data.loc[data["molecule"].isin(outer), "dist_region"] = 'Outlier'
         data['molecule'] = data['molecule'].apply(format_formula)
+        data['molecule'] = data['molecule'].astype('object')
         data = data.sort_values('dist_region').sort_values(iso_type)
-        for i, m in enumerate(['Outlier']):
-            dm = data.query('dist_region==@m')
-            ax.set_title(basis)
-            ax.set_ylabel('')
-            ax.tick_params(
-                axis='x',  # changes apply to the x-axis
-                which='both',  # both major and minor ticks are affected
-                bottom=True,  # ticks along the bottom edge are off
-                top=False,  # ticks along the top edge are off
-                labelbottom=True)  # labels
-            ax.set_ylabel('')
-            ax.set(xlabel=None)
-            ax.set(ylabel=None)
-            ax.set(xlabel='Percent Error')
+        dm = data.query('dist_region=="Outlier"')
+        ax.set_title(basis)
+        ax.set_ylabel('')
+        ax.tick_params(
+            axis='x',  # changes apply to the x-axis
+            which='both',  # both major and minor ticks are affected
+            bottom=True,  # ticks along the bottom edge are off
+            top=False,  # ticks along the top edge are off
+            labelbottom=True)  # labels
+        ax.set_ylabel('')
+        ax.set(xlabel=None)
+        ax.set(ylabel=None)
+        ax.set(xlabel='Percent Error')
 
-            ax.axvline(x=0.0, color='k', ls='--', alpha=.5)
-            ax.axvline(x=self.mra_ref, color='k', ls='--', alpha=.5)
-            ax.axvline(x=-self.mra_ref, color='k', ls='--', alpha=.5)
-            ax.axvline(x=.5, color='k', ls='--', alpha=.5)
-            ax.axvline(x=-.5, color='k', ls='--', alpha=.5)
+        ax.axvline(x=0.0, color='k', ls='--', alpha=.5)
+        ax.axvline(x=self.mra_ref, color='k', ls='--', alpha=.5)
+        ax.axvline(x=-self.mra_ref, color='k', ls='--', alpha=.5)
+        ax.axvline(x=outer_boundary, color='k', ls='--', alpha=.5)
+        ax.axvline(x=-outer_boundary, color='k', ls='--', alpha=.5)
 
-            sns.histplot(data=dm, y='molecule', hue='mol_system', weights=iso_type, ax=ax,
-                         discrete=True,
-                         binwidth=1, fill=True)
-            l = ax.get_legend_handles_labels()
-            # Put a legend below current axis
-            ax.set(ylabel=None)
+        sns.histplot(data=dm, y='molecule', hue='mol_system', weights=iso_type, ax=ax,
+                     discrete=True,
+                     binwidth=1, fill=True)
+        ax.set(ylabel=None)
 
-    def plot_valence_outliers_large(self, iso_type, frequency, nl, quartile, share_x, size: tuple):
+    def plot_valence_outliers_large(self, iso_type, frequency, nl, quartile, share_x,
+                                    size: tuple, outer_boundary: float = 0.0):
         width = size[0]
         height = size[1]
 
@@ -168,7 +175,7 @@ class BasisMRADataAnalyzer:
                   'd-aug-cc-pV{}Z'.format(n), 'd-aug-cc-pCV{}Z'.format(n), ]
             for j, basis in enumerate(DZ):
                 axij = axes[i, j]
-                self.iso_quartile_plot(iso_type, frequency, basis, axij, quartile)
+                self.iso_quartile_plot(iso_type, frequency, basis, axij, quartile, outer_boundary)
 
                 if i == 2:
                     axij.set(xlabel='Percent Error')
@@ -184,72 +191,69 @@ class BasisMRADataAnalyzer:
                 z += 1
         return fig
 
-    def plot_upperQ_energy(self, basis, ax, Q):
-        a1 = self.get_basis_energy_data(self.all_basis)
-        a75 = a1.quantile(q=Q)[basis]
-        mdata = self.data_collection.detailed_energy_diff.copy()
-        outer = set(mdata.query('basis==@basis & error > @a75').molecule.unique())
-        data = mdata.query('basis==@basis').copy()
-        data["dist_region"] = np.nan
-        data.loc[data["molecule"].isin(outer), "dist_region"] = 'Outlier'
-        data['molecule'] = data['molecule'].apply(format_formula)
-        data = data.sort_values('dist_region').sort_values('error')
-        for i, m in enumerate(['Outlier']):
-            print(m)
-            dm = data.query('dist_region==@m').copy()
-            dm.loc[:, 'molecule'] = dm['molecule'].cat.remove_unused_categories()
-            dm['molecule'] = dm['molecule'].astype('object')
-            dm = dm.sort_values('error', ascending=True)
-            ax.set_title(basis)
-            ax.set_ylabel('')
-            ax.tick_params(
-                axis='x',  # changes apply to the x-axis
-                which='both',  # both major and minor ticks are affected
-                bottom=True,  # ticks along the bottom edge are off
-                top=False,  # ticks along the top edge are off
-                labelbottom=True)  # labels
-            ax.set_ylabel('')
-            ax.set(xlabel=None)
-            ax.set(ylabel=None)
-            ax.set(xlabel='Error')
+    def freq_iso_plot(self, v_level, iso_type, mol_set="all", sharey=False,
+                      thresh=.1, omegas=[0, 1, 2, 3, 4, 5, 6, 7, 8]
+                      ):
+        iso_diff_detailed = self.data_collection.detailed_iso_diff.copy()
+        if mol_set == "all":
+            data = iso_diff_detailed.query('omega.isin(@omegas) & valence==@v_level')
+        else:
+            data = iso_diff_detailed.query(
+                'omega.isin(@omegas) & valence==@v_level & mol_system.isin(@mol_set)')
+        mdata = data.query('valence==@v_level')
+        sns.set(rc={"xtick.bottom": True, "ytick.left": True})
+        aspect = 1.3
+        if mol_set == 'all':
+            g = sns.catplot(data=mdata,
+                            x="omega",
+                            row="polarization",
+                            row_order=['V', 'CV'],
+                            y=iso_type,
+                            hue="mol_system",
+                            col="augmentation",
+                            kind='strip',
+                            sharey=sharey,
+                            dodge=True,
+                            aspect=aspect
+                            )
+        else:
+            aspect = 1.0
+            set1 = select_basis_outliers(mdata, 'aug-cc-pV{}Z'.format(v_level), thresh)
+            set2 = select_basis_outliers(mdata, 'd-aug-cc-pCV{}Z'.format(v_level), thresh * .1)
+            set1 = set1.union(set2)
+            mdata = mdata.query('molecule.isin(@set1)')
+            mdata.dropna()
+            fwk = {"sharey": sharey, 'despine': True, }
+            if iso_type == 'alpha':
+                sizes = mdata.alpha
+            else:
+                sizes = mdata.gamma
 
-            sns.histplot(data=dm.sort_values('error'), y=dm.molecule, hue=dm.mol_system,
-                         weights=dm.error,
-                         ax=ax, discrete=True, binwidth=1, fill=True)
-            l = ax.get_legend_handles_labels()
-            # Put a legend below current axis
-            ax.set(ylabel=None)
+            g = sns.relplot(data=mdata,
+                            x="omega",
+                            row="polarization",
+                            y=iso_type,
+                            hue="molecule",
+                            style="molecule",
+                            col="augmentation",
+                            kind='line',
+                            markers=True,
+                            facet_kws=fwk,
+                            palette='Paired',
+                            aspect=aspect,
+                            # sizes="abs"
+                            )
+            g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0). \
+                set_axis_labels(r"$\omega_i$", "Percent Error"). \
+                set_titles("{col_name}-cc-p{row_name}" + "{}Z".format(v_level)).tight_layout(
+                w_pad=0)
+            g.fig.suptitle(iso_type)
+        g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0). \
+            set_axis_labels(r"$\omega_i$", "Percent Error"). \
+            set_titles("{col_name}-cc-p{row_name}" + "{}Z".format(v_level)).tight_layout(w_pad=0)
+        g.fig.suptitle(iso_type)
 
-    def plot_valence_outliers_large_energy(self, nl, Q, sharex, size: tuple):
-        width = size[0]
-        height = size[1]
-
-        sns.set_theme(context='paper',
-                      style='darkgrid', font='sans-serif',
-                      font_scale=1.5, color_codes=True, rc=None)
-        fig, axes = plt.subplots(nrows=3, ncols=4, figsize=(width, height),
-                                 squeeze=False, layout='constrained', sharey=False, sharex=sharex)
-        z = 0
-        for i, n in enumerate(nl):
-            DZ = ['aug-cc-pV{}Z'.format(n), 'aug-cc-pCV{}Z'.format(n),
-                  'd-aug-cc-pV{}Z'.format(n), 'd-aug-cc-pCV{}Z'.format(n), ]
-            for j, basis in enumerate(DZ):
-                axij = axes[i, j]
-                self.plot_upperQ_energy(basis, axij, Q)
-
-                if i == 2:
-                    axij.set(xlabel='Error')
-                else:
-                    axij.set(xlabel=None)
-
-                if z != 0:
-                    axij.get_legend().remove()
-                else:
-                    sns.move_legend(axij, "lower center", bbox_to_anchor=(.2, 1.05), ncol=1,
-                                    title=None,
-                                    frameon=False)
-                z += 1
-        return fig
+        return g
 
 
 b1 = [
@@ -257,9 +261,6 @@ b1 = [
     'aug-cc-pCVDZ', 'aug-cc-pCVTZ', 'aug-cc-pCVQZ',
     'd-aug-cc-pVDZ', 'd-aug-cc-pVTZ', 'd-aug-cc-pVQZ',
     'd-aug-cc-pCVDZ', 'd-aug-cc-pCVTZ', 'd-aug-cc-pCVQZ', ]
-
-
-
 
 EE = 5
 cmap = 'BrBG'
@@ -313,3 +314,211 @@ def format_formula(formula):
         else:
             formatted_formula += c
     return formatted_formula
+
+
+# selects outliers by change in percent error from the static to the
+def select_basis_outliers(data, basis, thresh):
+    om = [0, 8]
+    test = data.query('omega.isin(@om) & basis==@basis')
+
+    ma = {}
+    for mol in test.molecule.unique():
+        dmol = test.query('molecule==@mol')
+        a0 = dmol.query('omega==0').alpha.iloc[0]
+        a8 = dmol.query('omega==8').alpha.iloc[0]
+        ma[mol] = (a0 - a8)
+    ma = pd.Series(ma)
+    out_mols = ma[ma.abs() > thresh]
+    out_mols = set(out_mols.index)
+    return out_mols
+
+
+class HFDatabasePlots:
+    def mol_iso_convergence(self, iso_data, mol, basis):
+        width = 2 * 5
+        height = 2 * 4
+        g = plt.subplots(nrows=2, ncols=2, figsize=(width, height), constrained_layout=True,
+                         sharey=False)
+        fig = g[0]
+        ax = g[1]
+        data = get_frequency_compare(iso_data, mol, basis)
+        title = [r'$\alpha(\omega)$', r'$\gamma(\omega)$']
+
+        for i, axi in enumerate(ax):
+            for j, axij in enumerate(axi):
+                dij = data[i][j]
+                axij.set_title(title[j])
+                dij.plot(ax=axij, ls='dashdot')
+                axij.set_xlabel(r'$\omega_i$')
+        return g
+
+    def mol_component_convergence(self, mol, ij_diff_detailed):
+        ij = ['xx', 'yy', 'zz']
+        mol_data = ij_diff_detailed.query(' molecule == @mol & ij==@ij')
+        g = sns.relplot(data=mol_data,
+                        x=mol_data.valence,
+                        y='alpha',
+                        hue='ij',
+                        col='augmentation',
+                        style='polarization',
+                        kind='line',
+                        markers=True,
+                        facet_kws={'sharey': False},
+                        dashes=True,
+                        )
+        for i, ax in enumerate(g.axes):
+            for j, axi in enumerate(ax):
+                axi.tick_params(axis='x', rotation=0)
+                axi.grid(which="both")
+                axi.tick_params(which="both", top="on", left="on", right="on", bottom="on", )
+                axi.minorticks_on()
+        g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0).set_axis_labels("Valence",
+                                                                                    "Percent Error").set_titles(
+            "{col_name}-cc-pV(C)nZ").tight_layout(w_pad=0)
+        g.fig.suptitle(mol)
+        return g
+
+    def plot_violin_swarm(self, data, iso_type, xdata, hdata, pals, ax):
+        dotsize = 1.5
+
+        if iso_type == 'alpha':
+            ydata = data.alpha
+        else:
+            ydata = data.gamma
+        color1 = pals[0]
+        color2 = pals[1]
+
+        p1 = sns.violinplot(x=xdata, y=ydata, ax=ax, split=False, scale="count", hue=hdata,
+                            inner='quartile', cut=0, palette=color1, )
+
+        p11 = sns.stripplot(x=data.valence, y=ydata, ax=ax, size=dotsize, hue=hdata,
+                            dodge=True, palette=color2)
+
+    def make_plots(self, datas, xdata, hdata, pals, outliers, axes):
+        iso_types = ['alpha', 'gamma']
+        titles = [r'$\alpha(\omega)$', r'$\gamma(\omega)$']
+
+        for i, axi in enumerate(axes):
+            out_mols = outliers[i]
+            data = datas.query("not molecule.isin(@out_mols)")
+            self.plot_violin_swarm(data, iso_types[i], xdata, hdata, pals, axi)
+            axi.tick_params(axis='x', rotation=0)
+            axi.grid(which="both")
+            axi.tick_params(which="both", top="on", left="on", right="on", bottom="on", )
+            axi.minorticks_on()
+            axi.set_title(titles[i])
+            axi.set_ylabel('Percentage Error')
+            axi.set_xlabel('[n]')
+            handles, labels = axi.get_legend_handles_labels()
+            nlabels = ['D', 'T', 'Q']
+            labels = nlabels
+            # axi.legend(handles[:2], hdata.unique(), title=hdata.name)
+            if i == 0:
+                axi.set_ylabel('Percentage Error')
+            else:
+                axi.legend('', frameon=False)
+                axi.set_ylabel(None)
+            for l in axi.lines:
+                l.set_linestyle('--')
+                l.set_linewidth(1.2)
+                l.set_color('green')
+                l.set_alpha(0.8)
+            for l in axi.lines[1::3]:
+                l.set_linestyle('-')
+                l.set_linewidth(1.5)
+                l.set_color('black')
+                l.set_alpha(0.8)
+            axi.axhline(y=0, linewidth=1.2, ls="--", color="r")
+
+    def make_plot(self, datas, xdata, hdata, pals, out_mols, iso_type, axes):
+        iso_types = ['alpha', 'gamma']
+        titles = [r'$\alpha(\omega)$', r'$\gamma(\omega)$']
+        if iso_type == 'alpha':
+            title = titles[0]
+        else:
+            title = titles[1]
+
+        data = datas.query("not molecule.isin(@out_mols)")
+        axi = axes
+        self.plot_violin_swarm(data, iso_type, xdata, hdata, pals, axi)
+        axi.tick_params(axis='x', rotation=0)
+        axi.grid(which="both")
+        axi.tick_params(which="both", top="on", left="on", right="on", bottom="on", )
+        axi.minorticks_on()
+        axi.set_title(title)
+        axi.set_ylabel('Percentage Error')
+        axi.set_xlabel('[n]')
+        handles, labels = axi.get_legend_handles_labels()
+        nlabels = ['D', 'T', 'Q']
+        labels = nlabels
+        axi.legend(handles[:4], hdata.unique(), title=hdata.name)
+        axi.set_ylabel('Percentage Error')
+        for l in axi.lines:
+            l.set_linestyle('--')
+            l.set_linewidth(1.2)
+            l.set_color('green')
+            l.set_alpha(0.8)
+        for l in axi.lines[1::3]:
+            l.set_linestyle('-')
+            l.set_linewidth(1.5)
+            l.set_color('black')
+            l.set_alpha(0.8)
+        axi.axhline(y=0, linewidth=1.2, ls="--", color="r")
+
+    def freq_iso_plot(data, iso_diff_detailed, v_level, iso_type, mol_set="all", sharey=False,
+                      thresh=.1):
+        all_o = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+        omegas = all_o
+        if mol_set == "all":
+            data = iso_diff_detailed.query('omega.isin(@omegas) & valence==@v_level')
+        else:
+            data = iso_diff_detailed.query(
+                'omega.isin(@omegas) & valence==@v_level & mol_system.isin(@mol_set)')
+
+        mdata = data.query('valence==@v_level')
+        sns.set(rc={"xtick.bottom": True, "ytick.left": True})
+        aspect = 1.3
+        if mol_set == 'all':
+            g = sns.catplot(data=mdata,
+                            x="omega",
+                            row="polarization",
+                            y=iso_type,
+                            hue="mol_system",
+                            col="augmentation",
+                            kind='strip',
+                            sharey=sharey,
+                            dodge=True,
+                            aspect=aspect
+                            )
+        else:
+            aspect = 1.0
+            set1 = select_basis_outliers(mdata, 'aug-cc-pV{}Z'.format(v_level), thresh)
+            set2 = select_basis_outliers(mdata, 'd-aug-cc-pCV{}Z'.format(v_level), thresh * .1)
+            set1 = set1.union(set2)
+            mdata = mdata.query('molecule.isin(@set1)')
+            mdata.dropna()
+            fwk = {"sharey": sharey, 'despine': True, }
+            if iso_type == 'alpha':
+                sizes = mdata.alpha
+            else:
+                sizes = mdata.gamma
+
+            g = sns.relplot(data=mdata,
+                            x="omega",
+                            row="polarization",
+                            y=iso_type,
+                            hue="molecule",
+                            style="molecule",
+                            col="augmentation",
+                            kind='line',
+                            markers=True,
+                            facet_kws=fwk,
+                            palette='Paired',
+                            aspect=aspect,
+                            # sizes="abs"
+                            )
+        g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0). \
+            set_axis_labels(r"$\omega_i$", "Percent Error"). \
+            set_titles("{col_name}-cc-p{row_name}" + "{}Z".format(v_level)).tight_layout(w_pad=0)
+        g.fig.suptitle(iso_type)
+        return g
