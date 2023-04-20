@@ -21,3 +21,4 @@ moldft.energies.dat
 *.out
 *.gz.*
 /.idea/codeStyles/codeStyleConfig.xml
+*.out.*
