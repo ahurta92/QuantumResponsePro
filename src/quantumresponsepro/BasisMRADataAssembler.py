@@ -9,6 +9,78 @@ import seaborn as sns
 polar_keys = ['xx', 'xy', 'xz', 'yx', 'yy', 'yz', 'zx', 'zy', 'zz']
 
 
+def get_basis_e_data(mols, basis_sets, xc, op, database):
+    d = DaltonRunner(database, False)
+
+    df = pd.DataFrame()
+    for basis in basis_sets:
+        basis_dict = {}
+        basis_energy = {}
+        for mol in mols:
+            try:
+                ground, response = d.get_frequency_result(mol, xc, op, basis)
+
+                # print(ground)
+                basis_energy[mol] = ground['totalEnergy']
+                basis_dict[mol] = basis
+
+            except TypeError:
+                print(mol, basis)
+                pass
+
+        dd = [pd.Series(basis_dict, name='basis'),
+              pd.Series(basis_energy, name='energy')]
+        df = pd.concat([df, pd.concat(dd, axis=1)], axis=0)
+
+    return df
+
+
+def get_mra_energy_data(mols, xc, op, database):
+    basis = 'MRA'
+    mra_e_dict = {}
+    basis_dict = {}
+    for mol in mols:
+        try:
+            mad_r = MadnessResponse(mol, xc, op, database)
+            mra_e_dict[mol] = mad_r.ground_e['e_tot']
+            basis_dict[mol] = 'MRA'
+
+        except FileNotFoundError as f:
+            mad_r = FrequencyData(mol, xc, op, database)
+            mra_e_dict[mol] = mad_r.ground_e['e_tot']
+            basis_dict[mol] = 'MRA'
+
+    dd = [pd.Series(basis_dict, name='basis'),
+          pd.Series(mra_e_dict, name='energy')]
+    mra_e = pd.concat(dd, axis=1)
+
+    return mra_e
+
+
+def get_energy_data(mols, xc, op, basis_list, database):
+    mra = get_mra_energy_data(mols, xc, op, database)
+    basis = get_basis_e_data(mols, basis_list, xc, op, database)
+    df = pd.concat([mra, basis], axis=0)
+    df.index.name = 'molecule'
+    df.reset_index(inplace=True)
+    return df
+
+
+def get_energy_diff_data(mols, xc, op, basis_list, database):
+    df = get_energy_data(mols, xc, op, basis_list, database)
+    diff = pd.DataFrame()
+    for basis in df.basis.unique():
+        if basis != "MRA":
+            dE = -(df.query('basis=="MRA"').set_index('molecule').energy - df.query(
+                'basis ==@basis').set_index('molecule').energy)
+            dE = dE.rename('error')
+            print(dE)
+            bS = pd.Series([basis for i in range(len(dE))], name='basis', index=dE.index)
+            diff = pd.concat([diff, pd.concat([bS, dE], axis=1)])
+    diff.reset_index(inplace=True)
+    return diff
+
+
 def get_mra_polar_data(mols, xc, op, database):
     md = []
     N = 6  # round my data
@@ -36,12 +108,17 @@ def partition_molecule_list(mol_list):
     rest = []
     seconds = ["Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar"]
     for mol_i in mol_list:
-        if "F" in mol_i and not any([e2 in mol_i for e2 in seconds]):
-            Flist.append(mol_i)
-        elif any([e2 in mol_i for e2 in seconds]):
-            row2.append(mol_i)
-        else:
-            rest.append(mol_i)
+        try:
+            if "F" in mol_i and not any([e2 in mol_i for e2 in seconds]):
+                Flist.append(mol_i)
+            elif any([e2 in mol_i for e2 in seconds]):
+                row2.append(mol_i)
+            else:
+                rest.append(mol_i)
+        except TypeError as f:
+            print(f)
+            pass
+
     return rest, row2, Flist
 
 
@@ -71,7 +148,8 @@ def anisotropic_polar(polar_df):
         yz = alpha_ij[1, 2]
         zx = alpha_ij[2, 0]
         da = 1 / np.sqrt(2) * np.sqrt(
-            (xx - yy) ** 2 + (yy - zz) ** 2 + (zz - xx) ** 2 + 6 * (xy ** 2 + yz ** 2 + zx ** 2))
+            (xx - yy) ** 2 + (yy - zz) ** 2 + (zz - xx) ** 2 + 6 * (
+                    xy ** 2 + yz ** 2 + zx ** 2))
         daf[freq] = da
     deltaA = pd.Series(daf)
     return deltaA
@@ -82,7 +160,7 @@ def column_polar_df(df, mol, basis):
     alpha = 'alpha'
     j = 0
     r = []
-    for name, values in df.iteritems():
+    for name, values in df.items():
         if name != "frequencies":
             mS = pd.Series([mol for i in range(values.size)], name='molecule', dtype='category')
             bS = pd.Series([basis for i in range(values.size)], name='basis', dtype='category')
@@ -115,9 +193,7 @@ def compare_database(mol, xc, op, database, basis_sets):
     mad_IA.name = 'madness'
     bDA = {}
     bIA = {}
-    basis_sets = ['aug-cc-pVDZ', 'aug-cc-pVTZ', 'aug-cc-pVQZ',
-                  'd-aug-cc-pVDZ', 'd-aug-cc-pVTZ', 'd-aug-cc-pVQZ',
-                  'd-aug-cc-pCVDZ', 'd-aug-cc-pCVTZ', 'd-aug-cc-pCVQZ']
+
     for basis in basis_sets:
         ground, response = d.get_frequency_result(mol, 'hf', 'dipole', basis)
         basis_polar_df = response[polar_keys]
@@ -165,7 +241,8 @@ def get_frequency_compare(iso_data, mol, basis):
                     basis], axis=1)
     g1 = pd.concat(
         [o, mra_gamma] + [
-            iso_data.query('basis==@ba & molecule == @mol').gamma.reset_index(drop=True).rename(ba)
+            iso_data.query('basis==@ba & molecule == @mol').gamma.reset_index(drop=True).rename(
+                ba)
             for ba
             in basis], axis=1)
     a1 = a1.set_index('omega')
@@ -220,7 +297,9 @@ def mol_component_convergence(mol, ij_diff_detailed):
 
 def create_iso_diff_df(iso_data):
     iso_diff = []
-    blist = iso_data.basis.unique()[iso_data.basis.unique() != 'MRA']
+    blist = iso_data.copy().query("basis != 'MRA'").basis.unique()
+
+    print("create iso diff", blist)
     for mol in iso_data.molecule.unique():
         mMRA = iso_data.query('basis=="MRA" & molecule == @mol')
         a_mra = mMRA.set_index('omega').alpha
@@ -243,6 +322,7 @@ def create_iso_diff_df(iso_data):
     # Replace infinite updated data with nan
     iso_diff_df.replace([np.inf, -np.inf], np.nan, inplace=True)
     # iso_diff_df.dropna(inplace=True)
+    iso_diff_df.reset_index(inplace=True)
     return iso_diff_df
 
 
@@ -261,6 +341,7 @@ def create_component_diff_df(a_data):
             dB.alpha = dab
             a_diff.append(dB)
     ij_diff = pd.concat(a_diff)
+    ij_diff.reset_index(inplace=True)
     return ij_diff
 
 
@@ -272,16 +353,18 @@ def make_detailed_df(data):
     row1, row2, flist = partition_molecule_list(mols)
 
     single = ['aug-cc-pVDZ', 'aug-cc-pVTZ', 'aug-cc-pVQZ', 'aug-cc-pCVDZ', 'aug-cc-pCVTZ',
-              'aug-cc-pCVQZ', ]
+              'aug-cc-pCVQZ', 'aug-cc-pV5Z']
 
-    double = ['d-aug-cc-pVDZ', 'd-aug-cc-pVTZ', 'd-aug-cc-pVQZ', 'd-aug-cc-pCVDZ', 'd-aug-cc-pCVTZ',
-              'd-aug-cc-pCVQZ', ]
+    double = ['d-aug-cc-pVDZ', 'd-aug-cc-pVTZ', 'd-aug-cc-pVQZ', 'd-aug-cc-pCVDZ',
+              'd-aug-cc-pCVTZ',
+              'd-aug-cc-pCVQZ', 'd-aug-cc-pV5Z']
     single_polarized = ['aug-cc-pCVDZ', 'aug-cc-pCVTZ', 'aug-cc-pCVQZ', ]
     double_polarized = ['d-aug-cc-pCVDZ', 'd-aug-cc-pCVTZ', 'd-aug-cc-pCVQZ', ]
 
     DZ = ['aug-cc-pVDZ', 'd-aug-cc-pVDZ', 'aug-cc-pCVDZ', 'd-aug-cc-pCVDZ', ]
     TZ = ['aug-cc-pVTZ', 'd-aug-cc-pVTZ', 'aug-cc-pCVTZ', 'd-aug-cc-pCVTZ', ]
     QZ = ['aug-cc-pVQZ', 'd-aug-cc-pVQZ', 'aug-cc-pCVQZ', 'd-aug-cc-pCVQZ', ]
+    FZ = ['aug-cc-pV5Z', 'd-aug-cc-pV5Z']
 
     data = data.copy()
     data["augmentation"] = 'aug'
@@ -300,12 +383,14 @@ def make_detailed_df(data):
     data.loc[data["basis"].isin(DZ), "valence"] = 'D'
     data.loc[data["basis"].isin(TZ), "valence"] = 'T'
     data.loc[data["basis"].isin(QZ), "valence"] = 'Q'
+    data.loc[data["basis"].isin(FZ), "valence"] = '5'
     data["valence"] = data["valence"].astype("category")
-    data["valence"] = data['valence'].cat.reorder_categories(['D', 'T', 'Q'])
+    data["valence"] = data['valence'].cat.reorder_categories(['D', 'T', 'Q', '5'])
     data['polarization'].cat.reorder_categories(['V', 'CV', ])
 
-    data['Type'] = data[['augmentation', 'polarization']].apply(lambda x: "-cc-p".join(x) + 'nZ',
-                                                                axis=1)
+    data['Type'] = data[['augmentation', 'polarization']].apply(
+        lambda x: "-cc-p".join(x) + 'nZ',
+        axis=1)
     data["Type"] = data["Type"].astype("category")
     data['Type'] = data['Type'].cat.reorder_categories(
         ['aug-cc-pVnZ', 'aug-cc-pCVnZ', 'd-aug-cc-pVnZ', 'd-aug-cc-pCVnZ'])
@@ -328,7 +413,7 @@ def get_invariant_polar(azero):
     a0 = (axx + ayy + azz) / 3
     g0 = 1 * np.sqrt(
         (axx - ayy) ** 2 + (ayy - azz) ** 2 + (azz - axx) ** 2 + 6 * (
-                    axy ** 2 + ayz ** 2 + azx ** 2)) / np.sqrt(2)
+                axy ** 2 + ayz ** 2 + azx ** 2)) / np.sqrt(2)
     return a0, g0
 
 
@@ -350,5 +435,4 @@ def get_iso_data(a_data):
                         pd.Series(g0, dtype=np.float64, name='gamma'),
                     ], axis=1))
     iso_data = pd.concat(iso)
-
-    return iso_data.reset_index(drop=True)
+    return iso_data

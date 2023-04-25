@@ -16,6 +16,10 @@ class BasisMRADataAnalyzer:
                           'aug-cc-pCVDZ', 'aug-cc-pCVTZ', 'aug-cc-pCVQZ',
                           'd-aug-cc-pCVDZ', 'd-aug-cc-pCVTZ', 'd-aug-cc-pCVQZ']
 
+        sns.set_theme(context='paper',
+                      style='darkgrid', font='sans-serif',
+                      font_scale=1.5, color_codes=True, rc=None)
+
     def get_basis_iso_data(self, basis_list, frequency=0):
         """Collect basis view of data for a given frequency"""
         df = self.data_collection.iso_diff_data.query('omega==@frequency')
@@ -33,7 +37,7 @@ class BasisMRADataAnalyzer:
         """
         Collect basis view of energy data
         """
-        df = self.data_collection.energy_df
+        df = self.data_collection.energy_diff
         e = {}
         for b in basis_list:
             bdata = df.query('basis==@b')
@@ -66,11 +70,9 @@ class BasisMRADataAnalyzer:
             y=iso_type,
             hue="Type",
             kind='strip',
-            # col='mol_system',
             sharey=True,
             dodge=True,
             aspect=aspect,
-            # jitter=True,
             alpha=.7,
             palette=pal,
             legend_out=False,
@@ -84,6 +86,7 @@ class BasisMRADataAnalyzer:
                         palette=light_pal,
                         scale='count',
                         bw=.20,
+                        cut=0,
                         inner='quartile',
                         alpha=0.5,
                         saturation=.8,
@@ -146,11 +149,16 @@ class BasisMRADataAnalyzer:
         ax.set_ylabel('')
         ax.set(xlabel=None)
         ax.set(ylabel=None)
-        ax.set(xlabel='Percent Error')
+        if iso_type == 'error':
+            ax.set(xlabel='Energy Error (a.u.)')
+        else:
+            ax.set(xlabel='Percent Error')
 
         ax.axvline(x=0.0, color='k', ls='--', alpha=.5)
-        ax.axvline(x=self.mra_ref, color='k', ls='--', alpha=.9, )
-        ax.axvline(x=-self.mra_ref, color='k', ls='--', alpha=.9, )
+        ax.axvline(x=self.mra_ref, color='k', ls='--', alpha=.3, )
+        if iso_type != 'error':
+            ax.axvline(x=-self.mra_ref, color='k', ls='--', alpha=.3, )
+
         if outer_boundary != 0:
             ax.axvline(x=outer_boundary, color='red', ls='--', alpha=.3, )
             ax.axvline(x=-outer_boundary, color='red', ls='--', alpha=.3, )
@@ -165,9 +173,6 @@ class BasisMRADataAnalyzer:
         width = size[0]
         height = size[1]
 
-        sns.set_theme(context='paper',
-                      style='darkgrid', font='sans-serif',
-                      font_scale=1.5, color_codes=True, rc=None)
         fig, axes = plt.subplots(nrows=3, ncols=4, figsize=(width, height),
                                  squeeze=False, layout='constrained', sharey=False, sharex=share_x)
         z = 0
@@ -205,7 +210,15 @@ class BasisMRADataAnalyzer:
         iso_diff_detailed = self.data_collection.detailed_iso_diff.copy()
         if mol_set == "all":
             data = iso_diff_detailed.query('omega.isin(@omegas) & valence==@v_level')
+            row_order = ['V', 'CV']
+        elif mol_set[0] == "First-row":
+            data = iso_diff_detailed.query(
+                'polarization=="V" & omega.isin(@omegas) & valence==@v_level & mol_system.isin('
+                '@mol_set)').copy()
+            data['polarization'] = data.polarization.cat.remove_unused_categories()
+            row_order = ['V']
         else:
+            row_order = ['V', 'CV']
             data = iso_diff_detailed.query(
                 'omega.isin(@omegas) & valence==@v_level & mol_system.isin(@mol_set)')
         mdata = data.query('valence==@v_level')
@@ -215,7 +228,7 @@ class BasisMRADataAnalyzer:
             g = sns.catplot(data=mdata,
                             x="omega",
                             row="polarization",
-                            row_order=['V', 'CV'],
+                            row_order=row_order,
                             y=iso_type,
                             hue="mol_system",
                             col="augmentation",
@@ -226,8 +239,9 @@ class BasisMRADataAnalyzer:
                             )
         else:
             aspect = 1.0
-            set1 = select_basis_outliers(mdata, 'aug-cc-pV{}Z'.format(v_level), thresh)
-            set2 = select_basis_outliers(mdata, 'd-aug-cc-pCV{}Z'.format(v_level), thresh * .1)
+            set1 = self.__select_basis_outliers(mdata, 'aug-cc-pV{}Z'.format(v_level), thresh)
+            set2 = self.__select_basis_outliers(mdata, 'd-aug-cc-pCV{}Z'.format(v_level),
+                                               thresh * .5)
             set1 = set1.union(set2)
             mdata = mdata.query('molecule.isin(@set1)')
             mdata.dropna()
@@ -240,6 +254,7 @@ class BasisMRADataAnalyzer:
             g = sns.relplot(data=mdata,
                             x="omega",
                             row="polarization",
+                            row_order=row_order,
                             y=iso_type,
                             hue="molecule",
                             style="molecule",
@@ -257,8 +272,8 @@ class BasisMRADataAnalyzer:
                 w_pad=0)
             g.fig.suptitle(iso_type)
         g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=1). \
-            map(plt.axhline, y=border, color='r', dashes=(2, 1), zorder=0). \
-            map(plt.axhline, y=-border, color='r', dashes=(2, 1), zorder=0). \
+            map(plt.axhline, y=border, color='k', dashes=(2, 1), zorder=0, alpha=.8). \
+            map(plt.axhline, y=-border, color='k', dashes=(2, 1), zorder=0, alpha=.8). \
             set_axis_labels(r"$\omega_i$", "Percent Error"). \
             set_titles("{col_name}-cc-p{row_name}" + "{}Z".format(v_level)).tight_layout(w_pad=0)
         if iso_type == 'alpha':
@@ -267,6 +282,38 @@ class BasisMRADataAnalyzer:
             g.fig.suptitle(r'Error in $\gamma(\omega)$ at {}Z'.format(v_level), )
 
         return g
+
+    def plot_valence_convergence(self, mol, valence, iso_type, omega, sharey=False):
+        data = self.data_collection.detailed_iso_diff.query(
+            'molecule==@mol & omega.isin(@omega) & valence==@valence')
+        facet_kws = {"sharey": sharey, 'despine': True, }
+
+        f = sns.relplot(data=data,
+                        x='valence',
+                        kind='line',
+                        hue='omega',
+                        row='polarization',
+                        col='augmentation',
+                        facet_kws=facet_kws,
+                        y=iso_type)
+        f.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0)
+        return f
+
+    # selects outliers by change in percent error from the static to the
+    def __select_basis_outliers(self, data, basis, thresh):
+        om = [0, 8]
+        test = data.query('omega.isin(@om) & basis==@basis')
+
+        ma = {}
+        for mol in test.molecule.unique():
+            dmol = test.query('molecule==@mol')
+            a0 = dmol.query('omega==0').alpha.iloc[0]
+            a8 = dmol.query('omega==8').alpha.iloc[0]
+            ma[mol] = (a0 - a8)
+        ma = pd.Series(ma)
+        out_mols = ma[ma.abs() > thresh]
+        out_mols = set(out_mols.index)
+        return out_mols
 
 
 b1 = [
@@ -327,74 +374,3 @@ def format_formula(formula):
         else:
             formatted_formula += c
     return formatted_formula
-
-
-# selects outliers by change in percent error from the static to the
-def select_basis_outliers(data, basis, thresh):
-    om = [0, 8]
-    test = data.query('omega.isin(@om) & basis==@basis')
-
-    ma = {}
-    for mol in test.molecule.unique():
-        dmol = test.query('molecule==@mol')
-        a0 = dmol.query('omega==0').alpha.iloc[0]
-        a8 = dmol.query('omega==8').alpha.iloc[0]
-        ma[mol] = (a0 - a8)
-    ma = pd.Series(ma)
-    out_mols = ma[ma.abs() > thresh]
-    out_mols = set(out_mols.index)
-    return out_mols
-
-
-def plot_violin_swarm(data, iso_type, xdata, hdata, pals, ax):
-    dotsize = 1.5
-
-    if iso_type == 'alpha':
-        ydata = data.alpha
-    else:
-        ydata = data.gamma
-    color1 = pals[0]
-    color2 = pals[1]
-
-    p1 = sns.violinplot(x=xdata, y=ydata, ax=ax, split=False, scale="count", hue=hdata,
-                        inner='quartile', cut=0, palette=color1, )
-
-    p11 = sns.stripplot(x=data.valence, y=ydata, ax=ax, size=dotsize, hue=hdata,
-                        dodge=True, palette=color2)
-
-
-def make_plots(datas, xdata, hdata, pals, outliers, axes):
-    iso_types = ['alpha', 'gamma']
-    titles = [r'$\alpha(\omega)$', r'$\gamma(\omega)$']
-
-    for i, axi in enumerate(axes):
-        out_mols = outliers[i]
-        data = datas.query("not molecule.isin(@out_mols)")
-        plot_violin_swarm(data, iso_types[i], xdata, hdata, pals, axi)
-        axi.tick_params(axis='x', rotation=0)
-        axi.grid(which="both")
-        axi.tick_params(which="both", top="on", left="on", right="on", bottom="on", )
-        axi.minorticks_on()
-        axi.set_title(titles[i])
-        axi.set_ylabel('Percentage Error')
-        axi.set_xlabel('[n]')
-        handles, labels = axi.get_legend_handles_labels()
-        nlabels = ['D', 'T', 'Q']
-        labels = nlabels
-        # axi.legend(handles[:2], hdata.unique(), title=hdata.name)
-        if i == 0:
-            axi.set_ylabel('Percentage Error')
-        else:
-            axi.legend('', frameon=False)
-            axi.set_ylabel(None)
-        for l in axi.lines:
-            l.set_linestyle('--')
-            l.set_linewidth(1.2)
-            l.set_color('green')
-            l.set_alpha(0.8)
-        for l in axi.lines[1::3]:
-            l.set_linestyle('-')
-            l.set_linewidth(1.5)
-            l.set_color('black')
-            l.set_alpha(0.8)
-        axi.axhline(y=0, linewidth=1.2, ls="--", color="r")

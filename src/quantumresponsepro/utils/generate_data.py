@@ -21,6 +21,7 @@ class GenerateDatabasePaths:
         self.excited_keys = self.json_path.joinpath(
             'molecule_excited_state_keys.json')
 
+
 class DatabaseGenerator:
     """
     Class to generate data for database.
@@ -106,9 +107,12 @@ class DatabaseGenerator:
         for molecule in molecule_list:
             data_dict[xc][molecule] = {}
             for basis in basis_list:
-                data_dict[xc][molecule] = dal_runner.get_excited_json(molecule, xc, basis,
-                                                                      excited_json_keys[
-                                                                          molecule])
+                try:
+                    data_dict[xc][molecule][basis] = \
+                        dal_runner.get_excited_json(molecule, xc, basis,
+                                                    excited_json_keys[molecule])[basis]
+                except TypeError:
+                    data_dict[xc][molecule][basis] = {}
 
         return data_dict
 
@@ -156,9 +160,7 @@ class DatabaseGenerator:
 
             print(data_dict)
 
-
         return data_dict
-
 
     def get_dalton_frequency_json(self, xc, op, basis_list, run):
         """
@@ -177,7 +179,6 @@ class DatabaseGenerator:
 
         return dalton_frequency_json
 
-
     def get_frequency_json(self, num_steps_to_max: int, xc: str, op: str,
                            basis: str, frac_max=.5):
         """
@@ -192,6 +193,7 @@ class DatabaseGenerator:
         """
         try:
             with open(self.paths.dalton_excited, 'r') as f:
+                print(self.paths.dalton_excited)
                 excited_json = json.load(f)
                 freq_j = {}
                 for molecule in self.get_molecule_list():

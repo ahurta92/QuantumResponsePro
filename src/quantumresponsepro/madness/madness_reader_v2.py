@@ -19,7 +19,10 @@ def tensor_to_numpy(j):
 class MadnessReader:
     def __init__(self, data_dir):
         self.data_dir = data_dir
-        with open(self.data_dir + "/molecules/frequency.json") as json_file:
+        self.molecule_dir = data_dir.joinpath('molecules')
+        # TODO: Need to make this json_data/frequency.json
+        with open(self.data_dir.joinpath('molecules/frequency.json')) as \
+                json_file:
             self.freq_json = json.loads(json_file.read())
 
     def __read_protocol_polarizability_data(self, protocol_data: json):
@@ -136,9 +139,8 @@ class MadnessReader:
         return num_iters_per_protocol, full
 
     def __open_ground_json(self, mol, xc):
-        moldir = self.data_dir + "/" + xc + "/" + mol
-        jsonf = "moldft.calc_info.json"
-        path = "/".join([moldir, jsonf])
+        moldir = self.data_dir.joinpath(xc, mol)
+        path = moldir.joinpath("moldft.calc_info.json")
         with open(path) as json_file:
             response_j = json.loads(json_file.read())
         return response_j
@@ -284,7 +286,7 @@ class MadnessResponse:
         self.mol = mol
         self.xc = xc
         self.operator = operator
-        self.moldir = self.data_dir + "/" + self.xc + "/" + self.mol
+        self.moldir = self.data_dir.joinpath(self.xc).joinpath(self.mol)
 
         mad_reader = MadnessReader(self.data_dir)
         (
@@ -455,7 +457,8 @@ class MadnessResponse:
             .rename(columns={'x': 'rx', 'y': 'ry', 'z': 'rz'})
 
         rd.plot(logy=True, ax=ax, colormap='Accent', markersize=12, kind='line', style='.-')
-        rx.plot(logy=True, ax=ax, colormap='Accent', grid=True, markersize=12, kind='line', style='*-')
+        rx.plot(logy=True, ax=ax, colormap='Accent', grid=True, markersize=12, kind='line',
+                style='*-')
         iters = self.num_iter_proto[self.frequencies[frequency]]
 
         threshold = self.response_base[freq_key]["response_data"]['thresh']
@@ -466,18 +469,24 @@ class MadnessResponse:
 
             ax.axvline(x=pc - 1, ymin=0, ymax=1, c="black", linestyle="dashed", alpha=0.5)
             if n == 0:
-                ax.axhline(y=threshold[n], xmin=0, xmax=iters[-1], c="black", linestyle="dashed", alpha=0.5,
+                ax.axhline(y=threshold[n], xmin=0, xmax=iters[-1], c="black", linestyle="dashed",
+                           alpha=0.5,
                            label="Threshold")
-                ax.axhline(y=density_target[n], xmin=0, xmax=iters[-1], c="red", linestyle="dashed", alpha=0.5,
+                ax.axhline(y=density_target[n], xmin=0, xmax=iters[-1], c="red", linestyle="dashed",
+                           alpha=0.5,
                            label="Density Target")
-                ax.axhline(y=bsh_target[n], xmin=0, xmax=iters[-1], c="blue", linestyle="dashed", alpha=0.5,
+                ax.axhline(y=bsh_target[n], xmin=0, xmax=iters[-1], c="blue", linestyle="dashed",
+                           alpha=0.5,
                            label="BSH Target")
             else:
-                ax.axhline(y=threshold[n], xmin=0, xmax=iters[-1], c="black", linestyle="dashed", alpha=0.5,
+                ax.axhline(y=threshold[n], xmin=0, xmax=iters[-1], c="black", linestyle="dashed",
+                           alpha=0.5,
                            )
-                ax.axhline(y=density_target[n], xmin=0, xmax=iters[-1], c="red", linestyle="dashed", alpha=0.5,
+                ax.axhline(y=density_target[n], xmin=0, xmax=iters[-1], c="red", linestyle="dashed",
+                           alpha=0.5,
                            )
-                ax.axhline(y=bsh_target[n], xmin=0, xmax=iters[-1], c="blue", linestyle="dashed", alpha=0.5,
+                ax.axhline(y=bsh_target[n], xmin=0, xmax=iters[-1], c="blue", linestyle="dashed",
+                           alpha=0.5,
                            )
 
         ax.grid(which="both")

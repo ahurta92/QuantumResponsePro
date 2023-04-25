@@ -1,4 +1,3 @@
-
 import numpy as np
 from ..madness_to_dalton import *
 from ..dalton.daltonrunner import DaltonRunner
@@ -11,7 +10,7 @@ class MadnessReader:
         self.data_dir = data_dir
         if not os.path.exists("dalton"):
             os.mkdir("dalton")
-        with open(self.data_dir + "/molecules/frequency.json") as json_file:
+        with open(self.data_dir.joinpath("molecules/frequency.json")) as json_file:
             self.freq_json = json.loads(json_file.read())
 
     def __tensor_to_numpy(self, j):
@@ -140,11 +139,10 @@ class MadnessReader:
         # second number after decimal
         f2 = sfreq.split(".")[1]
 
-        moldir = self.data_dir + "/" + xc + "/" + mol
-        dfile = operator + "_" + xc + "_" + f1 + "-" + f2
+        moldft_path = self.data_dir.joinpath(xc, mol)
+        response_directory = operator + "_" + xc + "_" + f1 + "-" + f2
         jsonf = "response_base.json"
-
-        path = "/".join([moldir, dfile, jsonf])
+        path = moldft_path.joinpath(response_directory, jsonf)
 
         with open(path) as json_file:
             response_j = json.loads(json_file.read())
@@ -153,10 +151,9 @@ class MadnessReader:
 
     def __open_ground_json(self, mol, xc):
 
-        moldir = self.data_dir + "/" + xc + "/" + mol
+        moldft_path = self.data_dir.joinpath(xc, mol)
         jsonf = "calc_info.json"
-
-        path = "/".join([moldir, jsonf])
+        path = moldft_path.joinpath(jsonf)
         # print("mad_path",path)
 
         with open(path) as json_file:
@@ -674,7 +671,8 @@ class ExcitedData:
 
     def compare_dalton(self, basis):
         dalton_reader = DaltonRunner()
-        ground_dalton, response_dalton = dalton_reader.get_excited_result(self.mol, self.xc, basis, True)
+        ground_dalton, response_dalton = dalton_reader.get_excited_result(self.mol, self.xc, basis,
+                                                                          True)
 
         ground_compare = pd.concat(
             [

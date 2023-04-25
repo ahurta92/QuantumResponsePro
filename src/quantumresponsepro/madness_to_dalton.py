@@ -21,8 +21,8 @@ class madnessToDalton:
     def __init__(self, base_dir: Path):
         self.base_dir = base_dir
         self.DALROOT = self.base_dir.joinpath('dalton').absolute()
-        print('madnessToDalton base dir', self.base_dir)
-        print('madnessToDalton dalroot dir', self.DALROOT)
+        #print('madnessToDalton base dir', self.base_dir)
+        #print('madnessToDalton dalroot dir', self.DALROOT)
         if not os.path.exists("dalton"):
             os.mkdir("dalton")
 

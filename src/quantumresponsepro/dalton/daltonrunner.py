@@ -83,10 +83,10 @@ class DaltonRunner:
 
         dalton_inp.append("**END OF DALTON INPUT")
         dalton_inp = "\n".join(dalton_inp)
-        print(dalton_inp)
-        print(molecule_input)
-        print(operator)
-        print("self.dalton", self.dalton_dir)
+        # print(dalton_inp)
+        # print(molecule_input)
+        # print(operator)
+        # print("self.dalton", self.dalton_dir)
 
         run_dir = self.dalton_dir.joinpath(xc).joinpath(molecule_input).joinpath(operator)
         if not os.path.exists(run_dir):
@@ -137,7 +137,7 @@ class DaltonRunner:
         # /dalton/[xc]/[madmol]/excited-state
 
         molname = madmol.split(".")[0]
-        print(molname)
+        # print(molname)
         dalton_inp = []
         dalton_inp.append("**DALTON INPUT")
         dalton_inp.append(".RUN PROPERTIES")
@@ -163,7 +163,7 @@ class DaltonRunner:
 
         dalton_inp.append("**END OF DALTON INPUT")
         dalton_inp = "\n".join(dalton_inp)
-        run_dir = self.dalton_dir.joinpath(xc).joinpath(molname).joinpath('excited_state')
+        run_dir = self.dalton_dir.joinpath(xc).joinpath(molname).joinpath('excited-state')
         print(run_dir)
         mad_to_dal = madnessToDalton(self.base_dir.absolute())
         if not os.path.exists(run_dir):
@@ -204,8 +204,8 @@ class DaltonRunner:
         for cals in output_json['simulation']['calculations']:
             calc_type = cals['calculationType']
             calcs[calc_type] = cals
-            print(calc_type)
-        print(calcs)
+            # print(calc_type)
+        # print(calcs)
 
         r_dict = {}
         r_dict["frequencies"] = []
@@ -234,7 +234,7 @@ class DaltonRunner:
             calc_type = cals['calculationType']
             calcs[calc_type] = cals
             print(calc_type)
-        print(calcs)
+        # print(calcs)
 
         e_data = calcs['energyCalculation']
         dipole_data = calcs['Dipole']
@@ -242,7 +242,7 @@ class DaltonRunner:
 
         for dkeys in data.keys():
             data[dkeys].append(float(e_data["calculationResults"][dkeys]["value"]))
-        print(r_data)
+        # print(r_data)
 
         # sort the frequencies
         freq = r_data["calculationResults"]["frequencies"]
@@ -290,14 +290,9 @@ class DaltonRunner:
         run_directory, dal_input, mol_input = self.__write_polar_input(self,
                                                                        mol, xc, operator, basis
                                                                        )
-        print('dal_input:', dal_input)
-        print('mol_input:', mol_input)
-        print('run_directory:', run_directory)
         output_stem = "freq_" + "-".join([mol, basis])
         output_file = run_directory.joinpath(output_stem + ".out")
         output_json = run_directory.joinpath(output_stem + ".json")
-        print('output_file:', output_file)
-        print('output_json:', output_json)
 
         d_out, d_error = None, None
         data = None
@@ -311,6 +306,11 @@ class DaltonRunner:
         except (FileNotFoundError, IndexError) as e:
             if self.run:
                 print("Trying to run ", output_stem, " in ", run_directory)
+                print('dal_input:', dal_input)
+                print('mol_input:', mol_input)
+                print('run_directory:', run_directory)
+                print('output_file:', output_file)
+                print('output_json:', output_json)
                 d_out, d_error = self.__run_dalton(run_directory, dal_input, mol_input)
                 # print(d_out, d_error)
                 print("Finished running  ", mol, " in ", run_directory)
