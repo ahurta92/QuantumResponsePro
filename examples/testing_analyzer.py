@@ -44,7 +44,7 @@ sns.move_legend(g, "center right", title='Molecule', fancybox=True)
 g.fig.show()
 g.fig.savefig(paper_path.joinpath('alpha_freq_first_row.svg'), dpi=300)
 
-g = analyzer.freq_iso_plot('Q', "alpha", ['Second-row'], False, thresh=.1, border=.50)
+g = analyzer.freq_iso_plot('Q', "alpha", ['Second-row'], 'row', thresh=.1, border=.50)
 sns.move_legend(g, "center right", title='Molecule', fancybox=True)
 g.fig.show()
 g.fig.savefig(paper_path.joinpath('alpha_freq_second_row.svg'), dpi=300)

@@ -353,11 +353,11 @@ def make_detailed_df(data):
     row1, row2, flist = partition_molecule_list(mols)
 
     single = ['aug-cc-pVDZ', 'aug-cc-pVTZ', 'aug-cc-pVQZ', 'aug-cc-pCVDZ', 'aug-cc-pCVTZ',
-              'aug-cc-pCVQZ', 'aug-cc-pV5Z']
+              'aug-cc-pCVQZ', 'aug-cc-pV5Z', 'aug-cc-pV6Z']
 
     double = ['d-aug-cc-pVDZ', 'd-aug-cc-pVTZ', 'd-aug-cc-pVQZ', 'd-aug-cc-pCVDZ',
               'd-aug-cc-pCVTZ',
-              'd-aug-cc-pCVQZ', 'd-aug-cc-pV5Z']
+              'd-aug-cc-pCVQZ', 'd-aug-cc-pV5Z', 'd-aug-cc-pV6Z']
     single_polarized = ['aug-cc-pCVDZ', 'aug-cc-pCVTZ', 'aug-cc-pCVQZ', ]
     double_polarized = ['d-aug-cc-pCVDZ', 'd-aug-cc-pCVTZ', 'd-aug-cc-pCVQZ', ]
 
@@ -365,6 +365,7 @@ def make_detailed_df(data):
     TZ = ['aug-cc-pVTZ', 'd-aug-cc-pVTZ', 'aug-cc-pCVTZ', 'd-aug-cc-pCVTZ', ]
     QZ = ['aug-cc-pVQZ', 'd-aug-cc-pVQZ', 'aug-cc-pCVQZ', 'd-aug-cc-pCVQZ', ]
     FZ = ['aug-cc-pV5Z', 'd-aug-cc-pV5Z']
+    SZ = ['aug-cc-pV6Z', 'd-aug-cc-pV6Z']
 
     data = data.copy()
     data["augmentation"] = 'aug'
@@ -384,8 +385,9 @@ def make_detailed_df(data):
     data.loc[data["basis"].isin(TZ), "valence"] = 'T'
     data.loc[data["basis"].isin(QZ), "valence"] = 'Q'
     data.loc[data["basis"].isin(FZ), "valence"] = '5'
+    data.loc[data["basis"].isin(SZ), "valence"] = '6'
     data["valence"] = data["valence"].astype("category")
-    data["valence"] = data['valence'].cat.reorder_categories(['D', 'T', 'Q', '5'])
+    data["valence"] = data['valence'].cat.reorder_categories(['D', 'T', 'Q', '5', '6'])
     data['polarization'].cat.reorder_categories(['V', 'CV', ])
 
     data['Type'] = data[['augmentation', 'polarization']].apply(

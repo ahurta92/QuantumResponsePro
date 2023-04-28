@@ -1,9 +1,14 @@
 from quantumresponsepro import BasisMRADataCollection
 from quantumresponsepro.BasisMRADataAssembler import get_frequency_compare
+from quantumresponsepro.BasisMRADataAssembler import partition_molecule_list
+
 import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+import matplotlib.cm as cm
 import pandas as pd
+import matplotlib.colors as mcolors
 
 
 class BasisMRADataAnalyzer:
@@ -241,7 +246,7 @@ class BasisMRADataAnalyzer:
             aspect = 1.0
             set1 = self.__select_basis_outliers(mdata, 'aug-cc-pV{}Z'.format(v_level), thresh)
             set2 = self.__select_basis_outliers(mdata, 'd-aug-cc-pCV{}Z'.format(v_level),
-                                               thresh * .5)
+                                                thresh * .5)
             set1 = set1.union(set2)
             mdata = mdata.query('molecule.isin(@set1)')
             mdata.dropna()
@@ -297,6 +302,10 @@ class BasisMRADataAnalyzer:
                         facet_kws=facet_kws,
                         y=iso_type)
         f.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0)
+        f.set_titles("{col_name}-cc-p{row_name}nZ").tight_layout(w_pad=0)
+        f.fig.suptitle(r'Error in $\alpha(\omega)$ for {}'.format(mol))
+        f.set_xlabels('Valence [n]')
+        f.set_ylabels('Percent Error')
         return f
 
     # selects outliers by change in percent error from the static to the
@@ -316,50 +325,146 @@ class BasisMRADataAnalyzer:
         return out_mols
 
 
-b1 = [
-    'aug-cc-pVDZ', 'aug-cc-pVTZ', 'aug-cc-pVQZ',
-    'aug-cc-pCVDZ', 'aug-cc-pCVTZ', 'aug-cc-pCVQZ',
-    'd-aug-cc-pVDZ', 'd-aug-cc-pVTZ', 'd-aug-cc-pVQZ',
-    'd-aug-cc-pCVDZ', 'd-aug-cc-pCVTZ', 'd-aug-cc-pCVQZ', ]
-
-EE = 5
-cmap = 'BrBG'
-
-
-def make_pretty_gamma_summary(styler):
-    EE = 10
-
-    styler.format("{:.2e}", precision=0)
-    styler.background_gradient(
-        axis=1, vmin=-EE, vmax=EE, cmap=cmap, low=0, high=0
-    )
-    # styler.apply(highlight_positive, axis=0)
-    return styler
+def background_with_norm(s, vmax=1e-1):
+    linthresh = 1e-2
+    linscale = 1
+    cmap = cm.coolwarm
+    norm = mcolors.SymLogNorm(linthresh=linthresh, linscale=linscale, base=10, vmin=-vmax,
+                              vmax=vmax)
+    return ['background-color: {:s}'.format(mcolors.to_hex(c.flatten())) for c in
+            cmap(norm(s.values))]
 
 
-def make_pretty_summary(styler):
-    styler.format("{:.2e}", precision=0)
-    styler.background_gradient(
-        axis=1, vmin=-EE, vmax=EE, cmap=cmap, low=0, high=0
-    )
-    # styler.apply(highlight_positive, axis=0)
-    return styler
+DZ = ['aug-cc-pVDZ', 'aug-cc-pCVDZ', 'd-aug-cc-pVDZ', 'd-aug-cc-pCVDZ']
+TZ = ['aug-cc-pVTZ', 'aug-cc-pCVTZ', 'd-aug-cc-pVTZ', 'd-aug-cc-pCVTZ']
+QZ = ['aug-cc-pVQZ', 'aug-cc-pCVQZ', 'd-aug-cc-pVQZ', 'd-aug-cc-pCVQZ']
 
 
-def make_e_pretty_summary(styler):
-    EE = .05
-    styler.format('{:.2e}', precision=0)
-    styler.background_gradient(
-        axis=1, vmin=-EE, vmax=EE, cmap=cmap, low=0, high=0
-    )
-    # styler.apply(highlight_positive, axis=0)
-    return styler
+class Tabler:
+    def __init__(self, data: BasisMRADataCollection, cmap='BrBG', thresh=5, basis_list=None):
 
+        if basis_list is None:
+            self.basis_list = [
+                'aug-cc-pVDZ', 'aug-cc-pVTZ', 'aug-cc-pVQZ',
+                'aug-cc-pCVDZ', 'aug-cc-pCVTZ', 'aug-cc-pCVQZ',
+                'd-aug-cc-pVDZ', 'd-aug-cc-pVTZ', 'd-aug-cc-pVQZ',
+                'd-aug-cc-pCVDZ', 'd-aug-cc-pCVTZ', 'd-aug-cc-pCVQZ', ]
+            self.basis_list = DZ + TZ + QZ
+        else:
+            self.basis_list = basis_list
 
-def max_abs(row):
-    max_val = max(abs(row['alpha']), abs(row['B']))
-    orig_val = row['A'] if abs(row['A']) == max_val else row['B']
-    return pd.Series({'max_abs_val': max_val, 'orig_val': orig_val})
+        self.data = data
+        self.cmap = cmap
+        self.thresh = thresh
+
+    def get_basis_data(self):
+        df = self.data.iso_diff_data.query('omega==0')
+        alphab = {}
+        gammab = {}
+        for b in self.basis_list:
+            bdata = df.query('basis==@b')
+            alphab[b] = bdata.set_index('molecule').alpha
+            gammab[b] = bdata.set_index('molecule').gamma
+        alpha_df = pd.DataFrame(alphab)
+        gamma_df = pd.DataFrame(gammab)
+        return alpha_df, gamma_df
+
+    def get_basis_edata(self):
+        df = self.data.energy_diff
+        e = {}
+        for b in self.basis_list:
+            bdata = df.query('basis==@b')
+            e[b] = bdata.set_index('molecule').error
+        e_df = pd.DataFrame(e)
+        return e_df
+
+    def __style_full(self, df, fmt="{:.2e}"):
+        first_row, second, flourine = partition_molecule_list(df.index)
+
+        first = first_row + flourine
+        one = df.query("molecule.isin(@first)")
+        two = df.query("molecule.isin(@second)")
+
+        vmax = df.iloc[:, :-1].max().max()
+
+        # define a function to format the index values
+
+        def format_index(idx):
+            return r'\ce{' + '{}'.format(idx) + '}'
+
+        one.index = one.index.map(format_index)
+        two.index = two.index.map(format_index)
+
+        bnorm = lambda x: background_with_norm(x, vmax)
+
+        col1 = one.columns[:-1]
+        style_one = one.style.apply(bnorm, subset=col1)
+        style_one.format(fmt, subset=col1)
+        style_one.format("{:.4g}", subset=one.columns[-1])
+        style_one.applymap_index(
+            lambda v: "rotatebox:{45}--rwrap--latex;", level=0, axis=1)
+
+        col2 = two.columns[:-1]
+        style_two = one.style.apply(bnorm, subset=col2)
+        style_two.format(fmt, subset=col2)
+        style_two.format("{:.4g}", subset=two.columns[-1])
+        style_two.applymap_index(
+            lambda v: "rotatebox:{45}--rwrap--latex;", level=0, axis=1)
+
+        return style_one, style_two
+
+    def __style_summary(self, df, fmt="{:.2e}"):
+        summary = self.__get_summary(df)
+        vmax = df.max().max()
+        bnorm = lambda x: background_with_norm(x, vmax)
+        # Define the maximum data value (in absolute terms) for normalization
+        styled_df = summary.style.apply(bnorm)
+        styled_df.format(fmt)
+        return styled_df
+
+    def get_styled_summary(self, iso_type):
+        if iso_type == 'energy':
+            return self.__style_summary(self.get_basis_edata())
+        elif iso_type == 'alpha':
+            return self.__style_summary(self.get_basis_data()[0])
+        elif iso_type == 'gamma':
+            return self.__style_summary(self.get_basis_data()[1])
+
+    def get_styled_molecules(self, iso_type):
+        if iso_type == 'energy':
+            basis_e_data = self.get_basis_edata()
+            mra_e_data = self.data.energy_df.query('basis=="mra"').set_index('molecule').error
+            e_data = pd.concat([basis_e_data, mra_e_data.rename('MRA-ref')], axis=1)
+            return self.__style_full(e_data)
+        elif iso_type == 'alpha':
+            basis_a_data = self.get_basis_data()[0]
+
+            mra_a_data = self.data.iso_data.query('basis=="MRA" & omega==0').set_index(
+                'molecule').alpha
+            a_data = pd.concat([basis_a_data, mra_a_data.rename('MRA-ref')], axis=1)
+            return self.__style_full(a_data)
+        elif iso_type == 'gamma':
+            basis_g_data = self.get_basis_data()[1]
+            mra_g_data = self.data.iso_data.query('basis=="MRA" & omega==0').set_index(
+                'molecule').gamma
+            g_data = pd.concat([basis_g_data, mra_g_data], axis=1)
+            return self.__style_full(g_data)
+
+    def __get_summary(self, bdata):
+        summary = bdata.describe().iloc[1:]
+        new_idx = {}
+        for i in summary.index:
+            if i[-1] == '%':
+                new_idx[i] = i[:-1] + '\\' + i[-1]
+            else:
+                new_idx[i] = i
+        summary.rename(index=new_idx, inplace=True)
+        return summary.T
+
+    def max_abs(row):
+        max_val = max(abs(row['alpha']), abs(row['B']))
+        orig_val = row['A'] if abs(row['A']) == max_val else row['B']
+        return pd.Series({'max_abs_val': max_val, 'orig_val': orig_val})
 
 
 # create a sample dataframe with a column of chemical formulas
