@@ -53,17 +53,11 @@ e_fig = analyzer.plot_violin_strip('response', 'gamma', ['D', 'T', 'Q'])
 e_fig.fig.show()
 
 size = (13, 11)
-fig = analyzer.plot_valence_outliers_large('gamma', 0, ['D', 'T', 'Q'], .85, 'row', size)
+fig = analyzer.plot_valence_outliers_large('gamma', 0, ['D', 'T', 'Q'], .85, 'row', size, 1)
 sns.despine(fig)
 fig.show()
+fig.savefig(paper_path.joinpath('gamma_outliers.svg'), dpi=300)
 
-g = analyzer.freq_iso_plot('Q', 'gamma', 'all', False, border=0.5)
+g = analyzer.freq_iso_plot('Q', 'gamma', 'all', False, border=1)
 g.fig.show()
-
-g = analyzer.freq_iso_plot('Q', "gamma", ['First-row', 'Fluorine'], False, thresh=.1, border=.50)
-sns.move_legend(g, "center right", title='Molecule', fancybox=True)
-g.fig.show()
-
-g = analyzer.freq_iso_plot('Q', "gamma", ['Second-row'], False, thresh=.1, border=.50)
-sns.move_legend(g, "center right", title='Molecule', fancybox=True)
-g.fig.show()
+g.fig.savefig(paper_path.joinpath('gamma_freq.svg'), dpi=300)

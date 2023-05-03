@@ -288,7 +288,7 @@ class BasisMRADataAnalyzer:
 
         return g
 
-    def plot_valence_convergence(self, mol, valence, iso_type, omega, sharey=False):
+    def plot_iso_valence_convergence(self, mol, iso_type, valence, omega, sharey=False):
         data = self.data_collection.detailed_iso_diff.query(
             'molecule==@mol & omega.isin(@omega) & valence==@valence')
         facet_kws = {"sharey": sharey, 'despine': True, }
@@ -307,6 +307,33 @@ class BasisMRADataAnalyzer:
         f.set_xlabels('Valence [n]')
         f.set_ylabels('Percent Error')
         return f
+
+    def plot_alpha_component_convergence(self, mol, ij=['xx', 'yy', 'zz'], valence=['D', 'T', 'Q'],
+                                         omega=[0, 1, 2, 3, 4, 5, 6, 7, 8], sharey=False):
+        mol_data = self.data_collection.detailed_eigen_diff.query(
+            ' molecule == @mol & ij.isin(@ij) & valence.isin(@valence) & omega.isin(@omega)')
+        g = sns.relplot(data=mol_data,
+                        x=mol_data.valence,
+                        y='alpha',
+                        hue='ij',
+                        col='augmentation',
+                        style='polarization',
+                        kind='line',
+                        markers=True,
+                        facet_kws={'sharey': False},
+                        dashes=True,
+                        )
+        for i, ax in enumerate(g.axes):
+            for j, axi in enumerate(ax):
+                axi.tick_params(axis='x', rotation=0)
+                axi.grid(which="both")
+                axi.tick_params(which="both", top="on", left="on", right="on", bottom="on", )
+                axi.minorticks_on()
+        g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0).set_axis_labels("Valence",
+                                                                                    "Error").set_titles(
+            "{col_name}-cc-pV(C)nZ").tight_layout(w_pad=0)
+        g.fig.suptitle(mol)
+        return g
 
     # selects outliers by change in percent error from the static to the
     def __select_basis_outliers(self, data, basis, thresh):

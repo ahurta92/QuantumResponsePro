@@ -78,8 +78,9 @@ class BasisMRADataCollection:
             self.ij_diff = pd.read_feather(ij_df_path)
             self.ij_diff.reset_index(inplace=True)
         else:
+            print('Creating ij_diff')
             self.ij_diff = create_component_diff_df(self.all_polar_data)
-            self.ij_diff.to_feather(ij_df_path)
+            self.ij_diff.reset_index().to_feather(ij_df_path)
 
         energy_df_path = feather_data.joinpath('energy_data.feather')
 
@@ -91,6 +92,19 @@ class BasisMRADataCollection:
             self.energy_df.reset_index(inplace=True)
             self.energy_df.to_feather(energy_df_path)
             pass
+
+        alpha_eigen_path = feather_data.joinpath('alpha_eigen_data.feather')
+        if alpha_eigen_path.is_file():
+            self.alpha_eigen = pd.read_feather(alpha_eigen_path)
+        else:
+            self.alpha_eigen = get_ij_eigen(self.all_polar_data)
+            self.alpha_eigen.reset_index().to_feather(alpha_eigen_path)
+        eigen_diff_path = feather_data.joinpath('eigen_diff_data.feather')
+        if eigen_diff_path.is_file():
+            self.eigen_diff = pd.read_feather(eigen_diff_path)
+        else:
+            self.eigen_diff = create_component_diff_df(self.alpha_eigen)
+            self.eigen_diff.reset_index().to_feather(eigen_diff_path)
 
         energy_diff_path = feather_data.joinpath('energy_diff.feather')
         if energy_diff_path.is_file():
@@ -108,6 +122,7 @@ class BasisMRADataCollection:
             self.detailed_iso_diff = make_detailed_df(self.iso_diff_data)
             self.detailed_ij_diff = make_detailed_df(self.ij_diff)
             self.detailed_energy_diff = make_detailed_df(self.energy_diff)
+            self.detailed_eigen_diff = make_detailed_df(self.eigen_diff)
         except Exception as e:
             print(e)
             pass

@@ -328,21 +328,52 @@ def create_iso_diff_df(iso_data):
 
 def create_component_diff_df(a_data):
     multidex = ['ij', 'omega']
-    a_diff = []
-    blist = a_data.basis.unique()[a_data.basis.unique() != 'MRA']
+    f_ij = []
     for mol in a_data.molecule.unique():
+        # get the mra data
         mMRA = a_data.query('basis=="MRA" & molecule == @mol')
         a_mra = mMRA.set_index(multidex).alpha
-        for basis in blist:
-            mBASIS = a_data.query('basis==@basis & molecule == @mol')
-            a_basis = mBASIS.set_index(multidex).alpha
-            dab = (a_basis - a_mra) / a_mra * 100
-            dB = mBASIS.copy().set_index(multidex)
-            dB.alpha = dab
-            a_diff.append(dB)
-    ij_diff = pd.concat(a_diff)
-    ij_diff.reset_index(inplace=True)
+
+        # get the basis data
+        basis_data = a_data.query('molecule==@mol & basis != "MRA"')
+        b_mol_data = basis_data.set_index(multidex).alpha
+        rep_mol_mra = pd.concat([a_mra for i in range(len(basis_data.basis.unique()))])
+        diff_data = pd.concat([rep_mol_mra, b_mol_data], axis=1).diff(axis=1).iloc[:, 1]
+        bcol = basis_data.set_index(multidex).basis
+        mcol = basis_data.set_index(multidex).molecule
+
+        ij_diff = pd.concat([mcol, bcol, diff_data], axis=1).query('basis!="MRA"')
+        f_ij.append(ij_diff)
+    ij_diff = pd.concat(f_ij)
+
     return ij_diff
+
+
+def get_basis_mol_eigen(df: pd.DataFrame, mol, basis):
+    ij = ['xx', 'yy', 'zz']
+    ij = pd.Series(ij, name='ij')
+    mol_s = pd.Series([mol for i in range(3)], name='molecule')
+    b_s = pd.Series([basis for i in range(3)], name='basis')
+
+    f_data = pd.DataFrame()
+    for o in df.omega.unique():
+        try:
+            emra, vmra = np.linalg.eigh(np.array(df.query(
+                'molecule==@mol & basis==@basis& omega==@o').alpha).reshape(3, 3))
+            om = pd.Series([o for i in range(3)], name='omega')
+            emra = pd.Series(emra, name='alpha')
+            f_data = pd.concat([f_data, pd.concat([mol_s, b_s, ij, om, emra], axis=1)])
+        except ValueError as v:
+            print(v, mol, basis)
+    return f_data
+
+
+def get_ij_eigen(df: pd.DataFrame):
+    all_eigen = pd.DataFrame()
+    for mol in df.molecule.unique():
+        for basis in df.basis.unique():
+            all_eigen = pd.concat([all_eigen, get_basis_mol_eigen(df, mol, basis)])
+    return all_eigen
 
 
 def make_detailed_df(data):
