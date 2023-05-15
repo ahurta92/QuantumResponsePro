@@ -123,6 +123,7 @@ class BasisMRADataCollection:
             self.detailed_ij_diff = make_detailed_df(self.ij_diff)
             self.detailed_energy_diff = make_detailed_df(self.energy_diff)
             self.detailed_eigen_diff = make_detailed_df(self.eigen_diff)
+            self.detailed_alpha_eigen = make_detailed_df(self.alpha_eigen)
         except Exception as e:
             print(e)
             pass

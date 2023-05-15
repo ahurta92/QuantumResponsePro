@@ -4,12 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7af674dd-5e62-47db-810a-177fa0259216" name="Changes" comment="I've reproduced all the plots">
-      <change afterPath="$PROJECT_DIR$/examples/mol_convergence_plots.py" afterDir="false" />
+    <list default="true" id="7af674dd-5e62-47db-810a-177fa0259216" name="Changes" comment="compare alpha components by eigenvalues">
+      <change afterPath="$PROJECT_DIR$/examples/convergence_analysis.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/examples/convergence_analysis_v2.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/examples/make_freq_iso_plots.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/examples/make_outlier_plots.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/examples/make_violin_strip_plots.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/examples/making_tables.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/mol_convergence_plots.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/mol_convergence_plots.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/examples/testing_analyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/testing_analyzer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataAnalyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataAnalyzer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataAssembler.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataAssembler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataCollection.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataCollection.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -65,7 +70,95 @@
       <recent name="$PROJECT_DIR$/src/quantumresponsepro" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.mol_convergence_plots">
+  <component name="RunManager" selected="Python.convergence_analysis_v2">
+    <configuration name="convergence_analysis" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="QuantumResponsePro" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/convergence_analysis.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="convergence_analysis_v2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="QuantumResponsePro" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/convergence_analysis_v2.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="make_freq_iso_plots_v2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="QuantumResponsePro" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/make_freq_iso_plots_v2.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="make_outlier_plots" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="QuantumResponsePro" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/make_outlier_plots.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="mol_convergence_plots" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="QuantumResponsePro" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -88,103 +181,20 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="run_dalton" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="QuantumResponsePro" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/run_dalton.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="testing_analyzer" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="QuantumResponsePro" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/testing_analyzer.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="testing_tabler" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="QuantumResponsePro" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/testing_tabler.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="true" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="pytest in mol_convergence_plots.py" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
-      <module name="QuantumResponsePro" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="_new_keywords" value="&quot;&quot;" />
-      <option name="_new_parameters" value="&quot;&quot;" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/examples/mol_convergence_plots.py&quot;" />
-      <option name="_new_targetType" value="&quot;PATH&quot;" />
-      <method v="2" />
-    </configuration>
     <list>
+      <item itemvalue="Python.convergence_analysis" />
+      <item itemvalue="Python.convergence_analysis_v2" />
       <item itemvalue="Python.mol_convergence_plots" />
-      <item itemvalue="Python.run_dalton" />
-      <item itemvalue="Python.testing_tabler" />
-      <item itemvalue="Python.testing_analyzer" />
-      <item itemvalue="Python tests.pytest in mol_convergence_plots.py" />
+      <item itemvalue="Python.make_freq_iso_plots_v2" />
+      <item itemvalue="Python.make_outlier_plots" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.convergence_analysis_v2" />
+        <item itemvalue="Python.convergence_analysis" />
+        <item itemvalue="Python.make_freq_iso_plots_v2" />
         <item itemvalue="Python.mol_convergence_plots" />
-        <item itemvalue="Python tests.pytest in mol_convergence_plots.py" />
-        <item itemvalue="Python.testing_analyzer" />
-        <item itemvalue="Python.testing_tabler" />
-        <item itemvalue="Python.run_dalton" />
+        <item itemvalue="Python.make_outlier_plots" />
       </list>
     </recent_temporary>
   </component>
@@ -207,7 +217,12 @@
       <workItem from="1681994914980" duration="18605000" />
       <workItem from="1682342376230" duration="32698000" />
       <workItem from="1682523339857" duration="21347000" />
-      <workItem from="1683033981469" duration="9343000" />
+      <workItem from="1683033981469" duration="29958000" />
+      <workItem from="1683218480328" duration="33269000" />
+      <workItem from="1683559726219" duration="31318000" />
+      <workItem from="1683738547637" duration="19356000" />
+      <workItem from="1684076992966" duration="233000" />
+      <workItem from="1684107483833" duration="9462000" />
     </task>
     <task id="LOCAL-00001" summary="using Path instead of bare strings for file management">
       <created>1681736371953</created>
@@ -335,7 +350,14 @@
       <option name="project" value="LOCAL" />
       <updated>1682438030007</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="compare alpha components by eigenvalues">
+      <created>1683128582323</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1683128582323</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -359,18 +381,37 @@
     <MESSAGE value="remove legacy code" />
     <MESSAGE value="fix indentation issue" />
     <MESSAGE value="I've reproduced all of the plots" />
-    <option name="LAST_COMMIT_MESSAGE" value="I've reproduced all of the plots" />
+    <MESSAGE value="compare alpha components by eigenvalues" />
+    <option name="LAST_COMMIT_MESSAGE" value="compare alpha components by eigenvalues" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/examples/testing_analyzer.py</url>
+          <line>34</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$convergence_analysis_v2.coverage" NAME="convergence_analysis_v2 Coverage Results" MODIFIED="1684185583617" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$testing_analyzer.coverage" NAME="testing_analyzer Coverage Results" MODIFIED="1683150167994" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$make_violin_strip_plots.coverage" NAME="make_violin_strip_plots Coverage Results" MODIFIED="1683816371545" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$make_freq_iso_plots.coverage" NAME="make_freq_iso_plots Coverage Results" MODIFIED="1683313378222" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$pytest_in_test_mol_convergence_graphs_py.coverage" NAME="pytest in mol_convergence_plots.py Coverage Results" MODIFIED="1683037766962" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$make_outlier_plots.coverage" NAME="make_outlier_plots Coverage Results" MODIFIED="1683839640778" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$run_dalton.coverage" NAME="run_dalton Coverage Results" MODIFIED="1682626537676" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$testing_tabler.coverage" NAME="testing_tabler Coverage Results" MODIFIED="1682439826793" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$mol_convergence_plots.coverage" NAME="mol_convergence_plots Coverage Results" MODIFIED="1684107544323" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$pytest_for_test_DatabaseGenerator_test_generate_frequeny_json.coverage" NAME="pytest for test_DatabaseGenerator.test_generate_frequeny_json Coverage Results" MODIFIED="1681834497169" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$setup_database.coverage" NAME="setup_database Coverage Results" MODIFIED="1682013625334" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/notebooks" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$run_get_dalton_frequency_json.coverage" NAME="run_get_dalton_frequency_json Coverage Results" MODIFIED="1682006690715" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/QuantumResponsePro$testing_analyzer.coverage" NAME="testing_analyzer Coverage Results" MODIFIED="1683037428794" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/QuantumResponsePro$pytest_in_test_mol_convergence_graphs_py.coverage" NAME="pytest in mol_convergence_plots.py Coverage Results" MODIFIED="1683037766962" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$make_freq_iso_plots_v2.coverage" NAME="make_freq_iso_plots_v2 Coverage Results" MODIFIED="1684160760930" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$pytest_for_test_DatabaseGenerator_test_get_dalton_dipole_json.coverage" NAME="pytest for test_DatabaseGenerator.test_get_dalton_dipole_json Coverage Results" MODIFIED="1681836393187" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
-    <SUITE FILE_PATH="coverage/QuantumResponsePro$run_dalton.coverage" NAME="run_dalton Coverage Results" MODIFIED="1682626537676" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$create_json_files.coverage" NAME="create_json_files Coverage Results" MODIFIED="1681824638071" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/QuantumResponsePro$testing_tabler.coverage" NAME="testing_tabler Coverage Results" MODIFIED="1682439826793" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/QuantumResponsePro$mol_convergence_plots.coverage" NAME="mol_convergence_plots Coverage Results" MODIFIED="1683062313564" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$making_tables.coverage" NAME="making_tables Coverage Results" MODIFIED="1683832376630" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$convergence_analysis.coverage" NAME="convergence_analysis Coverage Results" MODIFIED="1684176318311" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
   </component>
 </project>

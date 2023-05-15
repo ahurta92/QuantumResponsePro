@@ -5,6 +5,9 @@ import seaborn as sns
 from pathlib import Path
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import matplotlib.pyplot as plt
+import pandas as pd
+import json
+from quantumresponsepro.BasisMRADataAssembler import partition_molecule_list
 
 
 def set_ax_inset(g: sns.FacetGrid, mol, loc='upper right', yb=.01, iso_type='alpha',
@@ -42,39 +45,64 @@ paper_path = thesis_path
 database = BasisMRADataCollection(august)
 analyzer = BasisMRADataAnalyzer(database, .05, font_scale=1.5)
 
-first_row_path = paper_path.joinpath('molecules/first')
-second_row_path = paper_path.joinpath('molecules/second')
-fluorine_path = paper_path.joinpath('molecules/fluorine')
 
-vls = ['D', 'T', 'Q']
+def mol_valence_matrix(mol):
+    df = pd.DataFrame()
+    for V in ['D', 'T', 'Q']:
+        mol_valence = database.detailed_iso_diff.query(
+            'molecule==@mol & valence==@V & omega==8').copy()
+        mol_valence['abs_alpha'] = mol_valence.alpha.abs()
+        mol_valence = mol_valence.sort_values('abs_alpha').drop('abs_alpha', axis=1)
+        vcol = mol_valence['augmentation'].astype('str') + mol_valence['polarization'].astype(
+            'str').map({'CV': '+core', 'V': ''})
+        df[V] = vcol.reset_index(drop=True)
+    return df
 
-mol = "HOOH"
-omega = [0, 4, 8]
-mol = "Na2"
 
-from quantumresponsepro.BasisMRADataAssembler import partition_molecule_list
+def get_convergence_data(mol_list):
+    my_dict = {}
+    for mol in mol_list:
+        mol_key = mol_valence_matrix(mol).loc[0][1:].to_json()
+        if mol_key in my_dict:
+            my_dict[mol_key].append(mol)
+        else:
+            my_dict[mol_key] = [mol]
+
+    df = pd.DataFrame()
+    b = 0
+    for key, val in my_dict.items():
+        mol_series = pd.Series(json.loads(key))
+        mol_series['molecules'] = val
+        # mol_series=pd.DataFrame(key)
+        df[b] = mol_series
+        b += 1
+    return df
+
 
 first, second, fluorine = partition_molecule_list(database.molecules)
+conv_df = get_convergence_data(first)
+
+print(conv_df.loc['molecules'])
+
+# first_row_path = paper_path.joinpath('molecules/first')
+# second_row_path = paper_path.joinpath('molecules/second')
+# fluorine_path = paper_path.joinpath('molecules/fluorine')
+
+omega = [0, 4, 8]
+
 
 width = '30%'
 height = '20%'
-for mol in first:
+
+i = 2
+
+print(conv_df.iloc[:-1, i])
+for mol in conv_df.loc['molecules'][i]:
     g = analyzer.plot_iso_valence_convergence_v2(mol, 'alpha', ['D', 'T', 'Q', '5'], omega)
     set_ax_inset(g, mol, loc='lower right', yb=.10, iso_type='alpha', omega=omega, width=width,
                  height=height)
-    g.fig.savefig(first_row_path.joinpath(f'{mol}_alpha_converge.svg'), dpi=300)
-
-for mol in second:
-    g = analyzer.plot_iso_valence_convergence_v2(mol, 'alpha', ['D', 'T', 'Q', '5'], omega)
-    set_ax_inset(g, mol, loc='lower right', yb=.30, iso_type='alpha', omega=omega, width=width,
-                 height=height)
-    g.fig.savefig(second_row_path.joinpath(f'{mol}_alpha_converge.svg'), dpi=300)
-
-for mol in fluorine:
-    g = analyzer.plot_iso_valence_convergence_v2(mol, 'alpha', ['D', 'T', 'Q', '5'], omega)
-    set_ax_inset(g, mol, loc='lower right', yb=.10, iso_type='alpha', omega=omega, width=width,
-                 height=height)
-    g.fig.savefig(fluorine_path.joinpath(f'{mol}_alpha_converge.svg'), dpi=300)
+    g.fig.show()
+    # g.fig.savefig(first_row_path.joinpath(f'{mol}_alpha_converge.svg'), dpi=300)
 
 # g = analyzer.plot_iso_valence_convergence_v2(mol, 'alpha', ['D', 'T', 'Q', '5'], omega, sharey=True)
 # g.fig.show()
