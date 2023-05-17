@@ -12,6 +12,12 @@ import json
 from quantumresponsepro.BasisMRADataAssembler import partition_molecule_list
 from quantumresponsepro import Tabler
 from sklearn.cluster import AgglomerativeClustering
+from sklearn.cluster import DBSCAN
+from sklearn.cluster import KMeans
+from sklearn.mixture import GaussianMixture
+from sklearn.mixture import BayesianGaussianMixture
+from sklearn.metrics import silhouette_score
+
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
 import numpy as np
@@ -111,6 +117,118 @@ def cluster_basis_data(data, n_clusters=8):
     return data
 
 
+def inv_symlog(y, linthresh):
+    """Inverse of symmetric log transformation."""
+
+    return np.sign(y) * linthresh * (np.exp(np.abs(y)) - 1)
+
+
+def symlog(x, linthresh):
+    """Symmetric log transformation."""
+
+    return np.sign(x) * np.log1p(np.abs(x / linthresh))
+
+
+def cluster_gaussian_mixture_with_bic(data):
+    """
+    Bayesian Information Criterioon (BIC) for model selction amoung a finite set of models
+    Based on likelhood function and introduces a penalty term for complexity to avoid overfitting
+    In this context used to select the number of clusters
+    """
+    scaler = StandardScaler()
+    X = data.to_numpy()
+    threshold = 5e-2
+
+    X = symlog(X, threshold)
+
+    X = scaler.fit_transform(X)
+    # print(data_scaled)
+    print(X)
+
+    n_clusters_range = range(1, 10)
+    bic_scores = []
+    convergence_type = 'full'
+    tol = 1e-3
+
+    for n_clusters in n_clusters_range:
+        # Create and fit a Gaussian Mixture Model
+        gmm = GaussianMixture(n_components=n_clusters, covariance_type=convergence_type,
+                              random_state=42,
+                              tol=tol, n_init=10, )
+        gmm.fit(X)
+
+        # Compute BIC for the current clustering
+        bic_scores.append(gmm.bic(X))
+
+    # Find the number of clusters that gives the minimum BIC
+    optimal_clusters = n_clusters_range[np.argmin(bic_scores)]
+    # optimal_clusters = 8
+    print(f"Optimal number of clusters: {optimal_clusters}")
+
+    plt.plot(n_clusters_range, bic_scores, marker='o')
+    plt.xlabel('Number of clusters')
+    plt.ylabel('BIC score')
+    plt.title('BIC score per number of clusters')
+    plt.show()
+
+    # Create an AgglomerativeClustering instance with n_clusters
+    # gmm = BayesianGaussianMixture(n_components=optimal_clusters,
+    #                               random_state=None,
+    #                               covariance_type='full',
+    #                               tol=1e-6, )
+    gmm = GaussianMixture(n_components=optimal_clusters,
+                          covariance_type=convergence_type,
+                          random_state=42,
+                          warm_start=True,
+                          reg_covar=1e-4,
+                          n_init=10,
+                          tol=tol, )
+    gmm.fit(X)
+
+    # Fit the model to your data and get the cluster assignments in one step
+    labels = gmm.fit_predict(X)
+    score = silhouette_score(X, labels, metric='euclidean')
+    data['cluster'] = labels
+    print("silhouette score", score)
+
+    average_vectors = []
+    for i in range(optimal_clusters):
+        cluster_points = X[labels == i]
+        average_vector = np.mean(cluster_points, axis=0)
+        average_vectors.append(average_vector)
+
+    avg_df = pd.DataFrame(average_vectors, columns=data.columns[:-1])
+    avg_df['mean'] = avg_df.mean(axis=1)
+    avg_df = avg_df.sort_values('mean', ascending=False)
+    avg_df.drop('mean', axis=1, inplace=True)
+
+    sorted_index = avg_df.index
+    cluster_map = {sorted_index[i]: i for i in range(len(sorted_index))}
+    avg_df = avg_df.reset_index(drop=True)
+    # avg_df = avg_df.apply(lambda x: inv_symlog(x, threshold))
+    avg_df = pd.DataFrame(scaler.inverse_transform(avg_df), columns=avg_df.columns,
+                          index=avg_df.index)
+    print(cluster_map)
+    data['cluster'] = data['cluster'].map(cluster_map)
+    # avg_df = np.exp(avg_df) + xmin
+
+    # Generate a line plot
+    plt.figure(figsize=(10, 6))  # Adjust the size of the plot as needed
+    for i, row in avg_df.iterrows():
+        plt.plot(row, label=f'Cluster {i}', marker='o')
+    # plt.yscale('log')
+    plt.axhline(y=0, color='black', linestyle='--', linewidth=1)  # Add a horizontal line at 0
+    plt.xlabel('Basis set')  # Label for the x-axis
+    plt.ylabel('Average basis set error')  # Label for the y-axis
+    plt.title('Average basis set errors for each cluster')  # Title of the plot
+    plt.legend()  # Show the legend
+    plt.xticks(rotation=90)  # Rotate the x-axis labels for better visibility if needed
+    plt.tight_layout()  # Adjust the layout for better visibility if needed
+    plt.show()
+
+    return data, avg_df
+
+
 first_row_path = paper_path.joinpath('molecules/first')
 second_row_path = paper_path.joinpath('molecules/second')
 fluorine_path = paper_path.joinpath('molecules/fluorine')
@@ -128,37 +246,68 @@ height = '20%'
 i = 2
 mapping = {
     'aug': 1,
-    'aug+core': 2,
-    'd-aug': 3,
-    'd-aug+core': 4,
+    'd-aug': -1,
+    'aug+core': 1.25,
+    'd-aug+core': -1.25,
 }
 df = pd.DataFrame()
 for mol in database.molecules:
     df[mol] = mol_valence_matrix(mol).stack().map(mapping)
 df.reset_index(drop=True, inplace=True)
 
-# data = tabler.get_basis_data()[0][DZ].abs().dropna()
+DZ = [
+    'aug-cc-pVDZ', 'd-aug-cc-pVDZ',
+    'aug-cc-pCVTZ', 'd-aug-cc-pCVTZ',
+    'aug-cc-pVQZ', 'd-aug-cc-pVQZ',
+    'aug-cc-pCVQZ', 'd-aug-cc-pCVQZ',
+]
+
+data = tabler.get_basis_data()[0].dropna()
 # data_first = data.query('molecule in @second')
 # data_first = data_first.query('molecule != "Ne"')
-X = cluster_basis_data(df.T, n_clusters=8)
-print(X)
+# X = cluster_basis_data(df.T, n_clusters=4)
+# X = cluster_basis_data_DBSCAN(df.T, eps=0.5, min_samples=5)
+X, avg_vectors = cluster_gaussian_mixture_with_bic(data)
 
+avg_vectors.plot()
+
+cluster_path = molecules_path.joinpath(f'clusters')
+if not cluster_path.exists():
+    cluster_path.mkdir()
+else:
+    shutil.rmtree(cluster_path)
+    cluster_path.mkdir()
+
+grouped = X.groupby('cluster')
+
+for cluster_id, group in grouped:
+    cluster_mol_path = cluster_path.joinpath(f'cluster_{cluster_id}_molecules.txt')
+    with open(cluster_mol_path, 'w') as f:
+        for molecule in group.index:
+            f.write(f"{molecule}\n")
+
+iso_diff = database.detailed_iso_diff.copy()
+iso_diff['cluster'] = iso_diff['molecule'].map(X['cluster'])
+g = analyzer.freq_iso_plot_cluster(iso_diff, ['D', 'T', 'Q'], 'alpha', 'all', 'row', omegas=omega,
+                                   pal='colorblind',
+                                   )
+freq_inset(g, iso_diff, omega=[8], loc='lower right', iso_type='alpha', width='50%', height='30%')
+g.fig.show()
 for cluster in X['cluster'].unique():
     mol_list = X.query('cluster==@cluster').index
-    cluster_path = molecules_path.joinpath(f'cluster_{cluster}')
-    if not cluster_path.exists():
-        cluster_path.mkdir()
+    cluster_path_i = cluster_path.joinpath(f'cluster_{cluster}')
+    if not cluster_path_i.exists():
+        cluster_path_i.mkdir()
     else:
         shutil.rmtree(cluster_path)
-        cluster_path.mkdir()
+        cluster_path_i.mkdir()
 
     for mol in mol_list:
         g = analyzer.plot_iso_valence_convergence_v2(mol, 'alpha', ['D', 'T', 'Q', '5'], omega)
-        set_ax_inset(g, mol, loc='lower right', yb=.10, iso_type='alpha', omega=omega, width=width,
+        set_ax_inset(g, mol, loc='lower right', yb=.10, iso_type='alpha', width=width,
                      height=height)
-        g.fig.savefig(cluster_path.joinpath(f'{mol}_alpha_converge.svg'), dpi=300)
+        g.fig.savefig(cluster_path_i.joinpath(f'{mol}_alpha_converge.svg'), dpi=300)
 
-# g = analyzer.plot_iso_valence_convergence_v2(mol, 'alpha', ['D', 'T', 'Q', '5'], omega, sharey=True)
 # g.fig.show()
 #
 # g = analyzer.plot_iso_valence_convergence(mol, 'gamma', ['D', 'T', 'Q', '5'], omega, sharey=True)

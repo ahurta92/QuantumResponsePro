@@ -268,6 +268,62 @@ class BasisMRADataAnalyzer:
         ax.set(xlabel=None)
         ax.set(ylabel=None)
 
+    def cluster_iso_plot_ax(self, iso_diff_detailed, ax, v_level, b_type, iso_type,
+                            omegas=[0, 1, 2, 3, 4, 5, 6, 7, 8], border=0.0,
+                            pal='colorblind'):
+
+        data = iso_diff_detailed.query('omega.isin(@omegas) & valence==@v_level & Type==@b_type')
+        sns.stripplot(x="omega", y=iso_type, data=data, dodge=True, ax=ax, palette=pal,
+                      hue='cluster', size=2.0, jitter=True, legend=False)
+
+        ax.axhline(y=0.0, color='k', ls='--', alpha=.5)
+        ax.axhline(y=-self.mra_ref, color='k', ls='--', alpha=.5)
+        ax.axhline(y=self.mra_ref, color='k', ls='--', alpha=.5)
+
+        ax.set(xlabel=None)
+        ax.set(ylabel=None)
+
+    def freq_iso_plot_cluster(self, iso_diff_detailed, v_level, iso_type, mol_set="all",
+                              sharey=False,
+                              omegas=[0, 1, 2, 3, 4, 5, 6, 7, 8], border=0.0,
+                              pal='colorblind'):
+        if mol_set == "all":
+            data = iso_diff_detailed.query('omega.isin(@omegas) & valence.isin(@v_level)')
+        mdata = data.copy()
+        mdata['valence'] = data.valence.cat.remove_unused_categories()
+        mdata['Type'] = data.Type.cat.remove_unused_categories()
+        sns.set(rc={"xtick.bottom": True, "ytick.left": True}, font_scale=1.5)
+        g = sns.FacetGrid(data=mdata, col='Type', row='valence', margin_titles=True,
+                          sharex=True, sharey=sharey, despine=False, legend_out=True,
+                          palette=pal)
+
+        g.map_dataframe(sns.stripplot, x="omega", y=iso_type, hue="cluster", dodge=True,
+                        size=4.25, jitter=True, legend="full",
+                        palette=pal, )
+
+        g.add_legend(title=None, ncol=3, loc='lower center', frameon=False, borderaxespad=0.0, )
+        # sns.move_legend(g, title=None, ncol=1, loc='upper right', frameon=False,
+        #                bbox_to_anchor=(1.0, 0.95), borderaxespad=0.0, )
+        g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0).tight_layout()
+        g.set_axis_labels(r"$\omega_i$", "Percent Error")
+        g.figure.subplots_adjust(wspace=0.00, hspace=0.0)
+        g.set_titles(row_template="{row_name}", col_template="{col_name}")
+        if border != 0.0:
+            g.map(plt.axhline, y=border, color='black', dashes=(2, 1), zorder=0)
+            g.map(plt.axhline, y=-border, color='black', dashes=(2, 1), zorder=0)
+        if iso_type == 'alpha':
+            title = r'Error in $\alpha(\omega)$'
+        else:
+            title = r'Error in $\gamma(\omega)$'
+
+        for ax in g.axes.flat:
+            for spine in ax.spines.values():
+                spine.set_linewidth(1)
+                spine.set_color('black')
+        plt.subplots_adjust(right=0.97, bottom=0.12)
+        g.figure.subplots_adjust(wspace=0.00, hspace=0.0)
+        return g
+
     def freq_iso_plot_v2(self, v_level, iso_type, mol_set="all", sharey=False,
                          omegas=[0, 1, 2, 3, 4, 5, 6, 7, 8], border=0.0,
                          pal='colorblind'):
@@ -418,8 +474,9 @@ class BasisMRADataAnalyzer:
 
     def plot_iso_valence_convergence_inset(self, ax, mol, iso_type, valence, omega, sharey=False):
         data = self.data_collection.detailed_iso_diff.query(
-            'molecule==@mol & omega.isin(@omega) & valence==@valence')
+            'molecule==@mol & omega.isin(@omega) & valence==@valence').copy()
 
+        data[iso_type] = data[iso_type].abs()
         sns.lineplot(data=data,
                      x='valence',
                      hue='Type',
@@ -605,7 +662,7 @@ class Tabler:
         self.thresh = thresh
 
     def get_basis_data(self):
-        df = self.data.iso_diff_data.query('omega==0')
+        df = self.data.iso_diff_data.query('omega==8')
         alphab = {}
         gammab = {}
         for b in self.basis_list:
