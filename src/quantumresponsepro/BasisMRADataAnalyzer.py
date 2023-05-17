@@ -305,6 +305,10 @@ class BasisMRADataAnalyzer:
         # sns.move_legend(g, title=None, ncol=1, loc='upper right', frameon=False,
         #                bbox_to_anchor=(1.0, 0.95), borderaxespad=0.0, )
         g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0).tight_layout()
+        g.map(plt.axhline, y=self.mra_ref, color='k', dashes=(2, 1), zorder=0).tight_layout()
+        g.map(plt.axhline, y=-self.mra_ref, color='k', dashes=(2, 1), zorder=0).tight_layout()
+        g.map(plt.axhline, y=1, color='k', dashes=(2, 1), zorder=0).tight_layout()
+        g.map(plt.axhline, y=-1, color='k', dashes=(2, 1), zorder=0).tight_layout()
         g.set_axis_labels(r"$\omega_i$", "Percent Error")
         g.figure.subplots_adjust(wspace=0.00, hspace=0.0)
         g.set_titles(row_template="{row_name}", col_template="{col_name}")

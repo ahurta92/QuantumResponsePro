@@ -23,6 +23,60 @@ from sklearn.preprocessing import StandardScaler
 import numpy as np
 
 
+def set_face_color(ax_dict):
+    pal2 = sns.color_palette("coolwarm_r", 4).as_hex()
+    p2 = [pal2[1], pal2[0], pal2[2], pal2[3]]
+    light_pal = sns.color_palette(p2)
+    b = 0
+    for i, ax in ax_dict.items():
+        back_color = light_pal[b % 4]
+        back_color = back_color + (0.3,)
+        ax.set_facecolor(back_color)
+
+        b += 1
+
+
+def freq_inset(g: sns.FacetGrid, data, loc='upper right', ylims=[3, .8, .18],
+               iso_type='alpha',
+               omega=[0, 4, 8],
+               width='80%', height='50%'):
+    b = 0
+    ax_dict = g.axes_dict
+    ylims = [3, .8, .18]
+    ylims = dict(zip(['D', 'T', 'Q'], ylims))
+    print(ylims)
+
+    for i, ax in ax_dict.items():
+        vlevel = i[0]
+        btype = i[1]
+        print(vlevel)
+        yb = ylims[vlevel]
+        if i[1] == 'd-aug-cc-pCVnZ' or i[1] == 'd-aug-cc-pVnZ' or (
+                (vlevel == 'Q') and (i[1] == 'aug-cc-pCVnZ' or btype == 'aug-cc-pVnZ')):
+            # Create the inset_axes instance
+            ax_inset = inset_axes(ax, width=width, height=height, loc=loc)
+
+            # Plot the same data in the inset_axes but zoom in on the specified range
+            zoom_range = (1.50, 2.50)
+            # ax_inset.set_xlim(*zoom_range)
+            analyzer.cluster_iso_plot_ax(data, ax_inset, v_level=vlevel, b_type=btype,
+                                         iso_type=iso_type,
+                                         omegas=omega,
+                                         pal='colorblind', )
+            # ax_inset.set_title('Zoomed Inset')
+
+            # Optionally, draw a rectangle in the main plot to indicate the zoomed area
+            rect = plt.Rectangle((zoom_range[0], -yb), zoom_range[1] - zoom_range[0], 2 * yb, lw=1,
+                                 edgecolor='red',
+                                 linestyle='--', facecolor='none')
+            ax.add_patch(rect)
+            ax_inset.set_ylim(-yb, yb)
+            b += 1
+        else:
+            ax.axhline(yb, color='k', linestyle='--', linewidth=1)
+            ax.axhline(yb, color='k', linestyle='--', linewidth=1)
+
+
 def set_ax_inset(g: sns.FacetGrid, mol, loc='upper right', yb=.01, iso_type='alpha',
                  omega=[0, 4, 8],
                  vlevel=['T', 'Q', '5'],
@@ -192,17 +246,25 @@ def cluster_gaussian_mixture_with_bic(data):
     print("silhouette score", score)
 
     average_vectors = []
+    std_vectors = []
     for i in range(optimal_clusters):
         cluster_points = X[labels == i]
         average_vector = np.mean(cluster_points, axis=0)
+        std_vector = np.std(cluster_points, axis=0)
         average_vectors.append(average_vector)
+        std_vectors.append(std_vector)
 
     avg_df = pd.DataFrame(average_vectors, columns=data.columns[:-1])
     avg_df['mean'] = avg_df.mean(axis=1)
     avg_df = avg_df.sort_values('mean', ascending=False)
     avg_df.drop('mean', axis=1, inplace=True)
 
+    std_df = pd.DataFrame(std_vectors, columns=data.columns[:-1])
+
     sorted_index = avg_df.index
+    std_df = std_df.reindex(sorted_index)
+    std_df.sort_index(inplace=True)
+
     cluster_map = {sorted_index[i]: i for i in range(len(sorted_index))}
     avg_df = avg_df.reset_index(drop=True)
     # avg_df = avg_df.apply(lambda x: inv_symlog(x, threshold))
@@ -292,7 +354,35 @@ g = analyzer.freq_iso_plot_cluster(iso_diff, ['D', 'T', 'Q'], 'alpha', 'all', 'r
                                    pal='colorblind',
                                    )
 freq_inset(g, iso_diff, omega=[8], loc='lower right', iso_type='alpha', width='50%', height='30%')
+set_face_color(g.axes_dict)
 g.fig.show()
+# Generate a line plot
+basis_order = [
+    'aug-cc-pVDZ',
+    'aug-cc-pCVDZ',
+    'd-aug-cc-pVDZ',
+    'd-aug-cc-pCVDZ',
+    'aug-cc-pVTZ',
+    'aug-cc-pCVTZ',
+    'd-aug-cc-pVTZ',
+    'd-aug-cc-pCVTZ',
+    'aug-cc-pVQZ',
+    'aug-cc-pCVQZ',
+]
+rdata = iso_diff.query('basis==@basis_order')
+sns.relplot(data=rdata, x=rdata.basis, y='alpha', hue='cluster', kind='line', errorbar='sd',
+            palette='colorblind', height=10, aspect=1.5)
+# plt.yscale('log')
+plt.axhline(y=0, color='black', linestyle='--', linewidth=1)  # Add a horizontal line at 0
+plt.xlabel('Basis set')  # Label for the x-axis
+plt.ylabel('Average basis set error')  # Label for the y-axis
+plt.yscale('symlog')  # Set the y-axis to be symlog
+plt.title('Average basis set errors for each cluster')  # Title of the plot
+plt.legend()  # Show the legend
+plt.xticks(rotation=90)  # Rotate the x-axis labels for better visibility if needed
+plt.tight_layout()  # Adjust the layout for better visibility if needed
+plt.show()
+
 for cluster in X['cluster'].unique():
     mol_list = X.query('cluster==@cluster').index
     cluster_path_i = cluster_path.joinpath(f'cluster_{cluster}')
