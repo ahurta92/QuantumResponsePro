@@ -1,6 +1,9 @@
 from quantumresponsepro import BasisMRADataCollection
 from quantumresponsepro import BasisMRADataAnalyzer
 import seaborn as sns
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.ticker import Locator
 
 from pathlib import Path
 import matplotlib
@@ -11,9 +14,11 @@ august = Path('/mnt/data/madness_data/post_watoc/august')
 paper_path = Path('/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/Figures_v2')
 thesis_path = Path('/home/adrianhurtado/projects/writing/thesis2023/Figures_v2')
 paper_path = Path('/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/Figures_v2')
-#paper_path = thesis_path
+tromso_poster_path = Path('/home/adrianhurtado/projects/writing/tromso_poster/figures')
+paper_path = tromso_poster_path
 database = BasisMRADataCollection(august)
 analyzer = BasisMRADataAnalyzer(database, .05, font_scale=3)
+sns.set_context('poster')
 
 
 def set_ax_inset(g: sns.FacetGrid, loc='upper right', iso_type='alpha', TZ_lim=None,
@@ -72,16 +77,20 @@ e_fig.fig.show()
 e_fig.fig.savefig(paper_path.joinpath('energy.svg'), dpi=300)
 
 a_fig = analyzer.plot_violin_strip('response', 'alpha', ['D', 'T', 'Q'], sharey=True)
-set_ax_inset(a_fig, loc='lower right', TZ_lim=(2, '40%', '70%'), iso_type='alpha',
-             calc_type='response',
-             height='55%',
-             width='70%')
+for ax in a_fig.axes_dict.values():
+    ax.set_yscale('symlog', linthresh=1e-2, linscale=.50, base=10)
+# set_ax_inset(a_fig, loc='lower right', TZ_lim=(2, '40%', '70%'), iso_type='alpha',
+#             calc_type='response',
+#             height='55%',
+#             width='70%')
+
 
 a_fig.fig.show()
 a_fig.savefig(paper_path.joinpath('alpha.svg'), dpi=300)
 
 e_fig = analyzer.plot_violin_strip('response', 'gamma', ['D', 'T', 'Q'], sharey=True)
-set_ax_inset(e_fig, loc='upper right', iso_type='gamma', calc_type='response',
-             height='80%', width='50%', )
+# set_ax_inset(e_fig, loc='upper right', iso_type='gamma', calc_type='response',
+#             height='80%', width='50%', )
+e_fig.set(yscale='symlog')
 e_fig.fig.show()
 e_fig.fig.savefig(paper_path.joinpath('gamma.svg'), dpi=300)

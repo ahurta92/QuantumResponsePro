@@ -110,7 +110,7 @@ class BasisMRADataAnalyzer:
         p2 = [pal2[1], pal2[0], pal2[2], pal2[3]]
         light_pal = sns.color_palette(p2)
         facet_kws = dict(sharey=sharey, sharex=sharex)
-        aspect = 0.3
+        aspect = .35
 
         g = sns.catplot(
             aspect=aspect,
@@ -124,33 +124,41 @@ class BasisMRADataAnalyzer:
             dodge=True,
             alpha=.7,
             palette=pal,
-            legend_out=False,
-            legend=False
+            legend_out=True,
+            legend=True
         )
-        g.map_dataframe(sns.violinplot,
-                        col="valence",
-                        col_order=valence_level,
-                        y=iso_type,
-                        hue="Type",
-                        palette=light_pal,
-                        scale='count',
-                        cut=0,
-                        inner=None,
-                        alpha=0.5,
-                        saturation=.8,
-                        legend_out=False,
-                        dodge=True)
+        if iso_type == 'alpha':
+            cut = 0.1
+        else:
+            cut = 0
+        # g.map_dataframe(sns.violinplot,
+        #                 col="valence",
+        #                 col_order=valence_level,
+        #                 y=iso_type,
+        #                 hue="Type",
+        #                 palette=light_pal,
+        #                 scale='width',
+        #                 gridsize=1000,
+        #                 cut=cut,
+        #                 inner=None,
+        #                 alpha=0.5,
+        #                 saturation=.8,
+        #                 legend_out=False,
+        #                 dodge=True)
         j = 0;
-        g.add_legend(title=None, ncol=4, loc='lower center', frameon=False, borderaxespad=0.0, )
-        # sns.move_legend(g, title=None, ncol=1, loc='upper right', frameon=False,
-        #                bbox_to_anchor=(1.0, 0.95), borderaxespad=0.0, )
+        g.map(plt.axhline, y=0.0, color='k', ls='--', alpha=.5)
+        g.map(plt.axhline, y=self.mra_ref, color='green', ls='--', alpha=.5)
+        g.map(plt.axhline, y=-self.mra_ref, color='green', ls='--', alpha=.5)
+
+        # g.add_legend(title=None, ncol=4, loc='lower center', frameon=False, borderaxespad=0.0, )
+        sns.move_legend(g, title=None, ncol=2, loc='lower center', frameon=False,
+                        borderaxespad=0.0, )
         g.tight_layout()
         if calculation_type == 'response':
             g.set_axis_labels("", "Percent Error")
         else:
             g.set_axis_labels("", "Energy Error (a.u.)")
-        g.map(plt.axhline, y=0, color='k', linewidth=3.0, alpha=.8, dashes=(2, 1)).set_titles(
-            "{col_name}Z")
+        g.set_titles("{col_name}Z")
         plt.subplots_adjust(right=0.97, bottom=0.20)
         g.figure.subplots_adjust(wspace=0.00, hspace=0.0)
         for ax in g.axes.flat:
@@ -274,57 +282,49 @@ class BasisMRADataAnalyzer:
 
         data = iso_diff_detailed.query('omega.isin(@omegas) & valence==@v_level & Type==@b_type')
         sns.stripplot(x="omega", y=iso_type, data=data, dodge=True, ax=ax, palette=pal,
-                      hue='cluster', size=2.0, jitter=True, legend=False)
+                      hue='cluster', size=4.0, jitter=True, legend=False)
 
         ax.axhline(y=0.0, color='k', ls='--', alpha=.5)
-        ax.axhline(y=-self.mra_ref, color='k', ls='--', alpha=.5)
-        ax.axhline(y=self.mra_ref, color='k', ls='--', alpha=.5)
 
         ax.set(xlabel=None)
         ax.set(ylabel=None)
 
-    def freq_iso_plot_cluster(self, iso_diff_detailed, v_level, iso_type, mol_set="all",
+    def freq_iso_plot_cluster(self, iso_diff_detailed, v_level, iso_type,
                               sharey=False,
                               omegas=[0, 1, 2, 3, 4, 5, 6, 7, 8], border=0.0,
                               pal='colorblind'):
-        if mol_set == "all":
-            data = iso_diff_detailed.query('omega.isin(@omegas) & valence.isin(@v_level)')
+        data = iso_diff_detailed.query('omega.isin(@omegas) & valence.isin(@v_level)').copy()
+        mapping = {i: i + 1 for i in range(len(data.cluster.unique()))}
+        data['cluster'] = data['cluster'].map(mapping)
+        data['cluster'] = data['cluster'].astype('category')
         mdata = data.copy()
         mdata['valence'] = data.valence.cat.remove_unused_categories()
         mdata['Type'] = data.Type.cat.remove_unused_categories()
-        sns.set(rc={"xtick.bottom": True, "ytick.left": True}, font_scale=1.5)
-        g = sns.FacetGrid(data=mdata, col='Type', row='valence', margin_titles=True,
+        # sns.set(rc={"xtick.bottom": True, "ytick.left": True}, font_scale=1.5)
+        g = sns.FacetGrid(data=mdata, col='valence', row='Type', margin_titles=True,
+                          aspect=0.50,
                           sharex=True, sharey=sharey, despine=False, legend_out=True,
                           palette=pal)
 
         g.map_dataframe(sns.stripplot, x="omega", y=iso_type, hue="cluster", dodge=True,
-                        size=4.25, jitter=True, legend="full",
+                        jitter=True, legend="full",
                         palette=pal, )
 
-        g.add_legend(title=None, ncol=3, loc='lower center', frameon=False, borderaxespad=0.0, )
-        # sns.move_legend(g, title=None, ncol=1, loc='upper right', frameon=False,
-        #                bbox_to_anchor=(1.0, 0.95), borderaxespad=0.0, )
+        g.add_legend(title=None, ncol=len(data.cluster.unique()), loc='upper center',
+                     frameon=False,
+                     borderaxespad=0.0, )
         g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0).tight_layout()
-        g.map(plt.axhline, y=self.mra_ref, color='k', dashes=(2, 1), zorder=0).tight_layout()
-        g.map(plt.axhline, y=-self.mra_ref, color='k', dashes=(2, 1), zorder=0).tight_layout()
-        g.map(plt.axhline, y=1, color='k', dashes=(2, 1), zorder=0).tight_layout()
-        g.map(plt.axhline, y=-1, color='k', dashes=(2, 1), zorder=0).tight_layout()
-        g.set_axis_labels(r"$\omega_i$", "Percent Error")
+        g.map(plt.axhline, y=self.mra_ref, color='green', dashes=(1, 1), zorder=0)
+        g.map(plt.axhline, y=-self.mra_ref, color='green', dashes=(1, 1), zorder=0)
+        g.set_axis_labels(r"", "Percent Error")
         g.figure.subplots_adjust(wspace=0.00, hspace=0.0)
         g.set_titles(row_template="{row_name}", col_template="{col_name}")
-        if border != 0.0:
-            g.map(plt.axhline, y=border, color='black', dashes=(2, 1), zorder=0)
-            g.map(plt.axhline, y=-border, color='black', dashes=(2, 1), zorder=0)
-        if iso_type == 'alpha':
-            title = r'Error in $\alpha(\omega)$'
-        else:
-            title = r'Error in $\gamma(\omega)$'
 
         for ax in g.axes.flat:
             for spine in ax.spines.values():
                 spine.set_linewidth(1)
                 spine.set_color('black')
-        plt.subplots_adjust(right=0.97, bottom=0.12)
+        plt.subplots_adjust(right=0.95, bottom=0.05, top=0.95)
         g.figure.subplots_adjust(wspace=0.00, hspace=0.0)
         return g
 
@@ -337,7 +337,6 @@ class BasisMRADataAnalyzer:
         mdata = data.copy()
         mdata['valence'] = data.valence.cat.remove_unused_categories()
         mdata['Type'] = data.Type.cat.remove_unused_categories()
-        sns.set(rc={"xtick.bottom": True, "ytick.left": True}, font_scale=1.5)
         g = sns.FacetGrid(data=mdata, col='Type', row='valence', margin_titles=True,
                           sharex=True, sharey=sharey, despine=False, legend_out=True,
                           palette=pal)
@@ -346,10 +345,16 @@ class BasisMRADataAnalyzer:
                         size=4.25, jitter=True, legend="full",
                         palette=pal, )
 
-        g.add_legend(title=None, ncol=3, loc='lower center', frameon=False, borderaxespad=0.0, )
+        g.add_legend(title=None, ncol=3, loc='upper center', frameon=False, borderaxespad=0.0, )
         # sns.move_legend(g, title=None, ncol=1, loc='upper right', frameon=False,
         #                bbox_to_anchor=(1.0, 0.95), borderaxespad=0.0, )
         g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0).tight_layout()
+        g.map(plt.axhline, y=1, color='red', dashes=(2, 1), zorder=0).tight_layout()
+        g.map(plt.axhline, y=-1, color='red', dashes=(2, 1), zorder=0).tight_layout()
+        g.map(plt.axhline, y=self.mra_ref, color='k', dashes=(2, 1), zorder=0,
+              alpha=0.5).tight_layout()
+        g.map(plt.axhline, y=-self.mra_ref, color='k', dashes=(2, 1), zorder=0,
+              alpha=0.5).tight_layout()
         g.set_axis_labels(r"$\omega_i$", "Percent Error")
         g.figure.subplots_adjust(wspace=0.00, hspace=0.0)
         g.set_titles(row_template="{row_name}", col_template="{col_name}")
@@ -387,8 +392,6 @@ class BasisMRADataAnalyzer:
             data = iso_diff_detailed.query(
                 'omega.isin(@omegas) & valence==@v_level & mol_system.isin(@mol_set)')
         mdata = data.query('valence==@v_level')
-        sns.set(rc={"xtick.bottom": True, "ytick.left": True})
-        sns.set(font_scale=2.0)
 
         if mol_set == 'all':
             if pC == True:
@@ -500,21 +503,30 @@ class BasisMRADataAnalyzer:
         data = self.data_collection.detailed_iso_diff.query(
             'molecule==@mol & omega.isin(@omega) & valence==@valence')
         facet_kws = {"sharey": sharey, 'despine': True, }
+        with sns.plotting_context("notebook"):
+            f = sns.relplot(data=data,
+                            x='valence',
+                            kind='line',
+                            style='Type',
+                            hue='Type',
+                            height=5,
+                            facet_kws=facet_kws,
+                            legend=True,
+                            y=iso_type)
 
-        f = sns.relplot(data=data,
-                        x='valence',
-                        kind='line',
-                        style='Type',
-                        hue='Type',
-                        facet_kws=facet_kws,
-                        y=iso_type)
-        f.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0)
-        f.set_titles("{col_name}-cc-p(C)VnZ", x=.7).tight_layout(w_pad=0)
-        f.fig.suptitle(r'$\Delta\{}(\omega)$ in {}'.format(iso_type, mol))
-        f.set_xlabels('Valence [n]')
-        f.set_ylabels('Percent Error')
-        f.tight_layout()
-        return f
+            sns.move_legend(f, title=None, ncol=1, loc='center right', frameon=False,
+                            borderaxespad=0.0, )
+            f.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0)
+            f.set_titles("{col_name}-cc-p(C)VnZ", x=.7).tight_layout(w_pad=0)
+            f.fig.suptitle(r'$\Delta\{}(\omega)$ in {}'.format(iso_type, mol))
+            f.set_xlabels('Valence [n]')
+            f.set_ylabels('Percent Error')
+            f.ax.set_yscale('symlog', linthresh=1e-2, linscale=.25, base=10,
+                            subs=[1, 2, 3, 4, 5, 6, 7, 8, 9])
+            f.map(plt.axhline, y=-self.mra_ref, color='green', dashes=(2, 1), zorder=0)
+            f.map(plt.axhline, y=self.mra_ref, color='green', dashes=(2, 1), zorder=0)
+            f.tight_layout()
+            return f
 
     def plot_iso_valence_convergence(self, mol, iso_type, valence, omega, sharey=False):
         data = self.data_collection.detailed_iso_diff.query(
@@ -545,6 +557,7 @@ class BasisMRADataAnalyzer:
                         hue='ij',
                         col='augmentation',
                         style='polarization',
+                        style_order=['CV', 'V'],
                         kind='line',
                         markers=True,
                         facet_kws={'sharey': sharey},
@@ -559,6 +572,7 @@ class BasisMRADataAnalyzer:
         g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0).set_axis_labels("Valence",
                                                                                     "Error").set_titles(
             "{col_name}-cc-pV(C)nZ").tight_layout(w_pad=0)
+        g.set(yscale='symlog')
         g.fig.suptitle(mol)
         return g
 
