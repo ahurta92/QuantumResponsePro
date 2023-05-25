@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7af674dd-5e62-47db-810a-177fa0259216" name="Changes" comment="average cluster with error bars">
+    <list default="true" id="7af674dd-5e62-47db-810a-177fa0259216" name="Changes" comment="Clustering without PCA">
       <change afterPath="$PROJECT_DIR$/.idea/csv-editor.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/examples/cluster_by_alpha_v2.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/examples/cluster_by_gamma.py" afterDir="false" />
@@ -232,7 +232,7 @@
       <workItem from="1684240563855" duration="3445000" />
       <workItem from="1684248691724" duration="68976000" />
       <workItem from="1684587858236" duration="33617000" />
-      <workItem from="1684785974101" duration="49018000" />
+      <workItem from="1684785974101" duration="49562000" />
     </task>
     <task id="LOCAL-00001" summary="using Path instead of bare strings for file management">
       <created>1681736371953</created>
@@ -388,7 +388,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684347721143</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="Clustering without PCA">
+      <created>1685028422563</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1685028422563</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -416,7 +423,8 @@
     <MESSAGE value="cluster my lovely molecules" />
     <MESSAGE value="consistent cluster" />
     <MESSAGE value="average cluster with error bars" />
-    <option name="LAST_COMMIT_MESSAGE" value="average cluster with error bars" />
+    <MESSAGE value="Clustering without PCA" />
+    <option name="LAST_COMMIT_MESSAGE" value="Clustering without PCA" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
