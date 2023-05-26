@@ -292,7 +292,7 @@ class BasisMRADataAnalyzer:
     def freq_iso_plot_cluster(self, iso_diff_detailed, v_level, iso_type,
                               sharey=False,
                               omegas=[0, 1, 2, 3, 4, 5, 6, 7, 8], border=0.0,
-                              pal='colorblind'):
+                              pal='colorblind', aspect=0.50):
         data = iso_diff_detailed.query('omega.isin(@omegas) & valence.isin(@v_level)').copy()
         mapping = {i: i + 1 for i in range(len(data.cluster.unique()))}
         data['cluster'] = data['cluster'].map(mapping)
@@ -302,7 +302,7 @@ class BasisMRADataAnalyzer:
         mdata['Type'] = data.Type.cat.remove_unused_categories()
         # sns.set(rc={"xtick.bottom": True, "ytick.left": True}, font_scale=1.5)
         g = sns.FacetGrid(data=mdata, col='valence', row='Type', margin_titles=True,
-                          aspect=0.50,
+                          aspect=aspect,
                           sharex=True, sharey=sharey, despine=False, legend_out=True,
                           palette=pal)
 

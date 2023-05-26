@@ -23,21 +23,24 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
 import numpy as np
+from sklearn.neighbors import NearestNeighbors
 
 august = Path('/mnt/data/madness_data/post_watoc/august')
 paper_path = Path('/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/Figures_v2')
 thesis_path = Path('/home/adrianhurtado/projects/writing/thesis2023/Figures_v2')
 tromso_poster_path = Path('/home/adrianhurtado/projects/writing/tromso_poster/figures')
-paper_path = tromso_poster_path
+tromso_poster_path_supple = Path(
+    '/home/adrianhurtado/projects/writing/tromso_poster/supplementary/figures')
+paper_path = tromso_poster_path_supple
 database = BasisMRADataCollection(august)
-analyzer = BasisMRADataAnalyzer(database, .05, font_scale=3.0)
+analyzer = BasisMRADataAnalyzer(database, .05, font_scale=1.5)
 tabler = Tabler(database)
 
 linthresh = .01
 subticks = [2, 3, 4, 5, 6, 7, 8, 9]
 linscale = 0.15
 
-sns.set_context('poster', )
+sns.set_context('paper', )
 sns.set_style('whitegrid')
 
 
@@ -239,6 +242,7 @@ def cluster_gaussian_mixture_with_bic(data):
 
     # Find the number of clusters that gives the minimum BIC
     optimal_clusters = n_clusters_range[np.argmin(bic_scores)]
+    neigh = NearestNeighbors(n_neighbors=optimal_clusters)
     # optimal_clusters = 4
     print(f"Optimal number of clusters: {optimal_clusters}")
 
@@ -262,10 +266,10 @@ def cluster_gaussian_mixture_with_bic(data):
                           warm_start=True,
                           n_init=40,
                           tol=tol, )
-    gmm.fit(data_matrix)
+    neigh.fit(data_matrix)
 
     # Fit the model to your data and get the cluster assignments in one step
-    labels = gmm.fit_predict(data_matrix)
+    labels = neigh.predict(data_matrix)
     score = silhouette_score(data_matrix, labels, metric='euclidean')
     data['cluster'] = labels
     print("silhouette score", score)
@@ -483,8 +487,9 @@ for ax in g.axes_dict.values():
 g.fig.savefig(cluster_path.joinpath('alpha_convergence.svg'))
 g.fig.show()
 
-g = analyzer.freq_iso_plot_cluster(iso_diff, ['D', 'T', 'Q'], 'alpha', omegas=[0, 8],
-                                   sharey='row')
+g = analyzer.freq_iso_plot_cluster(iso_diff, ['D', 'T', 'Q'], 'alpha',
+                                   omegas=[0, 4, 8],
+                                   sharey='row', aspect=1)
 for ax in g.axes_dict.values():
     ax.set_yscale('symlog', linthresh=linthresh, base=10, linscale=linscale,
                   subs=subticks)
@@ -517,7 +522,7 @@ with sns.axes_style('darkgrid'):
     plt.show()
     p.savefig(cluster_path.joinpath('cluster_molecule_count.svg'))
 
-if True:
+if False:
 
     for cluster in X['cluster'].unique():
         mol_list = X.query('cluster==@cluster').index
