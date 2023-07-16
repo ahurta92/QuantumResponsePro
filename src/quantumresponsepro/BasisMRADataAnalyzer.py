@@ -7,24 +7,20 @@ import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
-import matplotlib.cm as cm
 import pandas as pd
 import matplotlib.colors as mcolors
+import matplotlib.cm as cm
 
 
 class BasisMRADataAnalyzer:
 
-    def __init__(self, data_collection: BasisMRADataCollection, MRA_ref, font_scale=3):
+    def __init__(self, data_collection: BasisMRADataCollection, MRA_ref):
         self.data_collection = data_collection
         self.mra_ref = MRA_ref
         self.all_basis = ['aug-cc-pVDZ', 'aug-cc-pVTZ', 'aug-cc-pVQZ',
                           'd-aug-cc-pVDZ', 'd-aug-cc-pVTZ', 'd-aug-cc-pVQZ',
                           'aug-cc-pCVDZ', 'aug-cc-pCVTZ', 'aug-cc-pCVQZ',
                           'd-aug-cc-pCVDZ', 'd-aug-cc-pCVTZ', 'd-aug-cc-pCVQZ']
-
-        sns.set_theme(context='paper',
-                      font='sans-serif',
-                      font_scale=font_scale, color_codes=True, rc=None)
 
     def get_basis_iso_data(self, basis_list, frequency=0):
         """Collect basis view of data for a given frequency"""
@@ -101,7 +97,7 @@ class BasisMRADataAnalyzer:
         elif calculation_type == 'energy':
             iso_data_type = self.data_collection.detailed_energy_diff
 
-        sns.set(rc={"xtick.bottom": True, "ytick.left": True}, font_scale=1.5)
+        # sns.set(rc={"xtick.bottom": True, "ytick.left": True}, font_scale=1.5)
         pal = sns.color_palette("seismic_r", 4).as_hex()
         p1 = [pal[1], pal[0], pal[2], pal[3]]
         pal = sns.color_palette(p1)
@@ -110,10 +106,10 @@ class BasisMRADataAnalyzer:
         p2 = [pal2[1], pal2[0], pal2[2], pal2[3]]
         light_pal = sns.color_palette(p2)
         facet_kws = dict(sharey=sharey, sharex=sharex)
-        aspect = .35
+        # aspect = .50
 
         g = sns.catplot(
-            aspect=aspect,
+            # aspect=aspect,
             data=iso_data_type,
             col="valence",
             col_order=valence_level,
@@ -147,20 +143,21 @@ class BasisMRADataAnalyzer:
         #                 dodge=True)
         j = 0;
         g.map(plt.axhline, y=0.0, color='k', ls='--', alpha=.5)
-        g.map(plt.axhline, y=self.mra_ref, color='green', ls='--', alpha=.5)
-        g.map(plt.axhline, y=-self.mra_ref, color='green', ls='--', alpha=.5)
+        if calculation_type == 'response':
+            g.map(plt.axhline, y=self.mra_ref, color='green', ls='--', alpha=.9)
+            g.map(plt.axhline, y=-self.mra_ref, color='green', ls='--', alpha=.9)
 
         # g.add_legend(title=None, ncol=4, loc='lower center', frameon=False, borderaxespad=0.0, )
-        sns.move_legend(g, title=None, ncol=2, loc='lower center', frameon=False,
-                        borderaxespad=0.0, )
-        g.tight_layout()
+        sns.move_legend(g, title=None, ncol=4, loc='lower center', frameon=False,
+                        )
         if calculation_type == 'response':
             g.set_axis_labels("", "Percent Error")
         else:
             g.set_axis_labels("", "Energy Error (a.u.)")
         g.set_titles("{col_name}Z")
-        plt.subplots_adjust(right=0.97, bottom=0.20)
-        g.figure.subplots_adjust(wspace=0.00, hspace=0.0)
+        g.figure.subplots_adjust(wspace=0.00, hspace=0.0, right=0.99, top=0.90, bottom=0.15,
+                                 left=0.10)
+        # g.tight_layout()
         for ax in g.axes.flat:
             for spine in ax.spines.values():
                 spine.set_linewidth(1)
@@ -206,13 +203,9 @@ class BasisMRADataAnalyzer:
             ax.set(xlabel='Percent Error')
 
         ax.axvline(x=0.0, color='k', ls='--', alpha=.5)
-        ax.axvline(x=self.mra_ref, color='k', ls='--', alpha=.3, )
+        ax.axvline(x=self.mra_ref, color='green', ls='--', alpha=.95, )
         if iso_type != 'error':
-            ax.axvline(x=-self.mra_ref, color='k', ls='--', alpha=.3, )
-
-        if outer_boundary != 0:
-            ax.axvline(x=outer_boundary, color='black', ls='--', alpha=.3, )
-            ax.axvline(x=-outer_boundary, color='black', ls='--', alpha=.3, )
+            ax.axvline(x=-self.mra_ref, color='green', ls='--', alpha=.95, )
 
         sns.histplot(data=dm, y='molecule', hue='mol_system', weights=iso_type, ax=ax,
                      discrete=True,
@@ -254,11 +247,11 @@ class BasisMRADataAnalyzer:
         else:
             sup_title = r'{} percentile for $\gamma(\omega_{})$'.format(
                 quartile, frequency[0])
-        fig.suptitle(sup_title, x=.8, y=.995, )
+        # fig.suptitle(sup_title, x=.8, y=.995, )
 
         plt.subplots_adjust(left=0.05, right=0.97, bottom=0.05, top=.95)
         # fig.subplots_adjust(wspace=0.05, hspace=0.05)
-        return fig
+        return fig, axes
 
     def iso_plot_ax(self, ax, v_level, b_type, iso_type,
                     omegas=[0, 1, 2, 3, 4, 5, 6, 7, 8], border=0.0,
@@ -300,7 +293,7 @@ class BasisMRADataAnalyzer:
         mdata = data.copy()
         mdata['valence'] = data.valence.cat.remove_unused_categories()
         mdata['Type'] = data.Type.cat.remove_unused_categories()
-        # sns.set(rc={"xtick.bottom": True, "ytick.left": True}, font_scale=1.5)
+        sns.set(rc={"xtick.bottom": True, "ytick.left": True}, font_scale=2.0)
         g = sns.FacetGrid(data=mdata, col='valence', row='Type', margin_titles=True,
                           aspect=aspect,
                           sharex=True, sharey=sharey, despine=False, legend_out=True,
@@ -342,25 +335,20 @@ class BasisMRADataAnalyzer:
                           palette=pal)
 
         g.map_dataframe(sns.stripplot, x="omega", y=iso_type, hue="mol_system", dodge=True,
-                        size=4.25, jitter=True, legend="full",
+                        jitter=True, legend="full",
                         palette=pal, )
 
-        g.add_legend(title=None, ncol=3, loc='upper center', frameon=False, borderaxespad=0.0, )
+        g.add_legend(title=None, ncol=3, loc='lower center', frameon=False, borderaxespad=0.0, )
         # sns.move_legend(g, title=None, ncol=1, loc='upper right', frameon=False,
         #                bbox_to_anchor=(1.0, 0.95), borderaxespad=0.0, )
         g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0).tight_layout()
-        g.map(plt.axhline, y=1, color='red', dashes=(2, 1), zorder=0).tight_layout()
-        g.map(plt.axhline, y=-1, color='red', dashes=(2, 1), zorder=0).tight_layout()
-        g.map(plt.axhline, y=self.mra_ref, color='k', dashes=(2, 1), zorder=0,
-              alpha=0.5).tight_layout()
-        g.map(plt.axhline, y=-self.mra_ref, color='k', dashes=(2, 1), zorder=0,
-              alpha=0.5).tight_layout()
-        g.set_axis_labels(r"$\omega_i$", "Percent Error")
+        g.map(plt.axhline, y=self.mra_ref, color='green', dashes=(2, 1), zorder=0,
+              alpha=0.5)
+        g.map(plt.axhline, y=-self.mra_ref, color='green', dashes=(2, 1), zorder=0,
+              alpha=0.5)
+        g.set_axis_labels(r"", "Percent Error")
         g.figure.subplots_adjust(wspace=0.00, hspace=0.0)
         g.set_titles(row_template="{row_name}", col_template="{col_name}")
-        if border != 0.0:
-            g.map(plt.axhline, y=border, color='black', dashes=(2, 1), zorder=0)
-            g.map(plt.axhline, y=-border, color='black', dashes=(2, 1), zorder=0)
         if iso_type == 'alpha':
             title = r'Error in $\alpha(\omega)$'
         else:
@@ -370,7 +358,7 @@ class BasisMRADataAnalyzer:
             for spine in ax.spines.values():
                 spine.set_linewidth(1)
                 spine.set_color('black')
-        plt.subplots_adjust(right=0.97, bottom=0.12)
+        plt.subplots_adjust(right=0.97, bottom=0.10)
         g.figure.subplots_adjust(wspace=0.00, hspace=0.0)
         return g
 
@@ -503,7 +491,7 @@ class BasisMRADataAnalyzer:
         data = self.data_collection.detailed_iso_diff.query(
             'molecule==@mol & omega.isin(@omega) & valence==@valence')
         facet_kws = {"sharey": sharey, 'despine': True, }
-        with sns.plotting_context("notebook"):
+        with sns.plotting_context("paper"):
             f = sns.relplot(data=data,
                             x='valence',
                             kind='line',

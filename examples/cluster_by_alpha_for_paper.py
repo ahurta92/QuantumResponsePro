@@ -4,9 +4,6 @@ from quantumresponsepro import BasisMRADataCollection
 from quantumresponsepro import BasisMRADataAnalyzer
 import seaborn as sns
 
-import matplotlib.colors as mcolors
-import matplotlib.cm as cm
-
 from pathlib import Path
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import matplotlib.pyplot as plt
@@ -31,16 +28,18 @@ august = Path('/mnt/data/madness_data/post_watoc/august')
 paper_path = Path('/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/Figures_v2')
 thesis_path = Path('/home/adrianhurtado/projects/writing/thesis2023/Figures_v2')
 tromso_poster_path = Path('/home/adrianhurtado/projects/writing/tromso_poster/figures')
-paper_path = tromso_poster_path
+tromso_poster_path_supple = Path(
+    '/home/adrianhurtado/projects/writing/tromso_poster/supplementary/figures')
+paper_path = paper_path
 database = BasisMRADataCollection(august)
-analyzer = BasisMRADataAnalyzer(database, .05, font_scale=3.0)
+analyzer = BasisMRADataAnalyzer(database, .02, font_scale=1.50)
 tabler = Tabler(database)
 
 linthresh = .01
 subticks = [2, 3, 4, 5, 6, 7, 8, 9]
-linscale = 0.15
+linscale = 0.10
 
-sns.set_context('poster', )
+sns.set_context('notebook', )
 sns.set_style('whitegrid')
 
 
@@ -354,7 +353,43 @@ def plot_iso_valence_cluster_frequecy(data, iso_type, valence, omega, sharey=Fal
 
 
 def plot_iso_valence_cluster_convergence(data, iso_type, valence, omega, sharey=False):
-    data = data.query('omega.isin(@omega) & valence.isin(@valence)')
+    data = data.query('omega.isin(@omega) & valence.isin(@valence)').copy()
+    facet_kws = {"sharey": sharey, 'despine': True, 'sharex': True,
+                 "margin_titles": True, }
+    mapping = {i: i + 1 for i in range(len(data.cluster.unique()))}
+    data['cluster'] = data['cluster'].map(mapping)
+    data['cluster'] = data['cluster'].astype('category')
+
+    with sns.axes_style("darkgrid"):
+        f = sns.relplot(data=data,
+                        x='valence',
+                        y=iso_type,
+                        col='cluster',
+                        row='mol_system',
+                        kind='line',
+                        aspect=0.50,
+                        style='Type',
+                        hue='Type',
+                        facet_kws=facet_kws,
+                        palette='colorblind',
+                        markers=True,
+                        legend='brief',
+                        errorbar=('ci', 95),
+                        )
+        f.map(plt.axhline, y=0, color='k', dashes=(1, 1), zorder=0, alpha=0.8, ls='--')
+        f.set_titles('{col_name}')
+        f.set_xlabels('Valence [n]')
+        f.set_ylabels('Percent Error')
+        sns.move_legend(
+           f, "upper center",
+           ncol=4, title=None, frameon=False, fontsize=12)
+        # f.figure.subplots_adjust(top=0.87, right=0.99, left=0.08, bottom=0.15, wspace=0.05)
+
+    return f
+
+
+def plot_iso_valence_cluster_convergence_2(data, iso_type, valence, omega, sharey=False):
+    data = data.query('omega.isin(@omega) & valence.isin(@valence)').copy()
     facet_kws = {"sharey": sharey, 'despine': True, 'sharex': True, }
     mapping = {i: i + 1 for i in range(len(data.cluster.unique()))}
     data['cluster'] = data['cluster'].map(mapping)
@@ -365,9 +400,10 @@ def plot_iso_valence_cluster_convergence(data, iso_type, valence, omega, sharey=
                         x='valence',
                         kind='line',
                         aspect=0.50,
-                        style='Type',
-                        hue='Type',
-                        col='cluster',
+                        col='Type',
+                        style='cluster',
+                        hue='cluster',
+                        row='mol_system',
                         facet_kws=facet_kws,
                         palette='colorblind',
                         markers=True,
@@ -379,9 +415,9 @@ def plot_iso_valence_cluster_convergence(data, iso_type, valence, omega, sharey=
         f.set_titles('Cluster {col_name}')
         f.set_xlabels('Valence [n]')
         f.set_ylabels('Percent Error')
-        sns.move_legend(
-            f, "upper center",
-            ncol=4, title=None, frameon=False, fontsize=12)
+        # sns.move_legend(
+        #    f, "upper center",
+        #    ncol=4, title=None, frameon=False, fontsize=12)
         f.figure.subplots_adjust(top=0.87, right=0.99, left=0.08, bottom=0.15, wspace=0.05)
 
     return f
@@ -398,16 +434,24 @@ for ax in a_fig.axes_dict.values():
 
 a_fig.savefig(paper_path.joinpath('alpha.svg'), dpi=300)
 
-omega = [0, 8]
+a_fig = analyzer.plot_violin_strip('response', 'gamma', ['D', 'T', 'Q'], sharey=True)
+for ax in a_fig.axes_dict.values():
+    ax.set_yscale('symlog', linthresh=linthresh, linscale=linscale, subs=subticks, base=10)
+
+a_fig.savefig(paper_path.joinpath('gamma.svg'), dpi=300)
+
+omega = [0, 4, 8]
 aspect = 0.9
 g = analyzer.freq_iso_plot_v2(['D', 'T', 'Q'], 'alpha', 'all', 'row', omegas=omega,
                               pal='colorblind',
                               )
-set_face_color(g.axes_dict)
-# set_ax_inset(g, loc='lower right', iso_type='alpha', width='50%', height='50%')
 for ax in g.axes_dict.values():
-    ax.set_yscale('symlog', linthresh=linthresh, base=10, linscale=linscale, subs=subticks)
-g.fig.show()
+    ax.axhline(-analyzer.mra_ref, color='green', linestyle='--')
+    ax.axhline(analyzer.mra_ref, color='green', linestyle='--')
+    ax.set_yscale('symlog', linthresh=linthresh, base=10, linscale=linscale,
+                  subs=subticks)
+# set_face_color(g.axes_dict)
+# set_ax_inset(g, loc='lower right', iso_type='alpha', width='50%', height='50%')
 g.fig.savefig(paper_path.joinpath('alpha_freq_DTQ.svg'), dpi=300)
 
 from quantumresponsepro.BasisMRADataAssembler import partition_molecule_list
@@ -445,31 +489,7 @@ data = tabler.get_basis_data()[0].dropna()
 # X = cluster_basis_data_DBSCAN(df.T, eps=0.5, min_samples=5)
 X, avg_vectors = cluster_gaussian_mixture_with_bic(data)
 
-avg_df = X.groupby('cluster').mean()
-print(avg_df)
-vmax = avg_df.abs().max().max()
-cmap = cm.coolwarm
-norm = mcolors.SymLogNorm(linthresh=linthresh, linscale=linscale, base=10, vmin=-vmax,
-                          vmax=vmax)
-
-def highlight(val):
-    color = 'yellow' if abs(val) > 0.8 else 'none'
-    return 'background-color: %s' % color
-
-
-plt.figure(figsize=(11, 9))
-ax = sns.heatmap(data=avg_df.T, center=0, norm=norm, annot=True,cmap='PuOr', linewidths=1
-                 )
-for i in range(df.shape[0]):
-    for j in range(df.shape[1]):
-        if abs(df.values[i, j]) < 0.05:
-            ax.add_patch(plt.Rectangle((j, i), 1, 1, fill=False, edgecolor='green', lw=5))
-
-ax.set(xlabel="", ylabel="")
-ax.xaxis.tick_top()
-plt.tight_layout()
-
-plt.show()
+avg_vectors.plot()
 
 cluster_path = molecules_path.joinpath(f'alpha_clusters')
 if not cluster_path.exists():
@@ -507,14 +527,16 @@ for ax in g.axes_dict.values():
     ax.set_yscale('symlog', linthresh=linthresh, base=10, linscale=linscale,
                   subs=subticks)
 
+
 g.fig.savefig(cluster_path.joinpath('alpha_convergence.svg'))
 g.fig.show()
 
-g = analyzer.freq_iso_plot_cluster(iso_diff, ['D', 'T', 'Q'], 'alpha', omegas=[0, 8],
-                                   sharey='row')
-for ax in g.axes_dict.values():
-    ax.set_yscale('symlog', linthresh=linthresh, base=10, linscale=linscale,
-                  subs=subticks)
+g = analyzer.freq_iso_plot_cluster(iso_diff, ['D', 'T', 'Q'], 'alpha',
+                                   omegas=[0, 4, 8],
+                                   sharey=False, aspect=1)
+# for ax in g.axes_dict.values():
+#    ax.set_yscale('symlog', linthresh=linthresh, base=10, linscale=linscale,
+#                  subs=subticks)
 set_face_color_cluster(g)
 # freq_inset(g, iso_diff, loc='lower right', ylims=[3, .8, .18], width='30%', height='40%',
 # omega=[8])
@@ -544,7 +566,7 @@ with sns.axes_style('darkgrid'):
     plt.show()
     p.savefig(cluster_path.joinpath('cluster_molecule_count.svg'))
 
-if True:
+if False:
 
     for cluster in X['cluster'].unique():
         mol_list = X.query('cluster==@cluster').index

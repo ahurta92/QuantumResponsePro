@@ -15,10 +15,11 @@ paper_path = Path('/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/
 thesis_path = Path('/home/adrianhurtado/projects/writing/thesis2023/Figures_v2')
 paper_path = Path('/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/Figures_v2')
 tromso_poster_path = Path('/home/adrianhurtado/projects/writing/tromso_poster/figures')
-paper_path = tromso_poster_path
+paper_path = paper_path
 database = BasisMRADataCollection(august)
-analyzer = BasisMRADataAnalyzer(database, .05, font_scale=3)
-sns.set_context('poster')
+analyzer = BasisMRADataAnalyzer(database, .02, )
+sns.set_context('paper')
+sns.set_theme(style="whitegrid", font_scale=1.5, rc={'ytick.left': True, 'xtick.bottom': False, })
 
 
 def set_ax_inset(g: sns.FacetGrid, loc='upper right', iso_type='alpha', TZ_lim=None,
@@ -72,13 +73,20 @@ def set_lim(ax_dict, lim_1, lim_2):
 
 
 e_fig = analyzer.plot_violin_strip('energy', 'error', ['D', 'T', 'Q'], sharey=True)
-set_ax_inset(e_fig, loc='upper right', iso_type='error', calc_type='energy', width='70%')
+# set_ax_inset(e_fig, loc='upper right', iso_type='error', calc_type='energy', width='70%')
+# for ax in e_fig.axes_dict.values():
+#    ax.set_yscale('log', base=10)
 e_fig.fig.show()
 e_fig.fig.savefig(paper_path.joinpath('energy.svg'), dpi=300)
 
 a_fig = analyzer.plot_violin_strip('response', 'alpha', ['D', 'T', 'Q'], sharey=True)
+
+subticks = [2, 3, 4, 5, 6, 7, 8, 9]
 for ax in a_fig.axes_dict.values():
-    ax.set_yscale('symlog', linthresh=1e-2, linscale=.50, base=10)
+    ax.set_yscale('symlog', linthresh=1e-2, linscale=.50, base=10, subs=subticks)
+    ax.xaxis.grid(True, "minor", linewidth=0.25)
+    ax.yaxis.grid(True, "minor", linewidth=0.25)
+#a_fig.despine(left=True, bottom=True)
 # set_ax_inset(a_fig, loc='lower right', TZ_lim=(2, '40%', '70%'), iso_type='alpha',
 #             calc_type='response',
 #             height='55%',
@@ -91,6 +99,10 @@ a_fig.savefig(paper_path.joinpath('alpha.svg'), dpi=300)
 e_fig = analyzer.plot_violin_strip('response', 'gamma', ['D', 'T', 'Q'], sharey=True)
 # set_ax_inset(e_fig, loc='upper right', iso_type='gamma', calc_type='response',
 #             height='80%', width='50%', )
-e_fig.set(yscale='symlog')
+for ax in e_fig.axes_dict.values():
+    ax.set_yscale('symlog', linthresh=1e-2, linscale=.50, base=10, subs=subticks)
+    ax.xaxis.grid(True, "minor", linewidth=0.25)
+    ax.yaxis.grid(True, "minor", linewidth=0.25)
+#e_fig.despine(left=True, bottom=True)
 e_fig.fig.show()
 e_fig.fig.savefig(paper_path.joinpath('gamma.svg'), dpi=300)

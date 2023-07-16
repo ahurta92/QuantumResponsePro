@@ -30,17 +30,17 @@ thesis_path = Path('/home/adrianhurtado/projects/writing/thesis2023/Figures_v2')
 tromso_poster_path = Path('/home/adrianhurtado/projects/writing/tromso_poster/figures')
 tromso_poster_path_supple = Path(
     '/home/adrianhurtado/projects/writing/tromso_poster/supplementary/figures')
-paper_path = tromso_poster_path_supple
+paper_path = paper_path
 database = BasisMRADataCollection(august)
-analyzer = BasisMRADataAnalyzer(database, .05, font_scale=1.5)
+analyzer = BasisMRADataAnalyzer(database, .02)
 tabler = Tabler(database)
 
 linthresh = .01
 subticks = [2, 3, 4, 5, 6, 7, 8, 9]
-linscale = 0.15
+linscale = 0.10
 
-sns.set_context('paper', )
-sns.set_style('whitegrid')
+sns.set_context('paper')
+sns.set_theme(style="whitegrid", font_scale=1.0, rc={'ytick.left': True, 'xtick.bottom': False, })
 
 
 def set_face_color(ax_dict):
@@ -353,7 +353,47 @@ def plot_iso_valence_cluster_frequecy(data, iso_type, valence, omega, sharey=Fal
 
 
 def plot_iso_valence_cluster_convergence(data, iso_type, valence, omega, sharey=False):
-    data = data.query('omega.isin(@omega) & valence.isin(@valence)')
+    data = data.query('omega.isin(@omega) & valence.isin(@valence)').copy()
+    facet_kws = {"sharey": sharey, 'despine': True, 'sharex': True,
+                 "margin_titles": True, }
+
+    mapping = {i: i + 1 for i in range(len(data.cluster.unique()))}
+    data['cluster'] = data['cluster'].map(mapping)
+    data['cluster'] = data['cluster'].astype('category')
+
+    with sns.axes_style("darkgrid") and sns.plotting_context("paper", font_scale=2.3):
+        f = sns.relplot(data=data,
+                        x='valence',
+                        y=iso_type,
+                        col='cluster',
+                        height=5,
+                        aspect=0.5,
+                        row='mol_system',
+                        kind='line',
+                        hue='Type',
+                        facet_kws=facet_kws,
+                        palette='colorblind',
+                        markers=True,
+                        legend='brief',
+                        errorbar=('ci', 95),
+                        )
+        f.map(plt.axhline, y=0, color='k', dashes=(1, 1), zorder=0, alpha=0.8, ls='--')
+        f.set_titles(row_template="{row_name}", col_template="Cluster {col_name}", template="{"
+                                                                                            "row_name}\
+                                                                                         | {col_name}")
+
+        f.set_xlabels('Valence [n]')
+        f.set_ylabels('Percent Error')
+        sns.move_legend(
+            f, "upper center",
+            ncol=4, title=None, frameon=False)
+        f.figure.subplots_adjust(top=0.93, right=0.97, left=0.08, bottom=0.08, wspace=0.05)
+
+    return f
+
+
+def plot_iso_valence_cluster_convergence_2(data, iso_type, valence, omega, sharey=False):
+    data = data.query('omega.isin(@omega) & valence.isin(@valence)').copy()
     facet_kws = {"sharey": sharey, 'despine': True, 'sharex': True, }
     mapping = {i: i + 1 for i in range(len(data.cluster.unique()))}
     data['cluster'] = data['cluster'].map(mapping)
@@ -364,9 +404,10 @@ def plot_iso_valence_cluster_convergence(data, iso_type, valence, omega, sharey=
                         x='valence',
                         kind='line',
                         aspect=0.50,
-                        style='Type',
-                        hue='Type',
-                        col='cluster',
+                        col='Type',
+                        style='cluster',
+                        hue='cluster',
+                        row='mol_system',
                         facet_kws=facet_kws,
                         palette='colorblind',
                         markers=True,
@@ -378,9 +419,9 @@ def plot_iso_valence_cluster_convergence(data, iso_type, valence, omega, sharey=
         f.set_titles('Cluster {col_name}')
         f.set_xlabels('Valence [n]')
         f.set_ylabels('Percent Error')
-        sns.move_legend(
-            f, "upper center",
-            ncol=4, title=None, frameon=False, fontsize=12)
+        # sns.move_legend(
+        #    f, "upper center",
+        #    ncol=4, title=None, frameon=False, fontsize=12)
         f.figure.subplots_adjust(top=0.87, right=0.99, left=0.08, bottom=0.15, wspace=0.05)
 
     return f
@@ -391,22 +432,21 @@ second_row_path = paper_path.joinpath('molecules/second')
 fluorine_path = paper_path.joinpath('molecules/fluorine')
 molecules_path = paper_path.joinpath('molecules')
 
-a_fig = analyzer.plot_violin_strip('response', 'alpha', ['D', 'T', 'Q'], sharey=True)
-for ax in a_fig.axes_dict.values():
-    ax.set_yscale('symlog', linthresh=linthresh, linscale=linscale, subs=subticks, base=10)
-
-a_fig.savefig(paper_path.joinpath('alpha.svg'), dpi=300)
-
-omega = [0, 8]
+omega = [0, 4, 8]
 aspect = 0.9
-g = analyzer.freq_iso_plot_v2(['D', 'T', 'Q'], 'alpha', 'all', 'row', omegas=omega,
+g = analyzer.freq_iso_plot_v2(['D', 'T', 'Q'], 'alpha', 'all', True, omegas=omega,
                               pal='colorblind',
                               )
+for ax in g.axes_dict.values():
+    ax.axhline(-analyzer.mra_ref, color='green', linestyle='--')
+    ax.axhline(analyzer.mra_ref, color='green', linestyle='--')
+    ax.set_yscale('symlog', linthresh=linthresh, base=10, linscale=linscale,
+                  subs=subticks)
+    ax.xaxis.grid(True, "minor", linewidth=0.25)
+    ax.yaxis.grid(True, "minor", linewidth=0.25)
+# e_fig.despine(left=True, bottom=True)`
 set_face_color(g.axes_dict)
 # set_ax_inset(g, loc='lower right', iso_type='alpha', width='50%', height='50%')
-for ax in g.axes_dict.values():
-    ax.set_yscale('symlog', linthresh=linthresh, base=10, linscale=linscale, subs=subticks)
-g.fig.show()
 g.fig.savefig(paper_path.joinpath('alpha_freq_DTQ.svg'), dpi=300)
 
 from quantumresponsepro.BasisMRADataAssembler import partition_molecule_list
@@ -475,22 +515,55 @@ iso_diff = database.detailed_iso_diff.copy()
 iso_diff['cluster'] = iso_diff['molecule'].map(X['cluster'])
 iso_diff['cluster'] = iso_diff['cluster'].astype('category')
 g = plot_iso_valence_cluster_convergence(iso_diff, 'alpha', ['D', 'T', 'Q', '5'], omega,
-                                         sharey=True)
+                                         sharey='row')
+
+
+# Define a custom formatting function for the axis ticks
+def custom_format(value, pos):
+    # Apply your desired formatting logic here
+    formatted_value = "{:.2f}".format(value)  # Format the value as needed
+    return formatted_value
+
+
 for ax in g.axes_dict.values():
     ax.axhline(-analyzer.mra_ref, color='green', linestyle='--')
     ax.axhline(analyzer.mra_ref, color='green', linestyle='--')
     ax.set_yscale('symlog', linthresh=linthresh, base=10, linscale=linscale,
                   subs=subticks)
+    ax.xaxis.grid(True, "minor", linewidth=0.25)
+    ax.yaxis.grid(True, "minor", linewidth=0.25)
+# e_fig.despine(left=True, bottom=True)
+# Add 'H2' text to the first subplot
+axs = g.axes  # Get the axes object from the FacetGrid
+print(axs)
+axs[0, 4].text(0.05, 0.95, 'O$_3$', ha='left', va='top', transform=axs[0, 4].transAxes,
+               bbox=dict(facecolor='red', alpha=0.5, edgecolor='black'),fontsize=20)
+axs[0, 5].text(0.05, 0.95, 'Be', ha='left', va='top', transform=axs[0, 5].transAxes,
+               bbox=dict(facecolor='red', alpha=0.5, edgecolor='black'),fontsize=20)
 
+axs[1, 4].text(0.05, 0.95, 'BF', ha='left', va='top', transform=axs[1, 4].transAxes,
+               bbox=dict(facecolor='red', alpha=0.5, edgecolor='black'),fontsize=20)
+
+axs[2, 2].text(0.05, 0.95, 'SiH$_3$Cl,  PH$_3$', ha='left', va='top', transform=axs[2, 2].transAxes,
+               bbox=dict(facecolor='red', alpha=0.5, edgecolor='black'),fontsize=20)
+
+# Add 'N2' text to the second subplot
 g.fig.savefig(cluster_path.joinpath('alpha_convergence.svg'))
 g.fig.show()
 
 g = analyzer.freq_iso_plot_cluster(iso_diff, ['D', 'T', 'Q'], 'alpha',
-                                   omegas=[0,  4,  8],
-                                   sharey='row', aspect=1)
+                                   omegas=[0, 4, 8],
+                                   sharey=False, aspect=1)
 for ax in g.axes_dict.values():
+    ax.axhline(-analyzer.mra_ref, color='green', linestyle='--')
+    ax.axhline(analyzer.mra_ref, color='green', linestyle='--')
     ax.set_yscale('symlog', linthresh=linthresh, base=10, linscale=linscale,
                   subs=subticks)
+    ax.xaxis.grid(True, "minor", linewidth=0.25)
+    ax.yaxis.grid(True, "minor", linewidth=0.25)
+# for ax in g.axes_dict.values():
+#    ax.set_yscale('symlog', linthresh=linthresh, base=10, linscale=linscale,
+#                  subs=subticks)
 set_face_color_cluster(g)
 # freq_inset(g, iso_diff, loc='lower right', ylims=[3, .8, .18], width='30%', height='40%',
 # omega=[8])
@@ -499,8 +572,8 @@ g.fig.show()
 
 plt.figure()
 
-with sns.axes_style('darkgrid'):
-    p = plt.figure()
+with sns.axes_style('darkgrid') and sns.plotting_context('paper', font_scale=1.0):
+    p = plt.figure(figsize=(4.5, 3))
     ax = p.add_subplot(111)
     data = iso_diff.copy()
     mapping = {i: i + 1 for i in range(len(data.cluster.unique()))}
@@ -516,7 +589,8 @@ with sns.axes_style('darkgrid'):
         ax, "lower center",
         bbox_to_anchor=(.5, 1), ncol=3, title=None, frameon=False,
     )
-    p.subplots_adjust(bottom=0.2)
+    plt.xlabel('')
+    # p.subplots_adjust(bottom=0.13, left=0.15, right=0.95, top=0.90)
     plt.show()
     p.savefig(cluster_path.joinpath('cluster_molecule_count.svg'))
 

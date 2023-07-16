@@ -146,9 +146,8 @@ class MadnessReader:
         return response_j
 
     def __open_ground_scf_json(self, mol, xc):
-        moldir = self.data_dir + "/" + xc + "/" + mol
-        jsonf = "moldft.scf_info.json"
-        path = "/".join([moldir, jsonf])
+        moldir = self.data_dir.joinpath(xc, mol)
+        path = moldir.joinpath("scf.json")
         try:
             with open(path) as json_file:
                 scf_j = json.loads(json_file.read())
@@ -208,11 +207,11 @@ class MadnessReader:
         # second number after decimal
         f2 = sfreq.split(".")[1]
 
-        moldir = self.data_dir + "/" + xc + "/" + mol
+        moldir = self.data_dir.joinpath(xc, mol)
         dfile = operator + "_" + xc + "_" + f1 + "-" + f2
         jsonf = "response_base.json"
 
-        path = "/".join([moldir, dfile, jsonf])
+        path = moldir.joinpath(dfile, jsonf)
         # print(path)
 
         with open(path) as json_file:
@@ -329,7 +328,7 @@ class MadnessResponse:
             f1 = sfreq.split(".")[0]
             f2 = sfreq.split(".")[1]
             dfile = operator + "_" + xc + "_" + f1 + "-" + f2
-            freq_i_path = "/".join([self.moldir, dfile])
+            freq_i_path = self.moldir.joinpath(dfile)
             self.calc_dirs[i] = freq_i_path
         try:
             self.data["convergence"] = self.get_convergence_dict()
@@ -537,6 +536,11 @@ class MadnessResponse:
         except KeyError as t:
             print(self.data['convergence'][frequency][value])
             print(t)
+            return
+        except FileNotFoundError as f:
+            print(f)
+            print('file not found', database_compare)
+            mad_compare = FrequencyData(self.mol, self.xc, self.operator, database_compare)
             return
         nC = {}
         oC = {}
