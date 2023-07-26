@@ -28,10 +28,11 @@ class madnessToDalton:
 
         self.periodic_table = pd.read_csv(self.base_dir.joinpath('periodic_table.csv'))
 
-        with open(self.base_dir.joinpath('molecules/frequency.json')) as json_file:
+        with open(self.base_dir.joinpath('json_data/frequency.json')) as json_file:
             self.freq_json = json.loads(json_file.read())
 
     def madmol_to_dalmol(self, madmol_f, basis):
+        print(madmol_f)
 
         dalton_inp = []
         dalton_inp.append('BASIS')

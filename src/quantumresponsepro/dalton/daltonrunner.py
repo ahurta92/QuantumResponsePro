@@ -287,6 +287,7 @@ class DaltonRunner:
             return False
 
     def get_polar_json(self, mol, xc, operator, basis):
+
         run_directory, dal_input, mol_input = self.__write_polar_input(self,
                                                                        mol, xc, operator, basis
                                                                        )

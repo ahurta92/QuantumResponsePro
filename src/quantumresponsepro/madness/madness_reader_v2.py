@@ -21,7 +21,7 @@ class MadnessReader:
         self.data_dir = data_dir
         self.molecule_dir = data_dir.joinpath('molecules')
         # TODO: Need to make this json_data/frequency.json
-        with open(self.data_dir.joinpath('molecules/frequency.json')) as \
+        with open(self.data_dir.joinpath('json_data/frequency.json')) as \
                 json_file:
             self.freq_json = json.loads(json_file.read())
 
@@ -566,17 +566,23 @@ class MadnessResponse:
         d = DaltonRunner(database_compare, False)
         bD = []
         for basis in basis_sets:
-            bC = {}
-            for o in op:
-                bC[o] = basis + '-' + o
-            ground, response = d.get_frequency_result(self.mol, self.xc, self.operator, basis)
-            basis_polar_df = response[op].copy()
-            basis_polar_df.rename(columns=bC, inplace=True)
-            bD.append(basis_polar_df)
+            try:
+                bC = {}
+                for o in op:
+                    bC[o] = basis + '-' + o
+                ground, response = d.get_frequency_result(self.mol, self.xc, self.operator, basis)
+                basis_polar_df = response[op].copy()
+                basis_polar_df.rename(columns=bC, inplace=True)
+                bD.append(basis_polar_df)
+            except TypeError as t:
+                print("did not find basis set data")
+                print(t)
+                continue
 
         basis_polar_df = pd.concat(bD, axis=1).reset_index(drop=True)
         p = pd.concat([basis_polar_df, new_x.reset_index(drop=True)], axis=1).reset_index(drop=True)
         p.plot()
+        plt.show()
         return p
 
 

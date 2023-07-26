@@ -17,6 +17,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/examples/cluster_3.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/src/quantumresponsepro/dalton/qcpro_dev/periodic_table.csv">
           <value>
             <Attribute>

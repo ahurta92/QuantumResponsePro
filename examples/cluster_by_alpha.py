@@ -9,7 +9,7 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import matplotlib.pyplot as plt
 import pandas as pd
 import json
-from quantumresponsepro.BasisMRADataAssembler import partition_molecule_list
+from quantumresponsepro.BasisMRADataAssembler import partition_molecule_list, make_detailed_df
 from quantumresponsepro import Tabler
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.cluster import DBSCAN
@@ -30,7 +30,7 @@ thesis_path = Path('/home/adrianhurtado/projects/writing/thesis2023/Figures_v2')
 tromso_poster_path = Path('/home/adrianhurtado/projects/writing/tromso_poster/figures')
 paper_path = tromso_poster_path
 database = BasisMRADataCollection(august)
-analyzer = BasisMRADataAnalyzer(database, .05, font_scale=1.5)
+analyzer = BasisMRADataAnalyzer(database, .05,)
 tabler = Tabler(database)
 
 sns.set_context('poster', )
@@ -483,7 +483,7 @@ g = analyzer.freq_iso_plot_cluster(iso_diff, ['D', 'T', 'Q'], 'alpha', omegas=[0
                                    sharey='row')
 for ax in g.axes_dict.values():
     ax.set_yscale('symlog', linthresh=linthresh, base=10, linscale=0.50)
-#set_face_color_cluster(g)
+# set_face_color_cluster(g)
 # freq_inset(g, iso_diff, loc='lower right', ylims=[3, .8, .18], width='30%', height='40%',
 # omega=[8])
 g.fig.savefig(cluster_path.joinpath('alpha_frequency_convergence.svg'))
@@ -524,7 +524,7 @@ if True:
                                                          omega)
             g.fig.savefig(cluster_path_i.joinpath(f'{mol}_alpha_converge.svg'), dpi=300)
 
-# g.fig.show()
+
 #
 # g = analyzer.plot_iso_valence_convergence(mol, 'gamma', ['D', 'T', 'Q', '5'], omega, sharey=True)
 # g.fig.show()

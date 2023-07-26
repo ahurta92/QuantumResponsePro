@@ -201,9 +201,9 @@ class BasisMRADataAnalyzer:
             ax.set(xlabel='Energy Error (a.u.)')
         else:
             ax.set(xlabel='Percent Error')
+            ax.axvline(x=self.mra_ref, color='green', ls='--', alpha=.95, )
 
         ax.axvline(x=0.0, color='k', ls='--', alpha=.5)
-        ax.axvline(x=self.mra_ref, color='green', ls='--', alpha=.95, )
         if iso_type != 'error':
             ax.axvline(x=-self.mra_ref, color='green', ls='--', alpha=.95, )
 
@@ -228,7 +228,10 @@ class BasisMRADataAnalyzer:
                 self.iso_quartile_plot(iso_type, frequency, basis, axij, quartile, outer_boundary)
 
                 if i == 2:
-                    axij.set(xlabel='Percent Error')
+                    if iso_type == 'energy':
+                        axij.set(xlabel='Energy Error (a.u.)')
+                    else:
+                        axij.set(xlabel='Percent Error')
                 else:
                     axij.set(xlabel=None)
 
@@ -487,33 +490,76 @@ class BasisMRADataAnalyzer:
         ax.set(xlabel=None)
         ax.set(ylabel=None)
 
-    def plot_iso_valence_convergence_v2(self, mol, iso_type, valence, omega, sharey=False):
+    def plot_energy_convergence_v2(self, mol, valence, ax, reverse=False, ):
+        data = self.data_collection.detailed_energy_diff.query(
+            'molecule==@mol  & valence==@valence')
+        # remove unused valence categories
+        data['valence'] = data['valence'].cat.remove_unused_categories()
+        with sns.plotting_context("paper") and sns.axes_style("whitegrid"):
+
+            if reverse:
+                x = 'Type'
+                style = 'valence'
+                hue = 'valence'
+            else:
+                x = 'valence'
+                style = 'Type'
+                hue = 'Type'
+
+            f = sns.lineplot(data=data, ax=ax,
+                             x=x,
+                             style=style,
+                             hue=hue,
+                             legend=True,
+                             markers=True,
+                             y='error', )
+
+            ax.set_title('Total Energy ')
+            ax.set_xlabel('Valence [n]')
+            ax.set_ylabel('Absolute Error (a.u.)')
+            ax.set_yscale('log')
+            if reverse:
+                ax.tick_params(axis='x', rotation=45)
+
+            ax.grid(visible=True, which="both", axis='y', alpha=0.5)
+            ax.minorticks_on()
+
+            return f
+
+    def plot_iso_valence_convergence_v2(self, mol, iso_type, valence, omega, ax, reverse=False):
         data = self.data_collection.detailed_iso_diff.query(
             'molecule==@mol & omega.isin(@omega) & valence==@valence')
-        facet_kws = {"sharey": sharey, 'despine': True, }
-        with sns.plotting_context("paper"):
-            f = sns.relplot(data=data,
-                            x='valence',
-                            kind='line',
-                            style='Type',
-                            hue='Type',
-                            height=5,
-                            facet_kws=facet_kws,
-                            legend=True,
-                            y=iso_type)
+        data['valence'] = data['valence'].cat.remove_unused_categories()
+        with sns.plotting_context("paper") and sns.axes_style("whitegrid"):
+            if reverse:
+                x = 'Type'
+                style = 'valence'
+                hue = 'valence'
+            else:
+                x = 'valence'
+                style = 'Type'
+                hue = 'Type'
+            f = sns.lineplot(data=data, ax=ax,
+                             x=x,
+                             style=style,
+                             hue=style,
+                             legend=True,
+                             markers=True,
+                             y=iso_type, )
 
-            sns.move_legend(f, title=None, ncol=1, loc='center right', frameon=False,
-                            borderaxespad=0.0, )
-            f.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0)
-            f.set_titles("{col_name}-cc-p(C)VnZ", x=.7).tight_layout(w_pad=0)
-            f.fig.suptitle(r'$\Delta\{}(\omega)$ in {}'.format(iso_type, mol))
-            f.set_xlabels('Valence [n]')
-            f.set_ylabels('Percent Error')
-            f.ax.set_yscale('symlog', linthresh=1e-2, linscale=.25, base=10,
-                            subs=[1, 2, 3, 4, 5, 6, 7, 8, 9])
-            f.map(plt.axhline, y=-self.mra_ref, color='green', dashes=(2, 1), zorder=0)
-            f.map(plt.axhline, y=self.mra_ref, color='green', dashes=(2, 1), zorder=0)
-            f.tight_layout()
+            if iso_type == 'alpha':
+                ax.set_title('Isotropic Polarizability')
+            else:
+                ax.set_title('Anisotropic Polarizability')
+            if reverse:
+                ax.tick_params(axis='x', rotation=45)
+            ax.set_xlabel('Valence [n]')
+            ax.set_ylabel('Percent Error')
+
+            ax.axhline(y=0, color='k', dashes=(2, 1), zorder=0)
+            ax.axhline(y=-self.mra_ref, color='green', dashes=(2, 1), zorder=0)
+            ax.axhline(y=self.mra_ref, color='green', dashes=(2, 1), zorder=0)
+            ax.set_yscale('symlog', linthresh=1e-2, linscale=1)
             return f
 
     def plot_iso_valence_convergence(self, mol, iso_type, valence, omega, sharey=False):
@@ -534,35 +580,6 @@ class BasisMRADataAnalyzer:
         f.set_xlabels('Valence [n]')
         f.set_ylabels('Percent Error')
         return f
-
-    def plot_alpha_component_convergence(self, mol, ij=['xx', 'yy', 'zz'], valence=['D', 'T', 'Q'],
-                                         omega=[0, 1, 2, 3, 4, 5, 6, 7, 8], sharey=False):
-        mol_data = self.data_collection.detailed_eigen_diff.query(
-            ' molecule == @mol & ij.isin(@ij) & valence.isin(@valence) & omega.isin(@omega)')
-        g = sns.relplot(data=mol_data,
-                        x=mol_data.valence,
-                        y='alpha',
-                        hue='ij',
-                        col='augmentation',
-                        style='polarization',
-                        style_order=['CV', 'V'],
-                        kind='line',
-                        markers=True,
-                        facet_kws={'sharey': sharey},
-                        dashes=True,
-                        )
-        for i, ax in enumerate(g.axes):
-            for j, axi in enumerate(ax):
-                axi.tick_params(axis='x', rotation=0)
-                axi.grid(which="both")
-                axi.tick_params(which="both", top="on", left="on", right="on", bottom="on", )
-                axi.minorticks_on()
-        g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0).set_axis_labels("Valence",
-                                                                                    "Error").set_titles(
-            "{col_name}-cc-pV(C)nZ").tight_layout(w_pad=0)
-        g.set(yscale='symlog')
-        g.fig.suptitle(mol)
-        return g
 
     def plot_alpha_component_convergence(self, mol, ij=['xx', 'yy', 'zz'], valence=['D', 'T', 'Q'],
                                          omega=[0, 1, 2, 3, 4, 5, 6, 7, 8], sharey=False):

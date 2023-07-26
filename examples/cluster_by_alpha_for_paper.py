@@ -9,7 +9,7 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import matplotlib.pyplot as plt
 import pandas as pd
 import json
-from quantumresponsepro.BasisMRADataAssembler import partition_molecule_list
+from quantumresponsepro.BasisMRADataAssembler import partition_molecule_list, make_detailed_df
 from quantumresponsepro import Tabler
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.cluster import DBSCAN
@@ -32,7 +32,7 @@ tromso_poster_path_supple = Path(
     '/home/adrianhurtado/projects/writing/tromso_poster/supplementary/figures')
 paper_path = paper_path
 database = BasisMRADataCollection(august)
-analyzer = BasisMRADataAnalyzer(database, .02, font_scale=1.50)
+analyzer = BasisMRADataAnalyzer(database, .02, )
 tabler = Tabler(database)
 
 linthresh = .01
@@ -381,8 +381,8 @@ def plot_iso_valence_cluster_convergence(data, iso_type, valence, omega, sharey=
         f.set_xlabels('Valence [n]')
         f.set_ylabels('Percent Error')
         sns.move_legend(
-           f, "upper center",
-           ncol=4, title=None, frameon=False, fontsize=12)
+            f, "upper center",
+            ncol=4, title=None, frameon=False, fontsize=12)
         # f.figure.subplots_adjust(top=0.87, right=0.99, left=0.08, bottom=0.15, wspace=0.05)
 
     return f
@@ -527,7 +527,6 @@ for ax in g.axes_dict.values():
     ax.set_yscale('symlog', linthresh=linthresh, base=10, linscale=linscale,
                   subs=subticks)
 
-
 g.fig.savefig(cluster_path.joinpath('alpha_convergence.svg'))
 g.fig.show()
 
@@ -544,50 +543,75 @@ g.fig.savefig(cluster_path.joinpath('alpha_frequency_convergence.svg'))
 g.fig.show()
 
 plt.figure()
+zetas = ['D', 'T', 'Q', '5', '6']
+all_basis = []
 
-with sns.axes_style('darkgrid'):
-    p = plt.figure()
-    ax = p.add_subplot(111)
-    data = iso_diff.copy()
-    mapping = {i: i + 1 for i in range(len(data.cluster.unique()))}
-    data['cluster'] = data['cluster'].map(mapping)
-    data['cluster'] = data['cluster'].astype('category')
-    sns.histplot(data.query('omega==0 & basis =="aug-cc-pVQZ"'), x="cluster",
-                 hue="mol_system",
-                 multiple="stack",
-                 ax=ax,
-                 shrink=.8)
-    plt.xticks(range(1, len(data.cluster.unique())))
-    sns.move_legend(
-        ax, "lower center",
-        bbox_to_anchor=(.5, 1), ncol=3, title=None, frameon=False,
-    )
-    p.subplots_adjust(bottom=0.2)
-    plt.show()
-    p.savefig(cluster_path.joinpath('cluster_molecule_count.svg'))
+for zeta in zetas:
+    basis = ["aug-cc-pV{}Z".format(zeta), 'aug-cc-pCV{}Z'.format(zeta),
+             'd-aug-cc-pV{}Z'.format(zeta),
+             'd-aug-cc-pCV{}Z'.format(zeta)]
+    all_basis = all_basis + basis
+# read detailed_all data from feather file if it exist else create it
+try:
+    # read the detailed_all data from feather file the working directory+ detailed_all_error.feather
+    detailed_all_error = pd.read_feather('detailed_all_error.feather')
+except:
+    detailed_all = pd.DataFrame()
+    all_error = pd.DataFrame()
+    for freq in range(0, 8):
+        print(freq)
 
-if False:
+        e_data = analyzer.get_basis_energy_data(all_basis)
+        a_data, g_data = analyzer.get_basis_iso_data(all_basis, freq)
+        # now do the same for the other molecules
+        for mol in e_data.index:
+            mol_energy_error = e_data.query("molecule==@mol").T
+            mol_energy_error['molecule'] = mol
+            mol_energy_error['omega'] = freq
+            mol_energy_error.rename(columns={mol: 'energy'}, inplace=True)
+            # reorder mol_energy_error columns
+            mol_energy_error = mol_energy_error[['molecule', 'omega', 'energy']]
+            mol_alpha_error = a_data.query("molecule==@mol").T
+            mol_gamma_error = g_data.query("molecule==@mol").T
+            mol_alpha_error.rename(columns={mol: 'alpha'}, inplace=True)
+            mol_gamma_error.rename(columns={mol: 'gamma'}, inplace=True)
+            mol_error = pd.concat([mol_energy_error, mol_alpha_error, mol_gamma_error], axis=1)
+            all_error = pd.concat([all_error, mol_error], axis=0)
 
-    for cluster in X['cluster'].unique():
-        mol_list = X.query('cluster==@cluster').index
-        cluster_path_i = cluster_path.joinpath(f'cluster_{cluster + 1}')
-        if not cluster_path_i.exists():
-            cluster_path_i.mkdir()
-        else:
-            shutil.rmtree(cluster_path)
-            cluster_path_i.mkdir()
+    detailed_all_error = make_detailed_df(
+        all_error.reset_index().rename(columns={'index': 'basis'}))
 
-        for mol in mol_list:
-            g = analyzer.plot_iso_valence_convergence_v2(mol, 'alpha', ['D', 'T', 'Q', '5', '6'],
-                                                         omega)
-            g.fig.savefig(cluster_path_i.joinpath(f'{mol}_alpha_converge.svg'), dpi=300)
+    # save detailed_all_error to feather
+    detailed_all_error.to_feather('detailed_all_error.feather')
 
-# g.fig.show()
-#
-# g = analyzer.plot_iso_valence_convergence(mol, 'gamma', ['D', 'T', 'Q', '5'], omega, sharey=True)
-# g.fig.show()
-# # g = analyzer.plot_iso_valence_convergence('NH3', 'gamma', ['D', 'T', 'Q', '5'], omega)
-# # g.fig.show()
+detailed_all_error = detailed_all_error.query("valence in ['D', 'T', 'Q'] and omega==0 ")
+detailed_all_error.valence = detailed_all_error.valence.cat.remove_unused_categories()
 
-#########g = analyzer.plot_alpha_eigen('NH3', 'gamma', ['D', 'T', 'Q', '5'], omega)
-#########g.fig.show()
+# add cluster column to detailed_all_error
+detailed_all_error['cluster'] = detailed_all_error.molecule.map(X.cluster)
+# add one to cluster to make it start from 1
+detailed_all_error['cluster'] = detailed_all_error['cluster'] + 1
+print(detailed_all_error)
+
+# sharex=False, sharey=False
+# make the points more prominent
+sns.set_context("paper", font_scale=3.0)
+facet_kwd = dict(sharex=False, sharey='row', margin_titles=True, despine=False,
+                 legend_out=True, )
+detailed_all_error['alpha'] = detailed_all_error['alpha'].abs()
+# Plot miles per gallon against horsepower with other semantics
+g = sns.relplot(row='valence', x="alpha", y="energy", col='Type',
+                alpha=.8, palette="colorblind", hue='mol_system', style='mol_system',
+                height=6, data=detailed_all_error, facet_kws=facet_kwd, kind='scatter',
+                s=300,
+                )
+
+for ax in g.axes.flat:
+    ax.axhline(0, ls='--', color='k')
+    ax.axvline(0, ls='--', color='k')
+
+g.set_titles(row_template="{row_name}", col_template="{col_name}")
+# set y lable to energy
+g.set_ylabels('Energy error (a.u)')
+g.set_xlabels('Percent Error')
+g.fig.show()

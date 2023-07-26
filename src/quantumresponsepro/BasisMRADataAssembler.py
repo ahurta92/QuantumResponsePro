@@ -131,6 +131,7 @@ def isotropic_polar(polar_df: pd.DataFrame):
         yy = alpha_ij[1, 1]
         zz = alpha_ij[2, 2]
         iso_alpha = (xx + yy + zz) / 3
+        print(iso_alpha)
         daf[freq] = iso_alpha
     isoA = pd.Series(daf)
     return isoA

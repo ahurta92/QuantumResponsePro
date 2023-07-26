@@ -1,3 +1,5 @@
+import os
+
 from .BasisMRADataAssembler import *
 from pathlib import Path
 import glob
@@ -20,10 +22,11 @@ def save_compressed_polar(df, database_dir, data_file):
 
 single = ['aug-cc-pVDZ', 'aug-cc-pVTZ', 'aug-cc-pVQZ', 'aug-cc-pV5Z', 'aug-cc-pV6Z']
 double = ['d-aug-cc-pVDZ', 'd-aug-cc-pVTZ', 'd-aug-cc-pVQZ', 'd-aug-cc-pV5Z', 'd-aug-cc-pV6Z']
+triple = ['t-aug-cc-pVDZ', 't-aug-cc-pVTZ', 't-aug-cc-pVQZ', 't-aug-cc-pV5Z', 't-aug-cc-pV6Z']
 single_polarized = ['aug-cc-pCVDZ', 'aug-cc-pCVTZ', 'aug-cc-pCVQZ']
 double_polarized = ['d-aug-cc-pCVDZ', 'd-aug-cc-pCVTZ', 'd-aug-cc-pCVQZ']
 
-all_basis_sets = single + double + single_polarized + double_polarized
+all_basis_sets = single + double  + single_polarized + double_polarized
 
 
 class BasisMRADataCollection:
@@ -31,11 +34,12 @@ class BasisMRADataCollection:
     ResponseDataBundle: A class designed to manage and organize a collection of DataFrames related to response properties for molecules. This class simplifies the process of comparing and analyzing data from various sources, such as MADNESS and Dalton quantum chemistry packages, by consolidating the response properties information into a single, easy-to-use structure.
     """
 
-    def __init__(self, data_dir, xc='hf', op='dipole', basis_sets=all_basis_sets):
+    def __init__(self, data_dir, xc='hf', op='dipole', basis_sets=all_basis_sets, new=False):
         self.data_dir = data_dir
         self.xc = xc
         self.op = op
         self.molecules = []
+        self.available_molecules = []
         self.basis_sets = basis_sets
 
         feather_data = data_dir.joinpath('feather_data')
@@ -44,7 +48,7 @@ class BasisMRADataCollection:
 
         all_data_path = feather_data.joinpath('all_polar_data.feather')
 
-        if all_data_path.is_file():
+        if all_data_path.is_file() and not new:
             self.all_polar_data = pd.read_feather(all_data_path)
             self.molecules = list(self.all_polar_data.molecule.unique())
         else:
@@ -52,13 +56,20 @@ class BasisMRADataCollection:
                 m = g.split('/')
                 mol = m[-1].split('.')[0]
                 self.molecules.append(mol)
-            self.all_polar_data = get_polar_df(self.molecules, xc, op, self.data_dir,
+            print(self.molecules)
+            # available molecules are molecules that have been run and have data
+            # check the xc directory for the molecule
+
+            convergence = self.__report_convergence()
+            self.available_molecules = convergence[0]
+
+            self.all_polar_data = get_polar_df(self.available_molecules, xc, op, self.data_dir,
                                                self.basis_sets)
             self.all_polar_data.to_feather(all_data_path)
 
         iso_polar_data_path = feather_data.joinpath('iso_polar_data.feather')
 
-        if iso_polar_data_path.is_file():
+        if iso_polar_data_path.is_file() and not new:
             self.iso_data = pd.read_feather(iso_polar_data_path)
         else:
             self.iso_data = get_iso_data(self.all_polar_data)
@@ -67,14 +78,14 @@ class BasisMRADataCollection:
 
         iso_diff_path = feather_data.joinpath('iso_diff_data.feather')
 
-        if iso_diff_path.is_file():
+        if iso_diff_path.is_file() and not new:
             self.iso_diff_data = pd.read_feather(iso_diff_path)
         else:
             self.iso_diff_data = create_iso_diff_df(self.iso_data)
             self.iso_diff_data.to_feather(iso_diff_path)
 
         ij_df_path = feather_data.joinpath('ij_diff_data.feather')
-        if ij_df_path.is_file():
+        if ij_df_path.is_file() and not new:
             self.ij_diff = pd.read_feather(ij_df_path)
             self.ij_diff.reset_index(inplace=True)
         else:
@@ -84,35 +95,36 @@ class BasisMRADataCollection:
 
         energy_df_path = feather_data.joinpath('energy_data.feather')
 
-        if energy_df_path.is_file():
+        if energy_df_path.is_file() and not new:
             self.energy_df = pd.read_feather(energy_df_path)
         else:
-            self.energy_df = get_energy_data(self.molecules, self.xc, self.op, basis_sets,
+            self.energy_df = get_energy_data(self.available_molecules, self.xc, self.op, basis_sets,
                                              self.data_dir)
             self.energy_df.reset_index(inplace=True)
             self.energy_df.to_feather(energy_df_path)
             pass
 
         alpha_eigen_path = feather_data.joinpath('alpha_eigen_data.feather')
-        if alpha_eigen_path.is_file():
+        if alpha_eigen_path.is_file() and not new:
             self.alpha_eigen = pd.read_feather(alpha_eigen_path)
         else:
             self.alpha_eigen = get_ij_eigen(self.all_polar_data)
             self.alpha_eigen.reset_index().to_feather(alpha_eigen_path)
         eigen_diff_path = feather_data.joinpath('eigen_diff_data.feather')
-        if eigen_diff_path.is_file():
+        if eigen_diff_path.is_file() and not new:
             self.eigen_diff = pd.read_feather(eigen_diff_path)
         else:
             self.eigen_diff = create_component_diff_df(self.alpha_eigen)
             self.eigen_diff.reset_index().to_feather(eigen_diff_path)
 
         energy_diff_path = feather_data.joinpath('energy_diff.feather')
-        if energy_diff_path.is_file():
+        if energy_diff_path.is_file() and not new:
             self.energy_diff = pd.read_feather(energy_diff_path)
             # self.energy_diff.reset_index(inplace=True)
 
         else:
-            self.energy_diff = get_energy_diff_data(self.molecules, self.xc, self.op, basis_sets,
+            self.energy_diff = get_energy_diff_data(self.available_molecules, self.xc, self.op,
+                                                    basis_sets,
                                                     self.data_dir)
             self.energy_diff.to_feather(energy_diff_path)
             pass
@@ -134,19 +146,37 @@ class BasisMRADataCollection:
         not_found = []
         type_error = []
         json_error = []
+        print(self.molecules)
         for mol in self.molecules:
+            print(mol)
             try:
-                check_mol = FrequencyData(mol, self.xc, self.op, self.database_dir)
-                if check_mol.converged.all() and check_mol.converged.sum() == self.num_freq:
+                check_mol = MadnessResponse(mol, self.xc, self.op, self.data_dir)
+                print(check_mol)
+                print(check_mol.converged)
+                print(check_mol.converged.all())
+
+                if check_mol.converged.all():
+                    print(mol, 'converged')
                     converged.append(mol)
                 else:
                     not_converged.append(mol)
+
             except FileNotFoundError as f:
-                not_found.append(mol)
-            except TypeError as f:
-                type_error.append(mol)
-            except json.decoder.JSONDecodeError as j:
-                json_error.append(mol)
+                print(f)
+                try:
+
+                    check_mol = FrequencyData(mol, self.xc, self.op, self.data_dir)
+                    if check_mol.converged.all():
+                        converged.append(mol)
+                    else:
+                        not_converged.append(mol)
+
+                except TypeError as f:
+                    type_error.append(mol)
+                except FileNotFoundError as f:
+                    not_found.append(mol)
+                except json.decoder.JSONDecodeError as j:
+                    json_error.append(mol)
 
         num_c = len(converged)
         num_n = len(not_converged)
