@@ -68,6 +68,8 @@ class DaltonRunner:
         dalton_inp.append("**RESPONSE")
         # LINEAR
         dalton_inp.append("*LINEAR")
+        dalton_inp.append('.THCLR')
+        dalton_inp.append('1D-6')
         # looks like it's the only option for a response calculation
         if operator == "dipole":
             dalton_inp.append(".DIPLEN")
