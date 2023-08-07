@@ -333,7 +333,7 @@ class MadnessResponse:
         try:
             self.data["convergence"] = self.get_convergence_dict()
         except KeyError:
-            print(KeyError)
+            print(KeyError, "Convergence data not found for frequency ", mol, " : ", i, ",", f)
             pass
 
     def get_response_calc_data_dict(self, thresh, data_k):
