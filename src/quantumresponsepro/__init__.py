@@ -4,5 +4,6 @@ from .dalton.daltonrunner import DaltonRunner
 from .BasisMRADataCollection import BasisMRADataCollection
 from .BasisMRADataAnalyzer import BasisMRADataAnalyzer
 from .BasisMRADataAnalyzer import Tabler
+from .DaltonBasisGenerator import EvenTemperedBasis
 
 from .utils import DatabaseGenerator
