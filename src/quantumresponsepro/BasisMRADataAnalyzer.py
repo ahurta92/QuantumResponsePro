@@ -583,6 +583,7 @@ class BasisMRADataAnalyzer:
 
     def plot_alpha_component_convergence(self, mol, ij=['xx', 'yy', 'zz'], valence=['D', 'T', 'Q'],
                                          omega=[0, 1, 2, 3, 4, 5, 6, 7, 8], sharey=False):
+        facet_kws = {"sharey": sharey, 'despine': True, }
         mol_data = self.data_collection.detailed_eigen_diff.query(
             ' molecule == @mol & ij.isin(@ij) & valence.isin(@valence) & omega.isin(@omega)')
         g = sns.relplot(data=mol_data,
@@ -593,7 +594,7 @@ class BasisMRADataAnalyzer:
                         style='polarization',
                         kind='line',
                         markers=True,
-                        facet_kws={'sharey': False},
+                        facet_kws=facet_kws,
                         dashes=True,
                         )
         for i, ax in enumerate(g.axes):

@@ -30,14 +30,15 @@ data_dir_high = Path("/mnt/data/madness_data/post_watoc/alrich_test_set")
 database_high = BasisMRADataCollection(data_dir_high, new=True)
 
 iso_diff = database_high.detailed_iso_diff
-facet_kws = {'sharey': False, 'sharex': False}
+facet_kws = {'sharey': True, 'sharex': False}
 
-zeta = ['Q', '5', '6']
+zeta = ['D', 'T', 'Q', '5', '6']
 
 g = sns.relplot(data=iso_diff.query("valence.isin(@zeta)"), x='valence', y='alpha',
                 hue='Type',
                 kind='line',
                 style='Type',
+                facet_kws=facet_kws,
                 col='omega',
                 col_wrap=3,
                 markers=True,
@@ -48,7 +49,7 @@ for ax in g.axes.flat:
     ax.axhline(.02, ls='--', color='green')
     ax.axhline(-.02, ls='--', color='green')
     # ax.axvline(0, ls='--', color='k')
-    # ax.set_yscale('symlog', linthresh=1e-2)
+    ax.set_yscale('symlog', linthresh=1e-2)
 plt.show()
 
 mols = ['H2']
@@ -74,7 +75,8 @@ for i, omega in enumerate(freqs):
                                                   axs[i + 2])
 plt.show()
 
-g = analyzer1.plot_alpha_component_convergence('H2', ['xx', 'yy', 'zz'], ['D', 'T,', 'Q', '5', '6'])
+g = analyzer1.plot_alpha_component_convergence('H2', ['xx', 'yy', 'zz'], ['D', 'T,', 'Q', '5',
+                                                                          '6'], sharey=True)
 for ax in g.axes.flat:
     ax.axhline(0, ls='--', color='k')
     ax.axhline(.02, ls='--', color='green')
@@ -86,7 +88,7 @@ plt.show()
 mols = ['H2', 'H2O', 'NaCl', 'NaCN', 'HF', 'F2', 'SO2', 'HCl']
 for mol in mols:
     g = analyzer2.plot_alpha_component_convergence(mol, ['xx', 'yy', 'zz'], ['D', 'T,', 'Q', '5',
-                                                                             '6'])
+                                                                             '6'], sharey=True)
     for ax in g.axes.flat:
         ax.axhline(0, ls='--', color='k')
         ax.axhline(.02, ls='--', color='green')
