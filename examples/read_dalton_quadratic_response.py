@@ -104,9 +104,9 @@ class ReadDaltonQuadraticResponse:
 
 
 dalton_file = Path(
-    "/mnt/data/madness_data/fd_compare/dalton/hf/Be/dipole/hyper/hyp_CO-aug-cc-pCVDZ.out")
+    "/mnt/data/madness_data/fd_compare/dalton/hf/Be/dipole/hyper/hyp_CO-aug-cc-pZ.out")
 dalton_file_2 = Path("/mnt/data/madness_data/post_watoc/august/dalton/hf/H2O/dipole/hyper/hyp_H2O"
-                     "-aug-cc-pVDZ.out")
+                     "-d-aug-cc-pVTZ.out")
 dalQuad = ReadDaltonQuadraticResponse(dalton_file_2)
 
 print(dalQuad.df)
@@ -123,8 +123,13 @@ def process_beta(row, df):
     return row
 
 
+# rename X-freq to Afreq
+
+
 df_original = dalQuad.df
 df = df_original.apply(lambda row: process_beta(row, df_original), axis=1)
+
+df.rename(columns={"A-freq": "Afreq", "B-freq": "Bfreq", "C-freq": "Cfreq"}, inplace=True)
 
 print(df)
 
@@ -172,7 +177,7 @@ max_frequency = 1
 
 divisions = 8
 
-plot_beta(df)
+#plot_beta(df)
 freq = np.linspace(min_frequency, max_frequency, divisions + 1)
 dir = ["Z", "Y", "X"]
 
@@ -189,4 +194,5 @@ for d1 in dir:
                              "C": d3}))
 
 freq_def = pd.concat(row, axis=1).transpose()
-print(freq_def)
+
+print(df.query("Afreq == 0.0"))

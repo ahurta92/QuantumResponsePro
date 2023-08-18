@@ -173,8 +173,7 @@ madness_file = Path("/mnt/data/madness_data/development/hf/H2O/beta.json")
 loaded_json = json.loads(madness_file.read_text())
 df = pd.DataFrame(loaded_json)
 print(df)
-# process the last column of the data frame beta
-
-
-
+# remove beta < 1e-3
+df = df[df["Beta"] > 1e-3]
+print(df)
 

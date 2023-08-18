@@ -112,6 +112,73 @@ class DaltonRunner:
         molecule_input = dalton_molecule_file.stem
         dalton_input = dal_run_file.stem
         return run_dir, dalton_input, molecule_input
+    @staticmethod
+    def __write_quadratic_input(self, madness_molecule, xc, operator, basis):
+        """writes the polar input to folder"""
+        # DALTON INPUT
+        molecule_input = madness_molecule.split(".")[0]
+        dalton_inp = []
+        dalton_inp.append("**DALTON INPUT")
+        dalton_inp.append(".RUN RESPONSE")
+        dalton_inp.append(".DIRECT")
+        if basis.split("-")[-1] == "uc":
+            dalton_inp.append("*MOLBAS ")
+            dalton_inp.append(".UNCONT ")
+        dalton_inp.append("**WAVE FUNCTIONS")
+        # HF or DFT
+        if xc == "hf":
+            dalton_inp.append(".HF")
+        else:
+            dalton_inp.append(".DFT")
+            dalton_inp.append(xc.capitalize())
+        # RESPONSE
+        dalton_inp.append("**RESPONSE")
+        # LINEAR
+        dalton_inp.append("*QUADRA")
+        dalton_inp.append('.THCLR')
+        dalton_inp.append('1D-6')
+        # looks like it's the only option for a response calculation
+        if operator == "dipole":
+            dalton_inp.append(".DIPLEN")
+            freq = self.freq_json[molecule_input][xc][operator]
+            num_freq = len(freq)
+            dalton_inp.append(".FREQUENCIES")
+            dalton_inp.append(str(num_freq))
+
+            freq_s = []
+            for f in freq:
+                freq_s.append(str(f))
+            dalton_inp.append(" ".join(freq_s))
+
+        dalton_inp.append("**END OF DALTON INPUT")
+        dalton_inp = "\n".join(dalton_inp)
+        # print(dalton_inp)
+        # print(molecule_input)
+        # print(operator)
+        # print("self.dalton", self.dalton_dir)
+
+        run_dir = self.dalton_dir.joinpath(xc).joinpath(molecule_input).joinpath(operator)
+        if not os.path.exists(run_dir):
+            os.makedirs(run_dir)
+        # Here I read the madness mol file from the molecules directory
+        madness_molecule_file = self.base_dir.joinpath('molecules').joinpath(
+            madness_molecule + '.mol')
+        mad_to_dal = madnessToDalton(self.base_dir)
+        if basis.split("-")[-1] == "uc":
+            mol_input = mad_to_dal.madmol_to_dalmol(madness_molecule_file,
+                                                    "-".join(basis.split("-")[:-1]))
+        else:
+            mol_input = mad_to_dal.madmol_to_dalmol(madness_molecule_file, basis)
+        dal_run_file = run_dir.joinpath('quad.dal')
+        with open(dal_run_file, "w") as file:  # Use file to refer to the file object
+            file.write(dalton_inp)
+        dalton_molecule_file = run_dir.joinpath(
+            molecule_input + '-' + basis.replace("*", "S") + ".mol")
+        with open(dalton_molecule_file, "w") as file:  # Use file to refer to the file object
+            file.write(mol_input)
+        molecule_input = dalton_molecule_file.stem
+        dalton_input = dal_run_file.stem
+        return run_dir, dalton_input, molecule_input
 
     def __run_dalton(self, rdir, dfile, mfile):
         dalton = shutil.which('dalton')
