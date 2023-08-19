@@ -186,6 +186,9 @@ class DatabaseGenerator:
                         dal_runner.get_quad_json(molecule, xc, op, basis)[basis]
                 except TypeError as t:
                     data_dict[molecule][xc][op][basis] = {}
+                except ValueError as v:
+                    "No data found for molecule, xc, op, basis"
+                    data_dict[molecule][xc][op][basis] = {}
 
             print(data_dict)
 
