@@ -112,6 +112,7 @@ class DaltonRunner:
         molecule_input = dalton_molecule_file.stem
         dalton_input = dal_run_file.stem
         return run_dir, dalton_input, molecule_input
+
     @staticmethod
     def __write_quadratic_input(self, madness_molecule, xc, operator, basis):
         """writes the polar input to folder"""
@@ -152,10 +153,10 @@ class DaltonRunner:
 
         dalton_inp.append("**END OF DALTON INPUT")
         dalton_inp = "\n".join(dalton_inp)
-        # print(dalton_inp)
-        # print(molecule_input)
-        # print(operator)
-        # print("self.dalton", self.dalton_dir)
+        print(dalton_inp)
+        print(molecule_input)
+        print(operator)
+        print("self.dalton", self.dalton_dir)
 
         run_dir = self.dalton_dir.joinpath(xc).joinpath(molecule_input).joinpath(operator)
         if not os.path.exists(run_dir):
@@ -293,6 +294,37 @@ class DaltonRunner:
         return {basis: {"ground": e_data, "response": r_dict, "dipole": dipole_data}}
 
     @staticmethod
+    def __create_quadratic_json(output_json, basis):
+        print(output_json)
+
+        rdata = {
+            "xx": [],
+            "xy": [],
+            "xz": [],
+            "yx": [],
+            "yy": [],
+            "yz": [],
+            "zx": [],
+            "zy": [],
+            "zz": [],
+        }
+
+        calcs = {}
+        for cals in output_json['simulation']['calculations']:
+            calc_type = cals['calculationType']
+            calcs[calc_type] = cals
+            # print(calc_type)
+        # print(calcs)
+
+        r_dict = {}
+        r_dict["frequencies"] = []
+
+        e_data = calcs['energyCalculation']
+        dipole_data = calcs['Dipole']
+
+        return {basis: {"ground": e_data, "response": r_dict, "dipole": dipole_data}}
+
+    @staticmethod
     def __create_excited_json(output_json, basis):
         # generate tables given name of output files and basis_list used to generate output files
         data = {"totalEnergy": [], "nuclearRepulsionEnergy": [], "electronEnergy": []}
@@ -391,6 +423,59 @@ class DaltonRunner:
                     with(open(output_json, "w")) as f:
                         f.write(json.dumps(dalton_json, indent=4))
                     data = self.__create_frequency_json(dalton_json, basis)
+                pass
+            else:
+                print("Did not find ", basis, " data for", mol, "and dalton is not set to run")
+                pass
+        except KeyError as e:
+            print(d_out, d_error)
+            print("KeyError: ", e)
+            print(output_stem, " in ", run_directory, " did not run correctly")
+            print('most likely the basis set is not available')
+            pass
+
+        return data
+
+    def get_quad_json(self, mol, xc, operator, basis):
+
+        run_directory, dal_input, mol_input = self.__write_quadratic_input(self,
+                                                                           mol, xc, operator, basis
+                                                                           )
+        output_stem = "quad_" + "-".join([mol, basis])
+        output_file = run_directory.joinpath(output_stem + ".out")
+        output_json = run_directory.joinpath(output_stem + ".json")
+
+        d_out, d_error = None, None
+        data = None
+        try:
+            with open(output_file, "r") as daltonOutput:
+                dj = daltonToJson()
+                dalton_json = json.loads(dj.convert(daltonOutput))
+                dalton_json['Quad'] = dj.readQuadResponse(output_file).to_dict()
+                with(open(output_json, "w")) as f:
+                    f.write(json.dumps(dalton_json, indent=4))
+                data = self.__create_quadratic_json(dalton_json, basis)
+                data['Quad'] = dj.readQuadResponse(output_file)
+        except (FileNotFoundError, IndexError) as e:
+            if self.run:
+                print("Trying to run ", output_stem, " in ", run_directory)
+                print('dal_input:', dal_input)
+                print('mol_input:', mol_input)
+                print('run_directory:', run_directory)
+                print('output_file:', output_file)
+                print('output_json:', output_json)
+                d_out, d_error = self.__run_dalton(run_directory, dal_input, mol_input)
+                # print(d_out, d_error)
+                print("Finished running  ", mol, " in ", run_directory)
+                print("Trying to open ", output_file)
+                with open(output_file, "r") as daltonOutput:
+                    dj = daltonToJson()
+                    dalton_json = json.loads(dj.convert(daltonOutput))
+                    with(open(output_json, "w")) as f:
+                        dalton_json['Quad'] = dj.readQuadResponse(output_file)
+                        f.write(json.dumps(dalton_json, indent=4))
+                    data = self.__create_quadratic_json(dalton_json, basis)
+                    data['Quad'] = dj.readQuadResponse(output_file)
                 pass
             else:
                 print("Did not find ", basis, " data for", mol, "and dalton is not set to run")

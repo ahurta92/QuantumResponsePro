@@ -1,9 +1,14 @@
 import json
 from collections import OrderedDict
+import re
+
+import pandas as pd
 
 
 class daltonToJson:
     def __init__(self):
+        self.outfile = None
+        self.quad_response = None
         self.dipole_dict = None
         self.polar_dict = None
         self.calcSetup = {}
@@ -146,6 +151,50 @@ class daltonToJson:
         self.calcTask["calculationResults"] = self.calcRes
         self.calcTask["calculationSetup"] = self.calcSetup
         self.calculations.append(self.calcTask)
+
+    def readQuadResponse(self, outfile):
+        print("READING QUAD RESPONSE")
+
+        self.outfile = outfile
+
+        with open(self.outfile, "r") as file:
+            rows = []
+            for line in file:
+                pattern = "  Results from quadratic response calculation"
+                match = re.search(pattern, line)
+                if match:
+                    line = file.readline()
+                    line = file.readline()
+                    for line in file:
+                        if line.startswith("@ B-freq"):
+                            # Create a regex pattern that captures three letters (X, Y, or Z) within parentheses,
+                            # separated by semicolons, and the floating point numbers in the string
+                            pattern = r"B-freq = ([\d\.]+)\s+C-freq = ([\d\.]+)\s+beta\((X|Y|Z);(X|Y|Z),(X|Y|Z)\) = (.*)"
+
+                            # Use the search function from the re module to get the match object
+                            match = re.search(pattern, line)
+
+                            if match:
+                                b_freq, c_freq, letter1, letter2, letter3, beta_value = match.groups()
+                                # Check if beta_value is another beta function call
+                                if "beta" in beta_value:
+                                    # If it is, replace it with the original letters
+                                    beta_value = f"beta({letter1};{letter2},{letter3})"
+                                a_freq = -(float(b_freq) + float(c_freq))
+                                # Append the data to the DataFrame
+                                rows.append(pd.Series({
+                                    "A-freq": a_freq,
+                                    "B-freq": float(b_freq),
+                                    "C-freq": float(c_freq),
+                                    "A": letter1,
+                                    "B": letter2,
+                                    "C": letter3,
+                                    "Beta Value": beta_value if "," in beta_value else float(
+                                        beta_value)
+                                }))
+                        else:
+                            break
+            return pd.concat(rows, axis=1).transpose()
 
     def readResponse(self, line, streamIn):
         self.calcTask["calculationType"] = "LinearResponse"
@@ -313,7 +362,8 @@ class daltonToJson:
                 break
             else:
                 line_split = line.split()
-                if len(line_split) > 0 and ((line_split[0] == 'x') or (line_split[0] == 'y') or (line_split[0] == 'z')):
+                if len(line_split) > 0 and (
+                        (line_split[0] == 'x') or (line_split[0] == 'y') or (line_split[0] == 'z')):
                     opKey = line_split[0]
                     dipole_value = line_split[1]
                     if opKey:
