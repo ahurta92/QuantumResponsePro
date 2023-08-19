@@ -220,7 +220,7 @@ class DatabaseGenerator:
         If it does exist it will merge the new data with the old data.
         """
 
-        dalton_quad_json = self.get_dalton_quad_json(xc, op, basis_list, run)
+        dalton_quad_json = self.__generate_dalton_quad_json(xc, op, basis_list, run)
         self.__load_and_merge_json(self.paths.dalton_quad_response, dalton_quad_json)
 
         return dalton_quad_json
