@@ -12,7 +12,7 @@ xc = "hf"
 op = 'dipole'
 basis = 'aug-cc-pVDZ'
 
-database_path = Path("/mnt/data/madness_data/post_watoc/august")
+database_path = Path("/gpfs/projects/rjh/adrian/post_watoc/august")
 
 # create a DaltonRunner object and set run_dalton to True
 dr = DaltonRunner(database_path, True)
