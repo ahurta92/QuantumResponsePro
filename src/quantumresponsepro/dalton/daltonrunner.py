@@ -468,7 +468,7 @@ class DaltonRunner:
                     dj = daltonToJson()
                     dalton_json = json.loads(dj.convert(daltonOutput))
                     with(open(output_json, "w")) as f:
-                        dalton_json['Quad'] = dj.readQuadResponse(output_file)
+                        dalton_json['Quad'] = dj.readQuadResponse(output_file).to_dict()
                         f.write(json.dumps(dalton_json, indent=4))
                     data = self.__create_quadratic_json(dalton_json, basis)
                     data['Quad'] = dj.readQuadResponse(output_file)
