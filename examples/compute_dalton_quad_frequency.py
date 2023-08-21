@@ -13,7 +13,9 @@ aug_basis = ['aug-cc-pVDZ', 'aug-cc-pVTZ', 'aug-cc-pVQZ']
 daug_basis = ['d-aug-cc-pVDZ', 'd-aug-cc-pVTZ', 'd-aug-cc-pVQZ']
 aug_pc_basis = ['aug-cc-pCVDZ', 'aug-cc-pCVTZ', 'aug-cc-pCVQZ', ]
 daug_pc_basis = ['d-aug-cc-pCVDZ', 'd-aug-cc-pCVTZ', 'd-aug-cc-pCVQZ', ]
+
 basis_list = aug_basis + daug_basis + aug_pc_basis + daug_pc_basis
+#basis_list = ['aug-cc-pVDZ', 'aug-cc-pVTZ']
 BASEDIR = Path(str(os.getcwd()))
 runner = DaltonRunner(BASEDIR, True)
 runner.Np = num_proc

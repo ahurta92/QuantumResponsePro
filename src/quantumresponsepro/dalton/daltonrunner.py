@@ -1,4 +1,5 @@
 import subprocess
+from math import ceil
 
 import numpy as np
 import shutil
@@ -131,6 +132,7 @@ class DaltonRunner:
             dalton_inp.append(".DFT")
             dalton_inp.append(xc.capitalize())
         # RESPONSE
+        dalton_inp.append("**PROPERTIES")
         dalton_inp.append("**RESPONSE")
         # LINEAR
         dalton_inp.append("*QUADRA")
@@ -138,13 +140,14 @@ class DaltonRunner:
         if operator == "dipole":
             dalton_inp.append(".DIPLEN")
             freq = self.freq_json[molecule_input][xc][operator]
-            num_freq = len(freq)
+            # for the quadratic we only input half of the frequencies because twice the number of frequencies are calculated
+            num_freq = ceil(len(freq) / 2)
             dalton_inp.append(".FREQUENCIES")
             dalton_inp.append(str(num_freq))
 
             freq_s = []
-            for f in freq:
-                freq_s.append(str(f))
+            for j in range(num_freq):
+                freq_s.append(str(freq[j]))
             dalton_inp.append(" ".join(freq_s))
 
         dalton_inp.append("**END OF DALTON INPUT")

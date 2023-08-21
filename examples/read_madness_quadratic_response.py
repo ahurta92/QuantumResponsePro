@@ -7,55 +7,6 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 
-# Write a class that reads a Dalton quadratic response output file
-# and stores the data in a pandas dataframe
-# Below is a sample of a data file with the store values
-# As you can see each line starts with B-freq and C-freq which indicate the two input frequencies
-# follow by beta(Z;Z,Z) = val  the First parameter is the output direction, and the two second
-# two are the directions of the two input frequencies.  My class should input a file name
-# read the file and store the data
-
-#  Results from quadratic response calculation
-# --------------------------------------------
-#
-# @ B-freq = 0.000000  C-freq = 0.000000     beta(Z;Z,Z) =     31.90375429
-# @ B-freq = 0.011116  C-freq = 0.000000     beta(Z;Z,Z) =     31.93779191
-# @ B-freq = 0.022233  C-freq = 0.000000     beta(Z;Z,Z) =     32.04026782
-# @ B-freq = 0.033349  C-freq = 0.000000     beta(Z;Z,Z) =     32.21228015
-# @ B-freq = 0.044465  C-freq = 0.000000     beta(Z;Z,Z) =     32.45568909
-# @ B-freq = 0.055582  C-freq = 0.000000     beta(Z;Z,Z) =     32.77316340
-# @ B-freq = 0.066698  C-freq = 0.000000     beta(Z;Z,Z) =     33.16824826
-# @ B-freq = 0.077814  C-freq = 0.000000     beta(Z;Z,Z) =     33.64545758
-# @ B-freq = 0.088930  C-freq = 0.000000     beta(Z;Z,Z) =     34.21039515
-# @ B-freq = 0.000000  C-freq = 0.011116     beta(Z;Z,Z) = beta(Z,Z,Z)
-# @ B-freq = 0.011116  C-freq = 0.011116     beta(Z;Z,Z) =     32.00604856
-# @ B-freq = 0.022233  C-freq = 0.011116     beta(Z;Z,Z) =     32.14329168
-# @ B-freq = 0.033349  C-freq = 0.011116     beta(Z;Z,Z) =     32.35099886
-# @ B-freq = 0.044465  C-freq = 0.011116     beta(Z;Z,Z) =     32.63143213
-# @ B-freq = 0.055582  C-freq = 0.011116     beta(Z;Z,Z) =     32.98769495
-# @ B-freq = 0.066698  C-freq = 0.011116     beta(Z;Z,Z) =     33.42381206
-# @ B-freq = 0.077814  C-freq = 0.011116     beta(Z;Z,Z) =     33.94483598
-# @ B-freq = 0.088930  C-freq = 0.011116     beta(Z;Z,Z) =     34.55698503
-# @ B-freq = 0.000000  C-freq = 0.022233     beta(Z;Z,Z) = beta(Z,Z,Z)
-# @ B-freq = 0.011116  C-freq = 0.022233     beta(Z;Z,Z) = beta(Z,Z,Z)
-# @ B-freq = 0.022233  C-freq = 0.022233     beta(Z;Z,Z) =     32.31622711
-# @ B-freq = 0.033349  C-freq = 0.022233     beta(Z;Z,Z) =     32.56094956
-# @ B-freq = 0.044465  C-freq = 0.022233     beta(Z;Z,Z) =     32.88014983
-# @ B-freq = 0.055582  C-freq = 0.022233     beta(Z;Z,Z) =     33.27740279
-# @ B-freq = 0.066698  C-freq = 0.022233     beta(Z;Z,Z) =     33.75726077
-# @ B-freq = 0.077814  C-freq = 0.022233     beta(Z;Z,Z) =     34.32537631
-# @ B-freq = 0.088930  C-freq = 0.022233     beta(Z;Z,Z) =     34.98865982
-# @ B-freq = 0.000000  C-freq = 0.033349     beta(Z;Z,Z) = beta(Z,Z,Z)
-# @ B-freq = 0.011116  C-freq = 0.033349     beta(Z;Z,Z) = beta(Z,Z,Z)
-# @ B-freq = 0.022233  C-freq = 0.033349     beta(Z;Z,Z) = beta(Z,Z,Z)
-# @ B-freq = 0.033349  C-freq = 0.033349     beta(Z;Z,Z) =     32.84443162
-# @ B-freq = 0.044465  C-freq = 0.033349     beta(Z;Z,Z) =     33.20460035 @ B-freq = 0.055582  C-freq = 0.033349     beta(Z;Z,Z) =     33.64554879
-# @ B-freq = 0.066698  C-freq = 0.033349     beta(Z;Z,Z) =     34.17241678
-# @ B-freq = 0.077814  C-freq = 0.033349     beta(Z;Z,Z) =     34.79153248
-# @ B-freq = 0.088930  C-freq = 0.033349     beta(Z;Z,Z) =     35.51059350
-# @ B-freq = 0.000000  C-freq = 0.044465     beta(Z;Z,Z) = beta(Z,Z,Z)
-# @ B-freq = 0.011116  C-freq = 0.044465     beta(Z;Z,Z) = beta(Z,Z,Z)
-# @ B-freq = 0.022233  C-freq = 0.044465     beta(Z;Z,Z) = beta(Z,Z,Z)
 class ReadDaltonQuadraticResponse:
     # input quadratic response file
     # from file read in data lines
@@ -105,75 +56,24 @@ class ReadDaltonQuadraticResponse:
 
 
 dalton_file = Path(
-    "/mnt/data/madness_data/fd_compare/dalton/hf/Be/dipole/hyper/hyp_CO-aug-cc-pCVDZ.out")
-dalton_file_2 = Path("/mnt/data/madness_data/post_watoc/august/dalton/hf/H2O/dipole/hyper/hyp_H2O"
-                     "-aug-cc-pVDZ.out")
+    "/mnt/data/madness_data/fd_compare/dalton/hf/Be/dipole/hyper/hyp_CO-aug-cc-pZ.out")
+dalton_file_2 = Path("/mnt/data/madness_data/development/dalton/hf/H2O/dipole/quad_H2O-d-aug-cc"
+                     "-pVTZ.out")
 dalQuad = ReadDaltonQuadraticResponse(dalton_file_2)
 
-print(dalQuad.df)
-
-
-def process_beta(row, df):
-    # Check if the beta value is not a float
-    if isinstance(row["Beta Value"], str):
-        # Find the row with reversed B-freq and C-freq
-        match_row = df[(df["B-freq"] == row["C-freq"]) & (df["C-freq"] == row["B-freq"])]
-        # If a matching row is found, replace the beta value
-        if not match_row.empty:
-            row["Beta Value"] = match_row["Beta Value"].values[0]
-    return row
-
-
 df_original = dalQuad.df
-df = df_original.apply(lambda row: process_beta(row, df_original), axis=1)
+# df = df_original.apply(lambda row: process_beta(row, df_original), axis=1)
+# remove row if beta value is a string
+df = df_original[df_original["Beta Value"].apply(lambda x: isinstance(x, float))]
 
-print(df)
-
-
-def plot_beta(df):
-    # Unique values of Letter1
-    letter1_values = df["A"].unique()
-
-    # Loop through each unique value of Letter1
-    for letter1 in letter1_values:
-        # Create a new figure for the current Letter1
-        fig = plt.figure(figsize=(15, 15))
-
-        # Filter the DataFrame for the current value of Letter1
-        df_letter1 = df[df["A"] == letter1]
-
-        # Unique combinations of Letter2 and Letter3 for the current Letter1
-        directions = df_letter1[["B", "C"]].drop_duplicates()
-        directions = ["X", "Y", "Z"]
-
-        # Loop through each unique combination of Letter2 and Letter3
-        j = 1
-        for d1 in directions:
-            for d2 in directions:
-                ax = fig.add_subplot(3, 3, j, projection='3d')
-
-                # Filter the DataFrame for the current combination of Letter2 and Letter3
-                df_dir = df_letter1[
-                    (df_letter1["B"] == d1) & (df_letter1["C"] == d2)]
-
-                # Plot data on the current subplot
-                ax.scatter(df_dir["B-freq"], df_dir["C-freq"], df_dir["Beta Value"])
-                ax.set_title(f'Direction: {letter1},{d1},{d2}')
-                ax.set_xlabel("B-freq")
-                ax.set_ylabel("C-freq")
-                ax.set_zlabel("Beta Value")
-                j = j + 1
-
-        plt.tight_layout()
-        plt.show()
-
+df.rename(columns={"A-freq": "Afreq", "B-freq": "Bfreq", "C-freq": "Cfreq"}, inplace=True)
+print(df.query("Afreq == 0.0 & Bfreq==0.0"))
 
 madness_file = Path("/mnt/data/madness_data/development/hf/H2O/beta.json")
 
 loaded_json = json.loads(madness_file.read_text())
 df = pd.DataFrame(loaded_json)
-print(df)
 # remove beta < 1e-3
 df = df[df["Beta"] > 1e-3]
-print(df)
-
+df.rename(columns={"A-freq": "Afreq", "B-freq": "Bfreq", "C-freq": "Cfreq"}, inplace=True)
+print(df.query("Afreq == 0.0 & Bfreq==0.0"))

@@ -131,6 +131,7 @@ df = df_original.apply(lambda row: process_beta(row, df_original), axis=1)
 
 df.rename(columns={"A-freq": "Afreq", "B-freq": "Bfreq", "C-freq": "Cfreq"}, inplace=True)
 
+print(df.query("Afreq == 0.0 & Bfreq==0.0"))
 print(df)
 
 
@@ -195,4 +196,70 @@ for d1 in dir:
 
 freq_def = pd.concat(row, axis=1).transpose()
 
-print(df.query("Afreq == 0.0"))
+print(df.query("Afreq == 0.0 & Bfreq==0.0"))
+
+print(df)
+
+
+def plot_beta(df):
+    # Unique values of Letter1
+    letter1_values = df["A"].unique()
+
+    # Loop through each unique value of Letter1
+    for letter1 in letter1_values:
+        # Create a new figure for the current Letter1
+        fig = plt.figure(figsize=(15, 15))
+
+        # Filter the DataFrame for the current value of Letter1
+        df_letter1 = df[df["A"] == letter1]
+
+        # Unique combinations of Letter2 and Letter3 for the current Letter1
+        directions = df_letter1[["B", "C"]].drop_duplicates()
+        directions = ["X", "Y", "Z"]
+
+        # Loop through each unique combination of Letter2 and Letter3
+        j = 1
+        for d1 in directions:
+            for d2 in directions:
+                ax = fig.add_subplot(3, 3, j, projection='3d')
+
+                # Filter the DataFrame for the current combination of Letter2 and Letter3
+                df_dir = df_letter1[
+                    (df_letter1["B"] == d1) & (df_letter1["C"] == d2)]
+
+                # Plot data on the current subplot
+                ax.scatter(df_dir["B-freq"], df_dir["C-freq"], df_dir["Beta Value"])
+                ax.set_title(f'Direction: {letter1},{d1},{d2}')
+                ax.set_xlabel("B-freq")
+                ax.set_ylabel("C-freq")
+                ax.set_zlabel("Beta Value")
+                j = j + 1
+
+        plt.tight_layout()
+        plt.show()
+
+
+min_frequency = 0.0
+max_frequency = 1
+
+divisions = 8
+
+#plot_beta(df)
+freq = np.linspace(min_frequency, max_frequency, divisions + 1)
+dir = ["Z", "Y", "X"]
+
+print(freq)
+row = []
+for d1 in dir:
+    for d2 in dir:
+        for d3 in dir:
+            for i, f in enumerate(freq):
+                for (j, f1) in enumerate(freq):
+                    if f + f1 <= max_frequency:
+                        row.append(pd.Series(
+                            {"A-freq": -(f + f1), "B-freq": f1, "C-freq": f, "A": d1, "B": d2,
+                             "C": d3}))
+
+freq_def = pd.concat(row, axis=1).transpose()
+
+print(df.query("Afreq == 0.0 & Bfreq==0.0"))
