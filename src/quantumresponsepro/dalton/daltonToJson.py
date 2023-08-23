@@ -194,7 +194,12 @@ class daltonToJson:
                                 }))
                         else:
                             break
-            return pd.concat(rows, axis=1).transpose()
+            self.quad_response = pd.concat(rows, axis=1).transpose()
+            # change A-freq to Afreq and so on
+            self.quad_response.columns = self.quad_response.columns.str.replace("-", "")
+            self.quad_response.columns = self.quad_response.columns.str.replace(" ", "")
+
+            return  self.quad_response
 
     def readResponse(self, line, streamIn):
         self.calcTask["calculationType"] = "LinearResponse"

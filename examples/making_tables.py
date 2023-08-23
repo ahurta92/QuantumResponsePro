@@ -7,8 +7,8 @@ from pathlib import Path
 
 august = Path('/mnt/data/madness_data/post_watoc/august')
 paper_path = Path('/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/Figures_v2')
-thesis_path = Path('/home/adrianhurtado/projects/writing/thesis2023/Figures_v2')
 paper_path = Path('/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/Figures_v2')
+thesis_path = Path('/home/adrianhurtado/projects/writing/thesis2023/Figures_v2')
 #paper_path = thesis_path
 database = BasisMRADataCollection(august)
 tabler = Tabler(database)

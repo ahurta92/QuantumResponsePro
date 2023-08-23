@@ -72,6 +72,7 @@ class DatabaseGenerator:
                 mol_excited_dict = json.load(f)
             if overwrite:
                 mol_list = self.get_molecule_list()
+                print(mol_list)
                 mol_excited_dict = {mol: num_states for mol in mol_list}
                 with open(self.paths.excited_keys, 'w') as f:
                     f.write(json.dumps(mol_excited_dict, indent=4))
@@ -103,6 +104,7 @@ class DatabaseGenerator:
         else:
             excited_json_keys = self.__generate_molecule_excited_state_keys(4,
                                                                             True)
+        print(molecule_list)
 
         data_dict = {xc: {}}
         for molecule in molecule_list:
@@ -246,6 +248,8 @@ class DatabaseGenerator:
                 excited_json = json.load(f)
                 freq_j = {}
                 for molecule in self.get_molecule_list():
+                    print(basis)
+                    print("molexcited data", molecule, excited_json[xc][molecule][basis])
                     omega_max = \
                         excited_json[xc][molecule][basis]['response']['freq'][0]
                     omega_max = frac_max * omega_max
@@ -261,6 +265,7 @@ class DatabaseGenerator:
             print(t)
             print('No excited states found')
             return None
+        print("freq_j", freq_j)
 
         if self.paths.frequency_json.exists():
             old_frequency_json = json.load(open(self.paths.frequency_json, 'r'))

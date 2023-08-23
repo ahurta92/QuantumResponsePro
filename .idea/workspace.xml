@@ -4,12 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7af674dd-5e62-47db-810a-177fa0259216" name="Changes" comment="add the import to_dict() line">
+    <list default="true" id="7af674dd-5e62-47db-810a-177fa0259216" name="Changes" comment="speed up hyperpolarizability by only limiting the input frequencies">
+      <change afterPath="$PROJECT_DIR$/examples/FDCompare_2.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/examples/FD_compare/fd_compare1.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/examples/FD_compare/fd_compare2.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/examples/creating_database/step1.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/examples/creating_database/step2.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/compute_dalton_quad_frequency.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/compute_dalton_quad_frequency.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/read_dalton_quadratic_response.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/read_dalton_quadratic_response.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/read_madness_quadratic_response.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/read_madness_quadratic_response.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/dalton/daltonrunner.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/dalton/daltonrunner.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/making_tables.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/making_tables.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/madness_to_dalton.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/madness_to_dalton.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/utils/generate_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/utils/generate_data.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +59,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "/mnt/data/madness_data/development",
+    "last_opened_file_path": "/home/adrianhurtado/projects/writing/thesis2023",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -72,6 +76,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/examples/FD_compare" />
       <recent name="$PROJECT_DIR$/examples" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -79,7 +84,7 @@
       <recent name="$PROJECT_DIR$/src/quantumresponsepro" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.read_madness_quadratic_response">
+  <component name="RunManager" selected="Python.fd_compare2">
     <configuration name="compute_dalton_quad_frequency" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="QuantumResponsePro" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -102,7 +107,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="read_dalton_quadratic_response" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="create_json_files" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="QuantumResponsePro" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -115,7 +120,29 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/read_dalton_quadratic_response.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/create_json_files.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="fd_compare2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="QuantumResponsePro" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples/FD_compare" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/FD_compare/fd_compare2.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -146,7 +173,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="run_dalton_quadratic_response" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="step1" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="QuantumResponsePro" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -154,12 +181,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples/creating_database" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/run_dalton_quadratic_response.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/creating_database/step1.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -168,7 +195,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="run_get_dalton_frequency_json" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="step2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="QuantumResponsePro" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -176,12 +203,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples/creating_database" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/run_get_dalton_frequency_json.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/creating_database/step2.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -192,17 +219,19 @@
     </configuration>
     <list>
       <item itemvalue="Python.compute_dalton_quad_frequency" />
-      <item itemvalue="Python.run_dalton_quadratic_response" />
-      <item itemvalue="Python.run_get_dalton_frequency_json" />
-      <item itemvalue="Python.read_dalton_quadratic_response" />
+      <item itemvalue="Python.fd_compare2" />
+      <item itemvalue="Python.step2" />
+      <item itemvalue="Python.create_json_files" />
+      <item itemvalue="Python.step1" />
       <item itemvalue="Python.read_madness_quadratic_response" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.fd_compare2" />
+        <item itemvalue="Python.step2" />
+        <item itemvalue="Python.step1" />
+        <item itemvalue="Python.create_json_files" />
         <item itemvalue="Python.read_madness_quadratic_response" />
-        <item itemvalue="Python.read_dalton_quadratic_response" />
-        <item itemvalue="Python.run_dalton_quadratic_response" />
-        <item itemvalue="Python.run_get_dalton_frequency_json" />
       </list>
     </recent_temporary>
   </component>
@@ -260,7 +289,9 @@
       <workItem from="1691502204971" duration="1480000" />
       <workItem from="1692107925062" duration="7151000" />
       <workItem from="1692372036730" duration="9631000" />
-      <workItem from="1692536280027" duration="9582000" />
+      <workItem from="1692536280027" duration="10202000" />
+      <workItem from="1692707723325" duration="2708000" />
+      <workItem from="1692713649671" duration="14590000" />
     </task>
     <task id="LOCAL-00001" summary="using Path instead of bare strings for file management">
       <created>1681736371953</created>
@@ -557,7 +588,15 @@
       <option name="project" value="LOCAL" />
       <updated>1692559978351</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="speed up hyperpolarizability by only limiting the input frequencies">
+      <option name="closed" value="true" />
+      <created>1692653843844</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1692653843844</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -575,7 +614,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="finished frequency and outlier plots" />
     <MESSAGE value="gitignore extra output files" />
     <MESSAGE value="remove legacy code" />
     <MESSAGE value="fix indentation issue" />
@@ -600,7 +638,8 @@
     <MESSAGE value="add to_dictstr(" />
     <MESSAGE value="remove the convergence threshold linear response" />
     <MESSAGE value="add the import to_dict() line" />
-    <option name="LAST_COMMIT_MESSAGE" value="add the import to_dict() line" />
+    <MESSAGE value="speed up hyperpolarizability by only limiting the input frequencies" />
+    <option name="LAST_COMMIT_MESSAGE" value="speed up hyperpolarizability by only limiting the input frequencies" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -615,11 +654,11 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/QuantumResponsePro$cluster_by_alpha_v2.coverage" NAME="cluster_by_alpha_v2 Coverage Results" MODIFIED="1685482820159" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/QuantumResponsePro$create_json_files.coverage" NAME="create_json_files Coverage Results" MODIFIED="1690218216179" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$even_tempered_basis.coverage" NAME="even_tempered_basis Coverage Results" MODIFIED="1690404827978" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$convergence_analysis_v2.coverage" NAME="cluster_by_alpha Coverage Results" MODIFIED="1684515450520" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$make_violin_strip_plots.coverage" NAME="make_violin_strip_plots Coverage Results" MODIFIED="1688422590807" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$comparing_mra_results.coverage" NAME="comparing_mra_results Coverage Results" MODIFIED="1690219814830" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$create_json_files.coverage" NAME="create_json_files Coverage Results" MODIFIED="1692712593241" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$read_madness_quadratic_response.coverage" NAME="read_madness_quadratic_response Coverage Results" MODIFIED="1692626761920" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$testing_analyzer.coverage" NAME="testing_analyzer Coverage Results" MODIFIED="1683150167994" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$testing_tabler.coverage" NAME="testing_tabler Coverage Results" MODIFIED="1682439826793" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
@@ -631,13 +670,16 @@
     <SUITE FILE_PATH="coverage/QuantumResponsePro$cluster_by_gamma.coverage" NAME="cluster_by_gamma Coverage Results" MODIFIED="1684513458827" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$pytest_for_test_DatabaseGenerator_test_get_dalton_dipole_json.coverage" NAME="pytest for test_DatabaseGenerator.test_get_dalton_dipole_json Coverage Results" MODIFIED="1681836393187" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$cluster_by_alpha_v3.coverage" NAME="cluster_by_alpha_v3 Coverage Results" MODIFIED="1688425659740" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$fd_compare2.coverage" NAME="fd_compare2 Coverage Results" MODIFIED="1692795090400" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/FD_compare" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$run_get_dalton_frequency_json.coverage" NAME="run_get_dalton_frequency_json Coverage Results" MODIFIED="1692451012401" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$run_dalton.coverage" NAME="run_dalton Coverage Results" MODIFIED="1690213861699" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$compute_dalton_quad_frequency.coverage" NAME="compute_dalton_quad_frequency Coverage Results" MODIFIED="1692576349725" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="/mnt/data/madness_data/development" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$pytest_for_test_DatabaseGenerator_test_generate_frequeny_json.coverage" NAME="pytest for test_DatabaseGenerator.test_generate_frequeny_json Coverage Results" MODIFIED="1681834497169" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$read_dalton_quadratic_response.coverage" NAME="read_dalton_quadratic_response Coverage Results" MODIFIED="1692577162874" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$step1.coverage" NAME="step1 Coverage Results" MODIFIED="1692713876157" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/creating_database" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$mol_convergence_plots.coverage" NAME="mol_convergence_plots Coverage Results" MODIFIED="1684107544323" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$run_dalton_quadratic_response.coverage" NAME="run_dalton_quadratic_response Coverage Results" MODIFIED="1692577095667" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$step2.coverage" NAME="step2 Coverage Results" MODIFIED="1692715640861" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/creating_database" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$FDCompare.coverage" NAME="FDCompare Coverage Results" MODIFIED="1690475554211" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/example_database" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$convergence_analysis.coverage" NAME="convergence_analysis Coverage Results" MODIFIED="1690285895341" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$making_tables.coverage" NAME="making_tables Coverage Results" MODIFIED="1683832376630" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
