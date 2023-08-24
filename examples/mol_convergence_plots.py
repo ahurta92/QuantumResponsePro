@@ -40,7 +40,8 @@ paper_path = Path('/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/
 thesis_path = Path('/home/adrianhurtado/projects/writing/thesis2023/Figures_v2')
 paper_path = thesis_path
 database = BasisMRADataCollection(august)
-analyzer = BasisMRADataAnalyzer(database, .05, font_scale=1.5)
+analyzer = BasisMRADataAnalyzer(database, .05, )
+
 
 first_row_path = paper_path.joinpath('molecules/first')
 second_row_path = paper_path.joinpath('molecules/second')

@@ -102,6 +102,25 @@ def get_mra_polar_data(mols, xc, op, database):
     return df
 
 
+def get_mra_quad_data(mols, xc, op, database):
+    df = pd.DataFrame()
+    N = 6  # round my data
+    basis = 'MRA'
+    dfi = []
+    for mol in mols:
+        try:
+            mad_r = MadnessResponse(mol, xc, op, database)
+            print(mad_r.quad_data.info())
+            dfi.append(mad_r.quad_data.reset_index(drop=True))
+
+        except FileNotFoundError as f:
+            print('did not find beta.json for {}'.format(mol))
+            pass
+    df = pd.concat(dfi, ignore_index=True, axis=0)
+    print(df.info())
+    return df
+
+
 def partition_molecule_list(mol_list):
     Flist = []
     row2 = []
@@ -216,6 +235,19 @@ def get_basis_polar_data(mols, basis_sets, xc, op, database):
                 ground, response = d.get_frequency_result(mol, xc, op, basis)
                 basis_polar_df = response[polar_keys]
                 bd.append(column_polar_df(basis_polar_df, mol, basis))
+            except TypeError:
+                print(mol, basis)
+                pass
+    return pd.concat(bd)
+def get_basis_quad_data(mols, basis_sets, xc, op, database):
+    d = DaltonRunner(database, False)
+    bd = []
+    for mol in mols:
+        for basis in basis_sets:
+            try:
+
+                quad_data= d.get_quad_json(mol, xc, op, basis)
+                bd.append(d.get_quad_json(mol, xc, op, basis))
             except TypeError:
                 print(mol, basis)
                 pass
@@ -339,14 +371,17 @@ def create_component_diff_df(a_data):
         basis_data = a_data.query('molecule==@mol & basis != "MRA"')
         b_mol_data = basis_data.set_index(multidex).alpha
         rep_mol_mra = pd.concat([a_mra for i in range(len(basis_data.basis.unique()))])
+        print(rep_mol_mra)
+
         diff_data = pd.concat([rep_mol_mra, b_mol_data], axis=1).diff(axis=1).iloc[:, 1]
         bcol = basis_data.set_index(multidex).basis
         mcol = basis_data.set_index(multidex).molecule
 
         ij_diff = pd.concat([mcol, bcol, diff_data], axis=1).query('basis!="MRA"')
         f_ij.append(ij_diff)
-    ij_diff = pd.concat(f_ij)
+    print(f_ij)
 
+    ij_diff = pd.concat(f_ij)
     return ij_diff
 
 
@@ -454,6 +489,7 @@ def get_invariant_polar(azero):
 def get_iso_data(a_data):
     iso = []
     for mol in a_data.molecule.unique():
+
         m_data = a_data.query('molecule==@mol')
         for b in a_data.basis.unique():
             mbdata = m_data.query('basis==@b')

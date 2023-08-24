@@ -309,6 +309,7 @@ class MadnessResponse:
             self.full_polar_data,
             self.polar_data,
         ) = mad_reader.get_polar_result(mol, xc, operator)
+        self.quad_data = self.get_quad_data(self.moldir)
 
         self.num_states = self.params['0.0']["states"]
         self.num_orbitals = self.params['0.0']["num_orbitals"]
@@ -335,6 +336,20 @@ class MadnessResponse:
         except KeyError:
             print(KeyError, "Convergence data not found for frequency ", mol, " : ", i, ",", f)
             pass
+
+    def get_quad_data(self, moldir):
+        beta_json_path = moldir.joinpath('beta.json')
+        loaded_json = json.loads(beta_json_path.read_text())
+        # add a column for the molecule in the beginning
+        beta_json = pd.DataFrame(loaded_json)
+        beta_json['molecule'] = self.mol
+        # drop the dash from A-freq and B-freq and C-freq columns names
+        beta_json.columns = beta_json.columns.str.replace('-', '')
+
+
+        # set the A B C columns to categorical type
+        print(beta_json)
+        return beta_json
 
     def get_response_calc_data_dict(self, thresh, data_k):
         pdx = self.polar_data.keys()[3:]

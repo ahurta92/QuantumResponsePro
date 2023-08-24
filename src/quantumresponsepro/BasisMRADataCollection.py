@@ -14,6 +14,15 @@ def get_polar_df(molecules, xc, op, database, basis):
     return a_data
 
 
+def get_quad_df(molecules, xc, op, database, basis):
+    mra_data = get_mra_quad_data(molecules, xc, op, database)
+    b_data = get_basis_quad_data(molecules, basis, xc, op, database)
+    # a_data = pd.concat([mra_data, b_data])
+    # a_data = a_data.reset_index(drop=True)
+    mra_data = mra_data.reset_index(drop=True)
+    return mra_data
+
+
 def save_compressed_polar(df, database_dir, data_file):
     compress_data_dir = database_dir + '/compress_data'
     file_name = compress_data_dir + "/" + data_file
@@ -26,7 +35,128 @@ triple = ['t-aug-cc-pVDZ', 't-aug-cc-pVTZ', 't-aug-cc-pVQZ', 't-aug-cc-pV5Z', 't
 single_polarized = ['aug-cc-pCVDZ', 'aug-cc-pCVTZ', 'aug-cc-pCVQZ']
 double_polarized = ['d-aug-cc-pCVDZ', 'd-aug-cc-pCVTZ', 'd-aug-cc-pCVQZ']
 
-all_basis_sets = single + double  + single_polarized + double_polarized
+all_basis_sets = single + double + single_polarized + double_polarized
+
+
+class BasisMRAData:
+    """
+    ResponseDataBundle: A class designed to manage and organize a collection of DataFrames related to response properties for molecules. This class simplifies the process of comparing and analyzing data from various sources, such as MADNESS and Dalton quantum chemistry packages, by consolidating the response properties information into a single, easy-to-use structure.
+    """
+
+    def __report_convergence(self):
+        converged = []
+        not_converged = []
+        not_found = []
+        type_error = []
+        json_error = []
+        print(self.molecules)
+        for mol in self.molecules:
+            print(mol)
+            try:
+                check_mol = MadnessResponse(mol, self.xc, self.op, self.data_dir)
+                print(check_mol)
+                print(check_mol.converged)
+                print(check_mol.converged.all())
+
+                if check_mol.converged.all():
+                    print(mol, 'converged')
+                    converged.append(mol)
+                else:
+                    not_converged.append(mol)
+
+            except FileNotFoundError as f:
+                print(f)
+                try:
+
+                    check_mol = FrequencyData(mol, self.xc, self.op, self.data_dir)
+                    if check_mol.converged.all():
+                        converged.append(mol)
+                    else:
+                        not_converged.append(mol)
+
+                except TypeError as f:
+                    type_error.append(mol)
+                except FileNotFoundError as f:
+                    not_found.append(mol)
+                except json.decoder.JSONDecodeError as j:
+                    json_error.append(mol)
+
+        num_c = len(converged)
+        num_n = len(not_converged)
+        num_nf = len(not_found)
+        num_json_e = len(json_error)
+        num_type_e = len(type_error)
+        total = num_c + num_n + num_nf + num_json_e + num_type_e
+        not_converged = []
+        part_converged = []
+        if True:
+            for mol in not_converged:
+                check = FrequencyData(mol, self.xc, self.op, self.database_dir)
+                if check.converged.any():
+                    # print(mol,'\n',check.converged)
+                    part_converged.append(mol)
+                else:
+                    not_converged.append(mol)
+        num_not_converged = len(not_converged)
+        num_part_converged = len(part_converged)
+        print("converged : ", num_c)
+        return converged, part_converged, not_converged, not_found, type_error, json_error
+
+    def __determine_convergence(self):
+        for g in glob.glob('*.mol', root_dir=self.data_dir.joinpath('molecules')):
+            m = g.split('/')
+            mol = m[-1].split('.')[0]
+            self.molecules.append(mol)
+        print(self.molecules)
+
+        convergence = self.__report_convergence()
+        self.available_molecules = convergence[0]
+
+    def __init__(self, data_dir, xc='hf', op='dipole', basis_sets=all_basis_sets, new=False):
+        # set up the data directory
+        self.data_dir = data_dir
+        self.xc = xc
+        self.op = op
+        self.molecules = []
+        self.available_molecules = []
+        self.basis_sets = basis_sets
+
+        # create the feather data directory if it doesn't exist
+        feather_data = data_dir.joinpath('feather_data')
+        if not feather_data.is_dir():
+            feather_data.mkdir()
+        # now figure out which molecules have been run and which have not
+        # The strategy is if it is a new Database then I will report convergence and save the data
+        # else if it is not a new database then I will load the data from the feather file
+        # and grab the molecules from the feather file
+        all_data_path = feather_data.joinpath('all_polar_data.feather')
+        all_beta_path = feather_data.joinpath('all_beta_data.feather')
+
+        if new:
+            self.__determine_convergence()
+            self.all_polar_data = get_polar_df(self.available_molecules, xc, op, self.data_dir,
+                                               self.basis_sets)
+            self.all_quad_data = get_quad_df(self.available_molecules, xc, op,
+                                             self.data_dir,
+                                             self.basis_sets)
+            self.all_polar_data.to_feather(all_data_path)
+            self.all_quad_data.to_feather(all_beta_path)
+        else:
+            if all_data_path.is_file():
+                self.all_polar_data = pd.read_feather(all_data_path)
+                self.molecules = list(self.all_polar_data.molecule.unique())
+                self.available_molecules = self.molecules
+            else:
+                self.all_polar_data = get_polar_df(self.available_molecules, xc, op, self.data_dir,
+                                                   self.basis_sets)
+                self.all_polar_data.to_feather(all_data_path)
+            if all_beta_path.is_file():
+                self.all_quad_data = pd.read_feather(all_beta_path)
+            else:
+                self.all_quad_data = get_quad_df(self.available_molecules, xc, op,
+                                                 self.data_dir,
+                                                 self.basis_sets)
+                self.all_quad_data.to_feather(all_beta_path)
 
 
 class BasisMRADataCollection:

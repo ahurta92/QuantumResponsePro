@@ -19,7 +19,7 @@ def get_mad_series(data_dir, molecules):
     return pd.Series(mad_zz_data, name=data_dir.name)
 
 
-fd_base = Path("/mnt/data/madness_data/fd_compare2")
+fd_base = Path("/mnt/data/madness_data/fd_compare3")
 db_gen = DatabaseGenerator(fd_base)
 molecules = ['LiH', 'BH', 'FH', 'CO', 'BF', 'NaCl', 'HeNe']
 
@@ -148,10 +148,12 @@ fd_data_alpha.style.format(
 print(fd_data_alpha)
 
 # now read the basis set data for the molecules
-basis_sets = ['aug-cc-pVDZ', 'aug-cc-pVTZ', ] + ['d-aug-cc-pVDZ', 'd-aug-cc-pVTZ',
-                                                 ]
+basis_sets = ['aug-cc-pVDZ', 'aug-cc-pVTZ', 'aug-cc-pVQZ'] + ['d-aug-cc-pVDZ', 'd-aug-cc-pVTZ',
+                                                              'd-aug-cc-pVQZ'
+                                                              ] + ['d-aug-cc-pCVTZ',
+                                                                   'd-aug-cc-pCVQZ']
 
-runner = DaltonRunner(fd_base, True)
+runner = DaltonRunner(fd_base, False)
 
 alpha_dict = {}
 beta_dict = {}
@@ -196,8 +198,60 @@ print(fd_beta)
 basis_alpha = pd.concat([fd_alpha, basis_alpha], axis=1)
 basis_beta = pd.concat([fd_beta, basis_beta], axis=1)
 
-# compute the percent error of the basis set data compared to the fd data
-
-
 print(basis_alpha)
 print(basis_beta)
+
+
+def compute_percent_error(df, target):
+    df = df.copy().abs()
+    for col in df.columns[1:]:  # Skip the first column
+        percent_error = (df[col] - df[target]) / df[target] * 100
+        df[f'{col}'] = percent_error
+    return df
+
+
+pe_alpha = compute_percent_error(basis_alpha, 'alpha')
+print(pe_alpha)
+pe_beta = compute_percent_error(basis_beta, 'beta')
+print(pe_beta)
+
+# now we can write the latex tables
+# first we put \ce{} around the molecules
+pe_alpha.index = pe_alpha.index.map(lambda x: "\\ce{" + x + "}")
+pe_beta.index = pe_beta.index.map(lambda x: "\\ce{" + x + "}")
+# now we style the tables
+
+# in this case we drop the alpha and beta columns
+pe_alpha.drop(['alpha'], axis=1, inplace=True)
+pe_beta.drop(['beta'], axis=1, inplace=True)
+
+# now we format all the colums to 2 decimal places
+pe_alpha = pe_alpha.applymap(lambda x: "{:.2f}".format(x))
+pe_beta = pe_beta.applymap(lambda x: "{:.2f}".format(x))
+
+# now we can write the latex tables
+column_format = "|c|ccc|ccc|ccc|ccc|"
+
+# rotate the column names by 45 degrees
+
+
+# now we can write the latex tables
+pe_alpha.style.applymap_index(lambda v: "rotatebox:{45}--rwrap--latex;", axis=1).to_latex(
+    paper_path.joinpath(
+        Path(
+            "Tables/alpha_basis_compare_fd.tex")),
+    convert_css=True,
+    multicol_align='|c|',
+    hrules=True,
+    siunitx=True,
+    column_format=column_format, )
+
+pe_beta.style.applymap_index(lambda v: "rotatebox:{45}--rwrap--latex;", axis=1).to_latex(
+    paper_path.joinpath("Tables/beta_basis_compare_fd.tex"),
+    convert_css=True,
+    multicol_align='|c|',
+    hrules=True,
+    siunitx=True,
+    column_format=column_format, )
+
+# compute the percent error of the basis set data compared to the fd data
