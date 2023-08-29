@@ -147,7 +147,7 @@ class MadnessReader:
 
     def __open_ground_scf_json(self, mol, xc):
         moldir = self.data_dir.joinpath(xc, mol)
-        path = moldir.joinpath("scf.json")
+        path = moldir.joinpath("moldft.scf_info.json")
         try:
             with open(path) as json_file:
                 scf_j = json.loads(json_file.read())
@@ -343,9 +343,9 @@ class MadnessResponse:
         # add a column for the molecule in the beginning
         beta_json = pd.DataFrame(loaded_json)
         beta_json['molecule'] = self.mol
+        beta_json['basis'] = 'MRA'
         # drop the dash from A-freq and B-freq and C-freq columns names
         beta_json.columns = beta_json.columns.str.replace('-', '')
-
 
         # set the A B C columns to categorical type
         print(beta_json)

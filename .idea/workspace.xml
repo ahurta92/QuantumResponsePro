@@ -5,20 +5,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7af674dd-5e62-47db-810a-177fa0259216" name="Changes" comment="speed up hyperpolarizability by only limiting the input frequencies">
-      <change afterPath="$PROJECT_DIR$/examples/FDCompare_2.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/FD_compare/fd_compare1.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/FD_compare/fd_compare2.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/creating_database/step1.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/creating_database/step2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/QuantumResponsePro.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/QuantumResponsePro.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/making_tables.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/making_tables.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/madness_to_dalton.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/madness_to_dalton.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/utils/generate_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/utils/generate_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/FD_compare/fd_compare2.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/FD_compare/fd_compare2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/QuadraticAnalysis/quadratic_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/QuadraticAnalysis/quadratic_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataAssembler.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataAssembler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataCollection.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataCollection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/dalton/daltonToJson.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/dalton/daltonToJson.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/dalton/daltonrunner.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/dalton/daltonrunner.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/madness/madness_reader_v2.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/madness/madness_reader_v2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../writing/thesis2023/Chapters/Chapter05.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../writing/thesis2023/Chapters/Chapter05.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../writing/thesis2023/main.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../writing/thesis2023/main.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../writing/thesis2023/thesis_mra_response.bib" beforeDir="false" afterPath="$PROJECT_DIR$/../writing/thesis2023/thesis_mra_response.bib" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
+    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -27,8 +35,19 @@
       </list>
     </option>
   </component>
+  <component name="FlaskConsoleOptions" custom-start-script="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))">
+    <envs>
+      <env key="FLASK_APP" value="app" />
+    </envs>
+    <option name="myCustomStartScript" value="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))" />
+    <option name="myEnvs">
+      <map>
+        <entry key="FLASK_APP" value="app" />
+      </map>
+    </option>
+  </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../writing/thesis2023" />
   </component>
   <component name="GitToolBoxStore">
     <option name="projectConfigVersion" value="5" />
@@ -49,31 +68,32 @@
   &quot;associatedIndex&quot;: 5
 }</component>
   <component name="ProjectId" id="2OYHTFWqbpXYchbxjcidkouDLA1" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/home/adrianhurtado/projects/writing/thesis2023",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.black.configuration.BlackFormatterConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/adrianhurtado/projects/writing/thesis2023&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.black.configuration.BlackFormatterConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
-      "Python"
+  &quot;keyToStringList&quot;: {
+    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
+      &quot;Python&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/examples/FD_compare" />
@@ -84,7 +104,31 @@
       <recent name="$PROJECT_DIR$/src/quantumresponsepro" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.fd_compare2">
+  <component name="RunManager" selected="LaTeX.main">
+    <configuration name="main" type="LATEX_RUN_CONFIGURATION" factoryName="LaTeX configuration factory">
+      <texify>
+        <compiler>PDFLATEX</compiler>
+        <compiler-path />
+        <sumatra-path />
+        <pdf-viewer>EVINCE</pdf-viewer>
+        <viewer-command />
+        <compiler-arguments>--shell-escape</compiler-arguments>
+        <envs />
+        <main-file>$PROJECT_DIR$/../writing/thesis2023/main.tex</main-file>
+        <output-path>$PROJECT_DIR$/../writing/thesis2023/out</output-path>
+        <auxil-path>{projectDir}/auxil</auxil-path>
+        <compile-twice>false</compile-twice>
+        <output-format>PDF</output-format>
+        <latex-distribution>TEXLIVE</latex-distribution>
+        <has-been-run>true</has-been-run>
+        <bib-run-config>[]</bib-run-config>
+        <makeindex-run-config>[]</makeindex-run-config>
+      </texify>
+      <method v="2">
+        <option name="RunConfigurationTask" enabled="true" run_configuration_name="quadratic_data" run_configuration_type="PythonConfigurationType" />
+        <option name="RunConfigurationTask" enabled="true" run_configuration_name="fd_compare2" run_configuration_type="PythonConfigurationType" />
+      </method>
+    </configuration>
     <configuration name="compute_dalton_quad_frequency" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="QuantumResponsePro" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -107,29 +151,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="create_json_files" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="QuantumResponsePro" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/create_json_files.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="fd_compare2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="fd_compare2" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="QuantumResponsePro" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -151,7 +173,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="read_madness_quadratic_response" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="quad_eigen" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="QuantumResponsePro" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -159,12 +181,34 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples/QuadraticAnalysis" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/read_madness_quadratic_response.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/QuadraticAnalysis/quad_eigen.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="quadratic_data" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="QuantumResponsePro" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples/QuadraticAnalysis" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/QuadraticAnalysis/quadratic_data.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -218,20 +262,19 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="LaTeX.main" />
       <item itemvalue="Python.compute_dalton_quad_frequency" />
+      <item itemvalue="Python.quadratic_data" />
       <item itemvalue="Python.fd_compare2" />
+      <item itemvalue="Python.quad_eigen" />
       <item itemvalue="Python.step2" />
-      <item itemvalue="Python.create_json_files" />
       <item itemvalue="Python.step1" />
-      <item itemvalue="Python.read_madness_quadratic_response" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.fd_compare2" />
+        <item itemvalue="Python.quad_eigen" />
         <item itemvalue="Python.step2" />
         <item itemvalue="Python.step1" />
-        <item itemvalue="Python.create_json_files" />
-        <item itemvalue="Python.read_madness_quadratic_response" />
       </list>
     </recent_temporary>
   </component>
@@ -292,6 +335,8 @@
       <workItem from="1692536280027" duration="10202000" />
       <workItem from="1692707723325" duration="2708000" />
       <workItem from="1692713649671" duration="14590000" />
+      <workItem from="1693230438998" duration="28318000" />
+      <workItem from="1693312329616" duration="5889000" />
     </task>
     <task id="LOCAL-00001" summary="using Path instead of bare strings for file management">
       <created>1681736371953</created>
@@ -659,6 +704,7 @@
     <SUITE FILE_PATH="coverage/QuantumResponsePro$make_violin_strip_plots.coverage" NAME="make_violin_strip_plots Coverage Results" MODIFIED="1688422590807" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$comparing_mra_results.coverage" NAME="comparing_mra_results Coverage Results" MODIFIED="1690219814830" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$create_json_files.coverage" NAME="create_json_files Coverage Results" MODIFIED="1692712593241" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$quad_eigen.coverage" NAME="quad_eigen Coverage Results" MODIFIED="1693250122546" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/QuadraticAnalysis" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$read_madness_quadratic_response.coverage" NAME="read_madness_quadratic_response Coverage Results" MODIFIED="1692626761920" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$testing_analyzer.coverage" NAME="testing_analyzer Coverage Results" MODIFIED="1683150167994" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$testing_tabler.coverage" NAME="testing_tabler Coverage Results" MODIFIED="1682439826793" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
@@ -668,9 +714,10 @@
     <SUITE FILE_PATH="coverage/QuantumResponsePro$cluster_by_alpha_for_paper.coverage" NAME="cluster_by_alpha_for_paper Coverage Results" MODIFIED="1690233909720" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$cluster_by_alpha.coverage" NAME="cluster_by_alpha Coverage Results" MODIFIED="1690214642776" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$cluster_by_gamma.coverage" NAME="cluster_by_gamma Coverage Results" MODIFIED="1684513458827" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$quadratic_data.coverage" NAME="quadratic_data Coverage Results" MODIFIED="1693318364326" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/QuadraticAnalysis" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$pytest_for_test_DatabaseGenerator_test_get_dalton_dipole_json.coverage" NAME="pytest for test_DatabaseGenerator.test_get_dalton_dipole_json Coverage Results" MODIFIED="1681836393187" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$cluster_by_alpha_v3.coverage" NAME="cluster_by_alpha_v3 Coverage Results" MODIFIED="1688425659740" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/QuantumResponsePro$fd_compare2.coverage" NAME="fd_compare2 Coverage Results" MODIFIED="1692795090400" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/FD_compare" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$fd_compare2.coverage" NAME="fd_compare2 Coverage Results" MODIFIED="1693318367966" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/FD_compare" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$run_get_dalton_frequency_json.coverage" NAME="run_get_dalton_frequency_json Coverage Results" MODIFIED="1692451012401" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$run_dalton.coverage" NAME="run_dalton Coverage Results" MODIFIED="1690213861699" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$compute_dalton_quad_frequency.coverage" NAME="compute_dalton_quad_frequency Coverage Results" MODIFIED="1692576349725" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="/mnt/data/madness_data/development" />

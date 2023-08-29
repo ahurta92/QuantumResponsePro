@@ -17,10 +17,9 @@ def get_polar_df(molecules, xc, op, database, basis):
 def get_quad_df(molecules, xc, op, database, basis):
     mra_data = get_mra_quad_data(molecules, xc, op, database)
     b_data = get_basis_quad_data(molecules, basis, xc, op, database)
-    # a_data = pd.concat([mra_data, b_data])
-    # a_data = a_data.reset_index(drop=True)
-    mra_data = mra_data.reset_index(drop=True)
-    return mra_data
+    a_data = pd.concat([mra_data, b_data])
+    a_data = a_data.reset_index(drop=True)
+    return a_data
 
 
 def save_compressed_polar(df, database_dir, data_file):
@@ -157,6 +156,28 @@ class BasisMRAData:
                                                  self.data_dir,
                                                  self.basis_sets)
                 self.all_quad_data.to_feather(all_beta_path)
+        energy_df_path = feather_data.joinpath('energy_data.feather')
+
+        if energy_df_path.is_file() and not new:
+            self.energy_df = pd.read_feather(energy_df_path)
+        else:
+            self.energy_df = get_energy_data(self.available_molecules, self.xc, self.op,
+                                             basis_sets,
+                                             self.data_dir)
+            self.energy_df.reset_index(inplace=True)
+            self.energy_df.to_feather(energy_df_path)
+            pass
+        energy_diff_path = feather_data.joinpath('energy_diff.feather')
+        if energy_diff_path.is_file() and not new:
+            self.energy_diff = pd.read_feather(energy_diff_path)
+            # self.energy_diff.reset_index(inplace=True)
+
+        else:
+            self.energy_diff = get_energy_diff_data(self.available_molecules, self.xc, self.op,
+                                                    basis_sets,
+                                                    self.data_dir)
+            self.energy_diff.to_feather(energy_diff_path)
+            pass
 
 
 class BasisMRADataCollection:
@@ -233,6 +254,17 @@ class BasisMRADataCollection:
             self.energy_df.reset_index(inplace=True)
             self.energy_df.to_feather(energy_df_path)
             pass
+        energy_diff_path = feather_data.joinpath('energy_diff.feather')
+        if energy_diff_path.is_file() and not new:
+            self.energy_diff = pd.read_feather(energy_diff_path)
+            # self.energy_diff.reset_index(inplace=True)
+
+        else:
+            self.energy_diff = get_energy_diff_data(self.available_molecules, self.xc, self.op,
+                                                    basis_sets,
+                                                    self.data_dir)
+            self.energy_diff.to_feather(energy_diff_path)
+            pass
 
         alpha_eigen_path = feather_data.joinpath('alpha_eigen_data.feather')
         if alpha_eigen_path.is_file() and not new:
@@ -246,18 +278,6 @@ class BasisMRADataCollection:
         else:
             self.eigen_diff = create_component_diff_df(self.alpha_eigen)
             self.eigen_diff.reset_index().to_feather(eigen_diff_path)
-
-        energy_diff_path = feather_data.joinpath('energy_diff.feather')
-        if energy_diff_path.is_file() and not new:
-            self.energy_diff = pd.read_feather(energy_diff_path)
-            # self.energy_diff.reset_index(inplace=True)
-
-        else:
-            self.energy_diff = get_energy_diff_data(self.available_molecules, self.xc, self.op,
-                                                    basis_sets,
-                                                    self.data_dir)
-            self.energy_diff.to_feather(energy_diff_path)
-            pass
 
         try:
 

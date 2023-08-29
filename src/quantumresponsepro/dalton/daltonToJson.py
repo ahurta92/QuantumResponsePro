@@ -153,8 +153,7 @@ class daltonToJson:
         self.calculations.append(self.calcTask)
 
     def readQuadResponse(self, outfile):
-        print("READING QUAD RESPONSE")
-
+        print("READING QUAD RESPONSE from {}".format(outfile))
         self.outfile = outfile
 
         with open(self.outfile, "r") as file:
@@ -163,6 +162,7 @@ class daltonToJson:
                 pattern = "  Results from quadratic response calculation"
                 match = re.search(pattern, line)
                 if match:
+                    print(line)
                     line = file.readline()
                     line = file.readline()
                     for line in file:
@@ -194,7 +194,14 @@ class daltonToJson:
                                 }))
                         else:
                             break
-            return pd.concat(rows, axis=1).transpose()
+            try:
+                beta_json = pd.concat(rows, axis=1).transpose()
+            except ValueError as verror:
+                print("ValueError: {}".format(verror))
+                print("rows: {}".format(rows))
+                beta_json = pd.DataFrame()
+
+            return beta_json
 
     def readResponse(self, line, streamIn):
         self.calcTask["calculationType"] = "LinearResponse"

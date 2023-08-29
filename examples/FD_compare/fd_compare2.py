@@ -21,7 +21,7 @@ def get_mad_series(data_dir, molecules):
 
 fd_base = Path("/mnt/data/madness_data/fd_compare3")
 db_gen = DatabaseGenerator(fd_base)
-molecules = ['LiH', 'BH', 'FH', 'CO', 'BF', 'NaCl', 'HeNe']
+molecules = ['LiH', 'BH', 'FH', 'CO', 'BF', 'NaCl', ]
 
 fd_data = pd.read_csv(fd_base.joinpath('FD_compare_2.csv'), dtype={'alpha': float,
                                                                    'beta': float})
@@ -165,9 +165,15 @@ for mol in molecules:
 
         try:
             result = runner.get_quad_json(mol, 'hf', 'dipole', basis)
-            beta_zzz = result['Quad'].query('A =="Z" & B=="Z" & C=="Z" ').query(
+            print(result)
+
+            result.rename(columns={'A-freq': 'Afreq', 'B-freq': 'Bfreq', 'C-freq': 'Cfreq'},
+                            inplace=True)
+
+            result.rename(columns={'Beta Value': 'Beta'}, inplace=True)
+            beta_zzz = result.query('A =="Z" & B=="Z" & C=="Z" ').query(
                 'Afreq==0.0 & '
-                'Bfreq==0.0 & Cfreq ==0.0 ').BetaValue.values[0]
+                'Bfreq==0.0 & Cfreq ==0.0 ').Beta.values[0]
             polar_data = runner.get_polar_json(mol, 'hf', 'dipole', basis)
             alpha_zz = polar_data[basis]['response']['values']['zz'][0]
             alpha_dict[mol][basis] = alpha_zz

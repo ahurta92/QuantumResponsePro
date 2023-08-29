@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/QuantumResponsePro.iml" filepath="$PROJECT_DIR$/.idea/QuantumResponsePro.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../writing/thesis2023/.idea/thesis2023.iml" filepath="$PROJECT_DIR$/../writing/thesis2023/.idea/thesis2023.iml" />
     </modules>
   </component>
 </project>

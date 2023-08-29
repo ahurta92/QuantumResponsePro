@@ -239,6 +239,8 @@ def get_basis_polar_data(mols, basis_sets, xc, op, database):
                 print(mol, basis)
                 pass
     return pd.concat(bd)
+
+
 def get_basis_quad_data(mols, basis_sets, xc, op, database):
     d = DaltonRunner(database, False)
     bd = []
@@ -246,12 +248,42 @@ def get_basis_quad_data(mols, basis_sets, xc, op, database):
         for basis in basis_sets:
             try:
 
-                quad_data= d.get_quad_json(mol, xc, op, basis)
-                bd.append(d.get_quad_json(mol, xc, op, basis))
+                quad_data = d.get_quad_json(mol, xc, op, basis)
+                bd.append(quad_data)
             except TypeError:
                 print(mol, basis)
                 pass
-    return pd.concat(bd)
+
+    b_data = pd.concat(bd)
+    print(b_data.info())
+    print(b_data)
+    # here we need to process the Beta Value coluns.  First we change the name to Beta
+    b_data.rename(columns={'Beta Value': 'Beta'}, inplace=True)
+    # also drop the dash from A-freq and B-freq and C-freq
+    b_data.rename(columns={'A-freq': 'Afreq', 'B-freq': 'Bfreq', 'C-freq': 'Cfreq'}, inplace=True)
+    # let's try the easy solution to just drop the beta value if it is a string
+    b_data = b_data[b_data['Beta'].apply(lambda x: isinstance(x, float))]
+    # add a basis column
+    return b_data
+
+    # now we need to take any string values and convert them to floats
+    # this happens when the value is equal to another value
+    # for example if Beta is equal to "beta(Z;Y,Y)" this indicates that it is equal to beta(Z;Y,
+    # Y) at the same frequency
+    # we need to convert this to a float value for the beta value at that frequency
+
+    b_data['Beta'] = b_data['Beta'].apply(
+        lambda x: float(x.split('(')[1].split(')')[0].split(';')[1]))
+
+    def set_up_query_key(beta_value):
+        XYZ = beta_value.split('(')[1].split(')')[0]
+        A = XYZ.split(';')[0]
+        BC = XYZ.split(';')[1]
+        B = BC.split(',')[0]
+        C = BC.split(',')[1]
+
+        query = "A=={} & B=={} & C=={}".format(A, B, C)
+        return query
 
 
 def percent_error(df):
@@ -453,16 +485,32 @@ def make_detailed_df(data):
     data.loc[data["basis"].isin(QZ), "valence"] = 'Q'
     data.loc[data["basis"].isin(FZ), "valence"] = '5'
     data.loc[data["basis"].isin(SZ), "valence"] = '6'
-    data["valence"] = data["valence"].astype("category")
-    data["valence"] = data['valence'].cat.reorder_categories(['D', 'T', 'Q', '5', '6'])
-    data['polarization'].cat.reorder_categories(['V', 'CV', ])
 
+    data["valence"] = data["valence"].astype("category")
+    try:
+        valence = list(data["valence"].unique())
+        print(valence)
+        data["valence"] = data['valence'].cat.reorder_categories(valence)
+    except ValueError:
+        data["valence"] = data['valence'].cat.reorder_categories(['D', 'T', 'Q', ])
+
+    try:
+        data['polarization'].cat.reorder_categories(['V', 'CV', ])
+    except ValueError as e:
+        print(e)
+
+    print(data)
     data['Type'] = data[['augmentation', 'polarization']].apply(
         lambda x: "-cc-p".join(x) + 'nZ',
         axis=1)
     data["Type"] = data["Type"].astype("category")
-    data['Type'] = data['Type'].cat.reorder_categories(
-        ['aug-cc-pVnZ', 'aug-cc-pCVnZ', 'd-aug-cc-pVnZ', 'd-aug-cc-pCVnZ'])
+    try:
+        data['Type'] = data['Type'].cat.reorder_categories(
+            ['aug-cc-pVnZ', 'aug-cc-pCVnZ', 'd-aug-cc-pVnZ', 'd-aug-cc-pCVnZ'])
+    except ValueError as e:
+
+        data['Type'] = data['Type'].cat.reorder_categories(
+            ['aug-cc-pVnZ', 'd-aug-cc-pVnZ', ])
 
     data["mol_size"] = 1.0
     data.loc[data["mol_system"] == 'First-Row', "mol_size"] = 1.0
