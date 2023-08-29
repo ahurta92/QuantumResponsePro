@@ -47,8 +47,61 @@ class DaltonRunner:
         # with open(DALROOT + '/dalton-excited.json') as json_file:
         #    self.excited_json = json.loads(json_file.read())
 
+    def __write_energy_input(self, madness_molecule, xc, basis, charge=0):
+        """writes the polar input to folder"""
+
+        print('madness_molecule', madness_molecule)
+        # DALTON INPUT
+        molecule_input = madness_molecule.split(".")[0]
+        dalton_inp = []
+        dalton_inp.append("**DALTON INPUT")
+        dalton_inp.append(".RUN RESPONSE")
+        dalton_inp.append(".DIRECT")
+        if basis.split("-")[-1] == "uc":
+            dalton_inp.append("*MOLBAS ")
+            dalton_inp.append(".UNCONT ")
+        dalton_inp.append("**WAVE FUNCTIONS")
+        # HF or DFT
+        if xc == "hf":
+            dalton_inp.append(".HF")
+        else:
+            dalton_inp.append(".DFT")
+            dalton_inp.append(xc.capitalize())
+        # RESPONSE
+
+        dalton_inp.append("**END OF DALTON INPUT")
+        dalton_inp = "\n".join(dalton_inp)
+        # print(dalton_inp)
+        # print(molecule_input)
+        # print(operator)
+        # print("self.dalton", self.dalton_dir)
+
+        run_dir = self.dalton_dir.joinpath(xc).joinpath(molecule_input).joinpath('energy')
+        if not os.path.exists(run_dir):
+            os.makedirs(run_dir)
+        # Here I read the madness mol file from the molecules directory
+        madness_molecule_file = self.base_dir.joinpath('molecules').joinpath(
+            madness_molecule + '.mol')
+        mad_to_dal = madnessToDalton(self.base_dir)
+        if basis.split("-")[-1] == "uc":
+            mol_input = mad_to_dal.madmol_to_dalmol(madness_molecule_file,
+                                                    "-".join(basis.split("-")[:-1]), charge)
+        else:
+            print(charge)
+            mol_input = mad_to_dal.madmol_to_dalmol(madness_molecule_file, basis, charge)
+        dal_run_file = run_dir.joinpath('energy_c{}.dal'.format(charge))
+        with open(dal_run_file, "w") as file:  # Use file to refer to the file object
+            file.write(dalton_inp)
+        dalton_molecule_file = run_dir.joinpath(
+            molecule_input + '-' + basis.replace("*", "S") + ".mol")
+        with open(dalton_molecule_file, "w") as file:  # Use file to refer to the file object
+            file.write(mol_input)
+        molecule_input = dalton_molecule_file.stem
+        dalton_input = dal_run_file.stem
+        return run_dir, dalton_input, molecule_input
+
     @staticmethod
-    def __write_polar_input(self, madness_molecule, xc, operator, basis):
+    def __write_polar_input(self, madness_molecule, xc, operator, basis, charge=0):
         """writes the polar input to folder"""
         # DALTON INPUT
         molecule_input = madness_molecule.split(".")[0]
@@ -101,7 +154,7 @@ class DaltonRunner:
             mol_input = mad_to_dal.madmol_to_dalmol(madness_molecule_file,
                                                     "-".join(basis.split("-")[:-1]))
         else:
-            mol_input = mad_to_dal.madmol_to_dalmol(madness_molecule_file, basis)
+            mol_input = mad_to_dal.madmol_to_dalmol(madness_molecule_file, basis, )
         dal_run_file = run_dir.joinpath('freq.dal')
         with open(dal_run_file, "w") as file:  # Use file to refer to the file object
             file.write(dalton_inp)
@@ -252,6 +305,32 @@ class DaltonRunner:
         return run_dir, dalname, molname
 
     @staticmethod
+    def __create_energy_json(output_json, basis):
+
+        rdata = {
+            "xx": [],
+            "xy": [],
+            "xz": [],
+            "yx": [],
+            "yy": [],
+            "yz": [],
+            "zx": [],
+            "zy": [],
+            "zz": [],
+        }
+
+        calcs = {}
+        for cals in output_json['simulation']['calculations']:
+            calc_type = cals['calculationType']
+            calcs[calc_type] = cals
+            # print(calc_type)
+        # print(calcs)
+
+        e_data = calcs['energyCalculation']
+
+        return {basis: {"ground": e_data, }}
+
+    @staticmethod
     def __create_frequency_json(output_json, basis):
 
         rdata = {
@@ -382,7 +461,56 @@ class DaltonRunner:
             print(e)
             return False
 
-    def get_polar_json(self, mol, xc, operator, basis):
+    def get_energy_json(self, mol, xc, basis, charge=0):
+
+        run_directory, dal_input, mol_input = self.__write_energy_input(
+            mol, xc, basis, charge
+        )
+        output_stem = "energy_c{}_".format(charge) + "-".join([mol, basis])
+        output_file = run_directory.joinpath(output_stem + ".out")
+        output_json = run_directory.joinpath(output_stem + ".json")
+
+        d_out, d_error = None, None
+        data = None
+        try:
+            with open(output_file, "r") as daltonOutput:
+                dj = daltonToJson()
+                dalton_json = json.loads(dj.convert(daltonOutput))
+                with(open(output_json, "w")) as f:
+                    f.write(json.dumps(dalton_json, indent=4))
+                data = self.__create_energy_json(dalton_json, basis)
+        except (FileNotFoundError, IndexError) as e:
+            if self.run:
+                print("Trying to run ", output_stem, " in ", run_directory)
+                print('dal_input:', dal_input)
+                print('mol_input:', mol_input)
+                print('run_directory:', run_directory)
+                print('output_file:', output_file)
+                print('output_json:', output_json)
+                d_out, d_error = self.__run_dalton(run_directory, dal_input, mol_input)
+                # print(d_out, d_error)
+                print("Finished running  ", mol, " in ", run_directory)
+                print("Trying to open ", output_file)
+                with open(output_file, "r") as daltonOutput:
+                    dj = daltonToJson()
+                    dalton_json = json.loads(dj.convert(daltonOutput))
+                    with(open(output_json, "w")) as f:
+                        f.write(json.dumps(dalton_json, indent=4))
+                    data = self.__create_energy_json(dalton_json, basis)
+                pass
+            else:
+                print("Did not find ", basis, " data for", mol, "and dalton is not set to run")
+                pass
+        except KeyError as e:
+            print(d_out, d_error)
+            print("KeyError: ", e)
+            print(output_stem, " in ", run_directory, " did not run correctly")
+            print('most likely the basis set is not available')
+            pass
+
+        return data
+
+    def get_polar_json(self, mol, xc, operator, basis, charge=None):
 
         run_directory, dal_input, mol_input = self.__write_polar_input(self,
                                                                        mol, xc, operator, basis

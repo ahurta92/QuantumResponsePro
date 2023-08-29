@@ -21,17 +21,17 @@ class madnessToDalton:
     def __init__(self, base_dir: Path):
         self.base_dir = base_dir
         self.DALROOT = self.base_dir.joinpath('dalton').absolute()
-        #print('madnessToDalton base dir', self.base_dir)
-        #print('madnessToDalton dalroot dir', self.DALROOT)
+        # print('madnessToDalton base dir', self.base_dir)
+        # print('madnessToDalton dalroot dir', self.DALROOT)
         if not os.path.exists("dalton"):
             os.mkdir("dalton")
 
         self.periodic_table = pd.read_csv(self.base_dir.joinpath('periodic_table.csv'))
 
-        #with open(self.base_dir.joinpath('json_data/frequency.json')) as json_file:
+        # with open(self.base_dir.joinpath('json_data/frequency.json')) as json_file:
         #    self.freq_json = json.loads(json_file.read())
 
-    def madmol_to_dalmol(self, madmol_f, basis):
+    def madmol_to_dalmol(self, madmol_f, basis, ncharge=0):
         print(madmol_f)
 
         dalton_inp = []
@@ -61,12 +61,15 @@ class madnessToDalton:
         atom_types = len(atom_dict)
         dalton_inp.append("blah")
         dalton_inp.append("blah")
-        general_line = 'Atomtype=' + str(atom_types) + " " + units.capitalize()
+        general_line = 'Atomtype=' + str(
+            atom_types) + " " + units.capitalize() + " " + "Charge=" + str(ncharge)
         dalton_inp.append(general_line)
 
         for atom in atom_dict.keys():
             # Get the charge of the atom
-            charge = self.periodic_table[self.periodic_table['Symbol'] == atom]['NumberofProtons'].reset_index()
+            charge = self.periodic_table[self.periodic_table['Symbol'] == atom][
+                'NumberofProtons'].reset_index()
+
             charge = charge['NumberofProtons'][0]
             # number of atoms of type atom
             num_atoms = len(atom_dict[atom])
