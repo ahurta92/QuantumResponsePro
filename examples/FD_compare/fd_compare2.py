@@ -165,7 +165,6 @@ for mol in molecules:
 
         try:
             result = runner.get_quad_json(mol, 'hf', 'dipole', basis)
-            print(result)
 
             result.rename(columns={'A-freq': 'Afreq', 'B-freq': 'Bfreq', 'C-freq': 'Cfreq'},
                             inplace=True)
@@ -178,9 +177,7 @@ for mol in molecules:
             alpha_zz = polar_data[basis]['response']['values']['zz'][0]
             alpha_dict[mol][basis] = alpha_zz
             beta_dict[mol][basis] = beta_zzz
-            print('alpha:', polar_data[basis]['response']['values']['zz'][0])
 
-            print(os.curdir)
 
         except (FileNotFoundError, TypeError) as f:
             print(f)
@@ -192,20 +189,18 @@ basis_beta = pd.DataFrame(beta_dict).T
 # for each column i'd like to compute the percent error with respect to the FD data column
 
 
-print(fd_data_copy)
+
 fd_data_copy.set_index('System', inplace=True)
 
 fd_alpha = fd_data_copy['alpha'].copy()
 fd_beta = fd_data_copy['beta'].copy()
-print(fd_alpha)
-print(fd_beta)
+
 
 # concat the basis set data with the fd data
 basis_alpha = pd.concat([fd_alpha, basis_alpha], axis=1)
 basis_beta = pd.concat([fd_beta, basis_beta], axis=1)
 
-print(basis_alpha)
-print(basis_beta)
+
 
 
 def compute_percent_error(df, target):
@@ -217,9 +212,7 @@ def compute_percent_error(df, target):
 
 
 pe_alpha = compute_percent_error(basis_alpha, 'alpha')
-print(pe_alpha)
 pe_beta = compute_percent_error(basis_beta, 'beta')
-print(pe_beta)
 
 # now we can write the latex tables
 # first we put \ce{} around the molecules
