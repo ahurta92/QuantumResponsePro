@@ -3,7 +3,7 @@ from quantumresponsepro import DatabaseGenerator
 
 # Step 1 is to generate the excited state data for the molecules in the database
 
-dir = "/mnt/data/madness_data/fd_compare2"
+dir = "/mnt/data/madness_data/nacl_ioniazation"
 
 db_gen = DatabaseGenerator(Path(dir))
 
