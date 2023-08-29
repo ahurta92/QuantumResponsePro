@@ -451,29 +451,34 @@ def make_detailed_df(data):
 
     row1, row2, flist = partition_molecule_list(mols)
 
+    zero = ['cc-pVDZ', 'cc-pVTZ', 'cc-pVQZ', 'cc-pCVDZ', 'cc-pCVTZ', 'cc-pCVQZ', 'cc-pV5Z',
+            'cc-pV6Z']
+
     single = ['aug-cc-pVDZ', 'aug-cc-pVTZ', 'aug-cc-pVQZ', 'aug-cc-pCVDZ', 'aug-cc-pCVTZ',
               'aug-cc-pCVQZ', 'aug-cc-pV5Z', 'aug-cc-pV6Z']
 
     double = ['d-aug-cc-pVDZ', 'd-aug-cc-pVTZ', 'd-aug-cc-pVQZ', 'd-aug-cc-pCVDZ',
               'd-aug-cc-pCVTZ',
               'd-aug-cc-pCVQZ', 'd-aug-cc-pV5Z', 'd-aug-cc-pV6Z']
+    zero_polarized = ['cc-pCVDZ', 'cc-pCVTZ', 'cc-pCVQZ', ]
     single_polarized = ['aug-cc-pCVDZ', 'aug-cc-pCVTZ', 'aug-cc-pCVQZ', ]
     double_polarized = ['d-aug-cc-pCVDZ', 'd-aug-cc-pCVTZ', 'd-aug-cc-pCVQZ', ]
 
-    DZ = ['aug-cc-pVDZ', 'd-aug-cc-pVDZ', 'aug-cc-pCVDZ', 'd-aug-cc-pCVDZ', ]
-    TZ = ['aug-cc-pVTZ', 'd-aug-cc-pVTZ', 'aug-cc-pCVTZ', 'd-aug-cc-pCVTZ', ]
-    QZ = ['aug-cc-pVQZ', 'd-aug-cc-pVQZ', 'aug-cc-pCVQZ', 'd-aug-cc-pCVQZ', ]
-    FZ = ['aug-cc-pV5Z', 'd-aug-cc-pV5Z']
-    SZ = ['aug-cc-pV6Z', 'd-aug-cc-pV6Z']
+    DZ = ['cc-pVDZ', 'aug-cc-pVDZ', 'd-aug-cc-pVDZ', 'aug-cc-pCVDZ', 'd-aug-cc-pCVDZ', ]
+    TZ = ['cc-pVTZ', 'aug-cc-pVTZ', 'd-aug-cc-pVTZ', 'aug-cc-pCVTZ', 'd-aug-cc-pCVTZ', ]
+    QZ = ['cc-pVQZ', 'aug-cc-pVQZ', 'd-aug-cc-pVQZ', 'aug-cc-pCVQZ', 'd-aug-cc-pCVQZ', ]
+    FZ = ['cc-pV5Z', 'aug-cc-pV5Z', 'd-aug-cc-pV5Z']
+    SZ = ['cc-pV6Z', 'aug-cc-pV6Z', 'd-aug-cc-pV6Z']
 
     data = data.copy()
-    data["augmentation"] = 'aug'
+    data["augmentation"] = ''
     data.loc[data["basis"].isin(double), "augmentation"] = 'd-aug'
     data.loc[data["basis"].isin(single), "augmentation"] = 'aug'
     data["augmentation"] = data["augmentation"].astype("category")
 
     data["polarization"] = 'V'
-    data.loc[data["basis"].isin(single_polarized + double_polarized), "polarization"] = 'CV'
+    data.loc[data["basis"].isin(zero_polarized + single_polarized + double_polarized),
+    "polarization"] = 'CV'
     data["polarization"] = data["polarization"].astype("category")
     data["mol_system"] = 'First-row'
     data.loc[data["molecule"].isin(row2), "mol_system"] = 'Second-row'
@@ -499,25 +504,25 @@ def make_detailed_df(data):
     except ValueError as e:
         print(e)
 
-    print(data)
     data['Type'] = data[['augmentation', 'polarization']].apply(
         lambda x: "-cc-p".join(x) + 'nZ',
         axis=1)
     data["Type"] = data["Type"].astype("category")
-    try:
-        data['Type'] = data['Type'].cat.reorder_categories(
-            ['aug-cc-pVnZ', 'aug-cc-pCVnZ', 'd-aug-cc-pVnZ', 'd-aug-cc-pCVnZ'])
-    except ValueError as e:
 
-        data['Type'] = data['Type'].cat.reorder_categories(
-            ['aug-cc-pVnZ', 'd-aug-cc-pVnZ', ])
+    # rename type  -cc-pVnZ and -cc-pCVnZ to cc-pVnZ and cc-pCVnZ
+    data['Type'] = data['Type'].cat.rename_categories(
+        {'-cc-pVnZ': 'cc-pVnZ', '-cc-pCVnZ': 'cc-pCVnZ', })
 
-    data["mol_size"] = 1.0
-    data.loc[data["mol_system"] == 'First-Row', "mol_size"] = 1.0
-    data.loc[data["mol_system"] == 'Fluorine', "mol_size"] = 10.0
-    data.loc[data["mol_system"] == 'Second-Row', "mol_size"] = 100.0
+    possible_types = ['cc-pVnZ', 'cc-pCVnZ', 'aug-cc-pVnZ', 'aug-cc-pCVnZ', 'd-aug-cc-pVnZ',
+                      'd-aug-cc-pCVnZ']
+    # drop if not in the actual types
+    actual_types = list(data['Type'].unique())
+    # drop from possible types if not in actual types
+    possible_types = [t for t in possible_types if t in actual_types]
+    # now reorder the categories to match the actual types
+    data['Type'] = data['Type'].cat.reorder_categories(possible_types, )
 
-    return data.reset_index()
+    return data
 
 
 def get_invariant_polar(azero):
