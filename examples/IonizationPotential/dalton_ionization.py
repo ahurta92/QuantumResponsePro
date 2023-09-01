@@ -86,7 +86,7 @@ aug_core_polarized = ['aug-cc-pCVDZ', 'aug-cc-pCVTZ', 'aug-cc-pCVQZ', ]
 daug = ['d-aug-cc-pVDZ', 'd-aug-cc-pVTZ', 'd-aug-cc-pVQZ', 'd-aug-cc-pV5Z', 'd-aug-cc-pV6Z']
 daug_core_polarized = ['d-aug-cc-pCVDZ', 'd-aug-cc-pCVTZ', 'd-aug-cc-pCVQZ', ]
 
-all_basis = aug + aug_core_polarized + daug + daug_core_polarized + no_aug + no_aug_core_polarized
+all_basis = aug + aug_core_polarized + daug + daug_core_polarized
 
 na_data = {}
 cl_data = {}
@@ -167,16 +167,17 @@ sns.set_theme('paper', 'darkgrid', palette=light_pal, font='sans-serif', font_sc
 
 r_plot, axes = plt.subplots(1, 2, figsize=(9, 4), frameon=True, layout='constrained',
                             sharex=False, sharey=False)
-if type is None:
-    pal = light_pal
+print("Types: ", na_df.Type.unique())
+if len(na_df.Type.unique()) > 4:
+    pal = 'tab20'
 else:
-    pal = simple_pal
+    pal = light_pal
 
 sns.lineplot(data=na_df, x='valence', y='error', hue='Type', style='Type', ax=axes[0], markers=True,
              markersize=10,
-             palette=light_pal)
+             palette=pal)
 sns.lineplot(data=cl_df, x='valence', y='error', hue='Type', style='Type', ax=axes[1], markers=True,
-             markersize=10, palette=light_pal)
+             markersize=10, palette=pal)
 
 pd.set_option('display.max_columns', None)
 
@@ -193,4 +194,4 @@ axes[1].set_ylabel('Error (Hartree)')
 
 
 thesis_path = Path('/home/adrianhurtado/projects/writing/thesis2023/Figures_v2')
-r_plot.savefig(thesis_path.joinpath("nacl_ionization_plot.png"), )
+r_plot.savefig(thesis_path.joinpath("nacl_ionization_plot.png"), dpi=300, bbox_inches='tight')

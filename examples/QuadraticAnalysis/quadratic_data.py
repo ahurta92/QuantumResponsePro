@@ -276,7 +276,7 @@ def basis_set_analysis_plot(database_path, molecule, valence, type=None):
 
 
 r_plot, axes = basis_set_analysis_plot(compare_path, 'NaCl', ['D', 'T', 'Q', ], type=None)
-r_plot.savefig(paper_path.joinpath("nacl_plot.png"), )
+r_plot.savefig(paper_path.joinpath("nacl_plot.png"),dpi=1000 )
 
 august_high_path = Path('/mnt/data/madness_data/post_watoc/august_high_prec')
 database = BasisMRAData(august_high_path, new=False)
@@ -284,10 +284,10 @@ database = BasisMRAData(august_high_path, new=False)
 type = ['aug-cc-pVnZ', 'd-aug-cc-pVnZ', ]
 
 r_plot, axes = basis_set_analysis_plot(compare_path, 'BF', ['D', 'T', 'Q', '5'], type=type)
-r_plot.savefig(paper_path.joinpath("bf_plot.png"), )
+r_plot.savefig(paper_path.joinpath("bf_plot.png"), dpi=300)
 
-r_plot, axes = basis_set_analysis_plot(compare_path, 'CO', ['D', 'T', 'Q', ], type=type)
-r_plot.savefig(paper_path.joinpath("CO_plot.png"), )
+r_plot, axes = basis_set_analysis_plot(compare_path, 'CO', ['D', 'T', 'Q', '5'], )
+r_plot.savefig(paper_path.joinpath("CO_plot.png"), dpi=300)
 
 
 class DataViewGenerator:
