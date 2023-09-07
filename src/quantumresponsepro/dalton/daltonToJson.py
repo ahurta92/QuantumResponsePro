@@ -177,9 +177,11 @@ class daltonToJson:
                             if match:
                                 b_freq, c_freq, letter1, letter2, letter3, beta_value = match.groups()
                                 # Check if beta_value is another beta function call
-                                if "beta" in beta_value:
-                                    # If it is, replace it with the original letters
-                                    beta_value = f"beta({letter1};{letter2},{letter3})"
+                                # not a good idea
+                                # if "beta" in beta_value:
+                                # If it is, replace it with the original letters
+                                # beta_value = f"beta({letter1};{letter2},{letter3})"
+
                                 a_freq = -(float(b_freq) + float(c_freq))
                                 # Append the data to the DataFrame
                                 rows.append(pd.Series({
@@ -200,6 +202,7 @@ class daltonToJson:
                 print("ValueError: {}".format(verror))
                 print("rows: {}".format(rows))
                 beta_json = pd.DataFrame()
+            # if beta_json is not empty process
 
             return beta_json
 

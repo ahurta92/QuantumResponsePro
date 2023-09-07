@@ -62,7 +62,7 @@ class madnessToDalton:
         dalton_inp.append("blah")
         dalton_inp.append("blah")
         general_line = 'Atomtype=' + str(
-            atom_types) + " " + units.capitalize() + " " + "Charge=" + str(ncharge)
+            atom_types) + " " + units.capitalize() + " " + "Charge=" + str(ncharge) + " Nosymmmetry"
         dalton_inp.append(general_line)
 
         for atom in atom_dict.keys():

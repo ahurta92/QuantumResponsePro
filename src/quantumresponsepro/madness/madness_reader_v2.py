@@ -347,8 +347,59 @@ class MadnessResponse:
         # drop the dash from A-freq and B-freq and C-freq columns names
         beta_json.columns = beta_json.columns.str.replace('-', '')
 
+        beta_json['ijk'] = beta_json['A'].astype(str) + beta_json['B'].astype(str) + \
+                           beta_json['C'].astype(str)
+        beta_json.drop(columns=['A', 'B', 'C'], inplace=True)
+
+        # Start to fill in the missing values
+        # XXY and
+        # for each row in beta_json
+
+        minimal_index_ijk = ['XXX', 'YYY', 'ZZZ', 'YXX', 'ZXX', 'XYY', 'ZYY', 'XZZ',
+                             'YZZ', 'XYZ']
+
+        new_beta_json = pd.DataFrame()
+        for i, row in beta_json.iterrows():
+            ijk = row.ijk
+
+            if ijk in minimal_index_ijk:
+                # create a new row with ijk
+                i = ijk[0]
+                j = ijk[1]
+                k = ijk[2]
+                # print(row, i, j, k)
+                if i == j == k:
+                    new_beta_json = pd.concat([new_beta_json, row], axis=1)
+                elif i != j != k:
+                    new_row = row.copy()
+                    new_row['ijk'] = ''.join([i, j, k])
+                    new_beta_json = pd.concat([new_beta_json, new_row], axis=1)
+                    new_row['ijk'] = ''.join([i, k, j])
+                    new_beta_json = pd.concat([new_beta_json, new_row], axis=1)
+                    new_row['ijk'] = ''.join([j, i, k])
+                    new_beta_json = pd.concat([new_beta_json, new_row], axis=1)
+                    new_row['ijk'] = ''.join([j, k, i])
+                    new_beta_json = pd.concat([new_beta_json, new_row], axis=1)
+                    new_row['ijk'] = ''.join([k, i, j])
+                    new_beta_json = pd.concat([new_beta_json, new_row], axis=1)
+                    new_row['ijk'] = ''.join([k, j, i])
+                    new_beta_json = pd.concat([new_beta_json, new_row], axis=1)
+                else:
+                    new_row = row.copy()
+
+                    new_row['ijk'] = ''.join([i, j, k])
+                    new_beta_json = pd.concat([new_beta_json, new_row], axis=1)
+                    new_row['ijk'] = ''.join([k, i, j])
+                    new_beta_json = pd.concat([new_beta_json, new_row], axis=1)
+                    new_row['ijk'] = ''.join([j, k, i])
+                    new_beta_json = pd.concat([new_beta_json, new_row], axis=1)
+
+        beta_json = new_beta_json.T
+        index = ['Afreq', 'Bfreq', 'Cfreq', 'ijk', 'basis', 'molecule']
+        # drop if ijk is ''
+        beta_json = beta_json[beta_json['ijk'] != '']
+        beta_json.set_index(index, inplace=True)
         # set the A B C columns to categorical type
-        print(beta_json)
         return beta_json
 
     def get_response_calc_data_dict(self, thresh, data_k):

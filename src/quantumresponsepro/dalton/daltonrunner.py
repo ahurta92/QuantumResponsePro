@@ -13,6 +13,8 @@ from pathlib import Path
 
 
 class DaltonRunner:
+    dalton_dir = None
+    base_dir = None
 
     @classmethod
     def __init__(self, base_dir: Path, run_new):
@@ -616,6 +618,63 @@ class DaltonRunner:
             print(output_stem, " in ", run_directory, " did not run correctly")
             print('most likely the basis set is not available')
             pass
+
+        beta_json = self.quad_data.copy()
+        # if the size of beta_json greater than 0
+        try:
+            if not beta_json.empty:
+                beta_json.rename(columns={'A-freq': 'Afreq', 'B-freq': 'Bfreq', 'C-freq': 'Cfreq'},
+                                 inplace=True)
+
+                # now i need to cobine A B C to one column ijk
+                beta_json['ijk'] = beta_json['A'].astype(str) + beta_json['B'].astype(str) + \
+                                   beta_json['C'].astype(str)
+                beta_json.drop(columns=['A', 'B', 'C'], inplace=True)
+                index = ['Afreq', 'Bfreq', 'Cfreq', 'ijk', 'basis', 'molecule']
+                beta_json['Afreq'] = -1.0 * beta_json['Afreq']
+
+                beta_json.set_index(index, inplace=True)
+                # data = data.reindex(columns=index)
+
+                # find the index where Beta Value is a string and not a float
+                f_data = beta_json[beta_json['Beta Value'].apply(lambda x: isinstance(x, float))]
+                s_data = beta_json[beta_json['Beta Value'].apply(lambda x: isinstance(x, str))]
+
+                # iterate over rows with Beta Value as a string
+                for index, row in s_data.iterrows():
+                    # first process the beta value to grab the 3 letter index withing beta(i,j,k)
+                    beta = row['Beta Value']
+                    beta = beta.split('(')[1].split(')')[0].split(',')
+                    beta = [i for i in beta]
+                    b_ijk = ''.join(beta)
+
+                    # split the index
+                    ijk = index[3]
+                    if ijk != b_ijk:
+                        # create a new index replacing the ijk with b_ijk
+                        new_index = list(index)
+                        new_index[3] = b_ijk
+                        new_index = tuple(new_index)
+                        row['Beta Value'] = f_data.loc[new_index]['Beta Value']
+
+
+                    else:
+                        new_index = list(index)
+                        new_index[1], new_index[2] = new_index[2], new_index[1]
+                        new_index = tuple(new_index)
+                        # f_data.loc[new_index]['Beta Value'])
+                        row['Beta Value'] = f_data.loc[new_index]['Beta Value']
+
+                beta_json = pd.concat([f_data, s_data])
+                # rename beta_json 'Beta Value' to 'Beta'
+                beta_json.rename(columns={'Beta Value': 'Beta'}, inplace=True)
+                # remove if ijk is empty
+                self.quad_data = beta_json
+
+        except KeyError as k:
+            print(k)
+            pass
+            return None
 
         return self.quad_data
 

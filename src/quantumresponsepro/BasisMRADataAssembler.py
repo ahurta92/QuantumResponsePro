@@ -110,14 +110,16 @@ def get_mra_quad_data(mols, xc, op, database):
     for mol in mols:
         try:
             mad_r = MadnessResponse(mol, xc, op, database)
-            print(mad_r.quad_data.info())
-            dfi.append(mad_r.quad_data.reset_index(drop=True))
+            beta_df = mad_r.quad_data
+
+            dfi.append(beta_df)
 
         except FileNotFoundError as f:
             print('did not find beta.json for {}'.format(mol))
             pass
-    df = pd.concat(dfi, ignore_index=True, axis=0)
-    print(df.info())
+    #print(dfi)
+    df = pd.concat(dfi, ignore_index=False, axis=0)
+
     return df
 
 
@@ -255,35 +257,13 @@ def get_basis_quad_data(mols, basis_sets, xc, op, database):
                 pass
 
     b_data = pd.concat(bd)
-    print(b_data.info())
-    print(b_data)
     # here we need to process the Beta Value coluns.  First we change the name to Beta
     b_data.rename(columns={'Beta Value': 'Beta'}, inplace=True)
+
     # also drop the dash from A-freq and B-freq and C-freq
-    b_data.rename(columns={'A-freq': 'Afreq', 'B-freq': 'Bfreq', 'C-freq': 'Cfreq'}, inplace=True)
-    # let's try the easy solution to just drop the beta value if it is a string
-    b_data = b_data[b_data['Beta'].apply(lambda x: isinstance(x, float))]
+
     # add a basis column
     return b_data
-
-    # now we need to take any string values and convert them to floats
-    # this happens when the value is equal to another value
-    # for example if Beta is equal to "beta(Z;Y,Y)" this indicates that it is equal to beta(Z;Y,
-    # Y) at the same frequency
-    # we need to convert this to a float value for the beta value at that frequency
-
-    b_data['Beta'] = b_data['Beta'].apply(
-        lambda x: float(x.split('(')[1].split(')')[0].split(';')[1]))
-
-    def set_up_query_key(beta_value):
-        XYZ = beta_value.split('(')[1].split(')')[0]
-        A = XYZ.split(';')[0]
-        BC = XYZ.split(';')[1]
-        B = BC.split(',')[0]
-        C = BC.split(',')[1]
-
-        query = "A=={} & B=={} & C=={}".format(A, B, C)
-        return query
 
 
 def percent_error(df):

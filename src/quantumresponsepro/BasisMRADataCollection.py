@@ -16,9 +16,12 @@ def get_polar_df(molecules, xc, op, database, basis):
 
 def get_quad_df(molecules, xc, op, database, basis):
     mra_data = get_mra_quad_data(molecules, xc, op, database)
+    #print(mra_data)
     b_data = get_basis_quad_data(molecules, basis, xc, op, database)
+    #print(b_data)
     a_data = pd.concat([mra_data, b_data])
-    a_data = a_data.reset_index(drop=True)
+    #print(a_data)
+    #print(a_data.info())
     return a_data
 
 
@@ -111,7 +114,7 @@ class BasisMRAData:
         convergence = self.__report_convergence()
         self.available_molecules = convergence[0]
 
-    def __init__(self, data_dir, xc='hf', op='dipole', basis_sets=all_basis_sets, new=False):
+    def __init__(self, data_dir, xc='hf', op='dipole', basis_sets=all_basis_sets, new=True):
         # set up the data directory
         self.data_dir = data_dir
         self.xc = xc
@@ -139,7 +142,7 @@ class BasisMRAData:
                                              self.data_dir,
                                              self.basis_sets)
             self.all_polar_data.to_feather(all_data_path)
-            self.all_quad_data.to_feather(all_beta_path)
+            self.all_quad_data.reset_index().to_feather(all_beta_path)
         else:
             if all_data_path.is_file():
                 self.all_polar_data = pd.read_feather(all_data_path)
@@ -151,10 +154,22 @@ class BasisMRAData:
                 self.all_polar_data.to_feather(all_data_path)
             if all_beta_path.is_file():
                 self.all_quad_data = pd.read_feather(all_beta_path)
+                self.all_quad_data.drop(columns=['molecule', 'basis'], inplace=True)
+                self.all_quad_data.rename(columns={'level_0': 'Afreq', 'level_1': 'Bfreq',
+                                                   'level_2': 'Cfreq', 'level_3': 'ijk',
+                                                   'level_4': 'basis', 'level_5': 'molecule',
+                                                   'level_6': 'Beta'}, inplace=True)
+                # now set the multiindex
+                self.all_quad_data.set_index(['Afreq', 'Bfreq', 'Cfreq', 'ijk', 'basis',
+                                              'molecule'], inplace=True)
+                print(self.all_quad_data)
             else:
                 self.all_quad_data = get_quad_df(self.available_molecules, xc, op,
                                                  self.data_dir,
                                                  self.basis_sets)
+                print(self.all_quad_data)
+                self.all_quad_data.reset_index(inplace=True)
+                print(self.all_quad_data)
                 self.all_quad_data.to_feather(all_beta_path)
         energy_df_path = feather_data.joinpath('energy_data.feather')
 
@@ -178,6 +193,19 @@ class BasisMRAData:
                                                     self.data_dir)
             self.energy_diff.to_feather(energy_diff_path)
             pass
+
+        alpha_eigen_path = feather_data.joinpath('alpha_eigen_data.feather')
+        if alpha_eigen_path.is_file() and not new:
+            self.alpha_eigen = pd.read_feather(alpha_eigen_path)
+        else:
+            self.alpha_eigen = get_ij_eigen(self.all_polar_data)
+            self.alpha_eigen.reset_index().to_feather(alpha_eigen_path)
+        eigen_diff_path = feather_data.joinpath('eigen_diff_data.feather')
+        if eigen_diff_path.is_file() and not new:
+            self.eigen_diff = pd.read_feather(eigen_diff_path)
+        else:
+            self.eigen_diff = create_component_diff_df(self.alpha_eigen)
+            self.eigen_diff.reset_index().to_feather(eigen_diff_path)
 
 
 class BasisMRADataCollection:
