@@ -117,7 +117,6 @@ def get_mra_quad_data(mols, xc, op, database):
         except FileNotFoundError as f:
             print('did not find beta.json for {}'.format(mol))
             pass
-    #print(dfi)
     df = pd.concat(dfi, ignore_index=False, axis=0)
 
     return df

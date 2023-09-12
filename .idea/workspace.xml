@@ -4,17 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7af674dd-5e62-47db-810a-177fa0259216" name="Changes" comment="I can generate unit sphere representation of SHG">
-      <change afterPath="$PROJECT_DIR$/examples/QuadraticAnalysis/fixing_beta.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/QuadraticAnalysis/quadratic_frequency_data.py" afterDir="false" />
+    <list default="true" id="7af674dd-5e62-47db-810a-177fa0259216" name="Changes" comment="No symmetry">
+      <change afterPath="$PROJECT_DIR$/examples/QuadraticAnalysis/QuadraticAnalysis.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/examples/QuadraticAnalysis/QuadraticData.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/examples/QuadraticAnalysis/quadratic_basis_set_analysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/QuadraticAnalysis/fixing_beta.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/QuadraticAnalysis/fixing_beta.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/QuadraticAnalysis/quadratic_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/QuadraticAnalysis/quadratic_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/QuadraticAnalysis/quadratic_frequency_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/QuadraticAnalysis/quadratic_frequency_data.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataAssembler.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataAssembler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataCollection.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataCollection.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/dalton/daltonToJson.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/dalton/daltonToJson.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/dalton/daltonrunner.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/dalton/daltonrunner.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/madness/madness_reader_v2.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/madness/madness_reader_v2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/madness_to_dalton.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/madness_to_dalton.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../writing/thesis2023/thesis_mra_response.bib" beforeDir="false" afterPath="$PROJECT_DIR$/../writing/thesis2023/thesis_mra_response.bib" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,12 +51,12 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/anaconda3/envs/test2/lib/python3.10/json/__init__.py" root0="SKIP_INSPECTION" />
-    <setting file="file://$PROJECT_DIR$/examples/read_dalton_quadratic_response.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/venv/lib/python3.10/site-packages/PIL/Image.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/venv/lib/python3.10/site-packages/matplotlib/artist.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/venv/lib/python3.10/site-packages/matplotlib/axes/_base.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/venv/lib/python3.10/site-packages/matplotlib/axis.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/venv/lib/python3.10/site-packages/matplotlib/ticker.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/venv/lib/python3.10/site-packages/pandas/core/frame.py" root0="SKIP_INSPECTION" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -81,7 +82,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.black.configuration.BlackFormatterConfigurable&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
   &quot;keyToStringList&quot;: {
@@ -101,7 +102,7 @@
       <recent name="$PROJECT_DIR$/src/quantumresponsepro" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.fixing_beta">
+  <component name="RunManager" selected="Python.QuadraticData">
     <configuration name="main" type="LATEX_RUN_CONFIGURATION" factoryName="LaTeX configuration factory">
       <texify>
         <compiler>PDFLATEX</compiler>
@@ -126,6 +127,50 @@
         <option name="RunConfigurationTask" enabled="true" run_configuration_name="fd_compare2" run_configuration_type="PythonConfigurationType" />
         <option name="RunConfigurationTask" enabled="true" run_configuration_name="dalton_ionization" run_configuration_type="PythonConfigurationType" />
       </method>
+    </configuration>
+    <configuration name="QuadraticAnalysis" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="QuantumResponsePro" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples/QuadraticAnalysis" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/QuadraticAnalysis/QuadraticAnalysis.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="QuadraticData" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="QuantumResponsePro" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples/QuadraticAnalysis" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/QuadraticAnalysis/QuadraticData.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
     </configuration>
     <configuration name="compute_dalton_quad_frequency" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="QuantumResponsePro" />
@@ -163,28 +208,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/IonizationPotential/dalton_ionization.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="daltonrunner" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="QuantumResponsePro" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/quantumresponsepro/dalton" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/quantumresponsepro/dalton/daltonrunner.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -237,6 +260,28 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="quadratic_basis_set_analysis" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="QuantumResponsePro" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples/QuadraticAnalysis" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/QuadraticAnalysis/quadratic_basis_set_analysis.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="quadratic_data" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="QuantumResponsePro" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -281,69 +326,25 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="step1" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="QuantumResponsePro" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples/creating_database" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/creating_database/step1.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="step2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="QuantumResponsePro" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/examples/creating_database" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/examples/creating_database/step2.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <list>
       <item itemvalue="LaTeX.main" />
       <item itemvalue="Python.compute_dalton_quad_frequency" />
       <item itemvalue="Python.quadratic_data" />
       <item itemvalue="Python.fd_compare2" />
       <item itemvalue="Python.dalton_ionization" />
-      <item itemvalue="Python.daltonrunner" />
+      <item itemvalue="Python.QuadraticData" />
+      <item itemvalue="Python.quadratic_basis_set_analysis" />
+      <item itemvalue="Python.QuadraticAnalysis" />
       <item itemvalue="Python.fixing_beta" />
       <item itemvalue="Python.quadratic_frequency_data" />
-      <item itemvalue="Python.step2" />
-      <item itemvalue="Python.step1" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.fixing_beta" />
+        <item itemvalue="Python.QuadraticData" />
         <item itemvalue="Python.quadratic_frequency_data" />
-        <item itemvalue="Python.daltonrunner" />
-        <item itemvalue="Python.step2" />
-        <item itemvalue="Python.step1" />
+        <item itemvalue="Python.quadratic_basis_set_analysis" />
+        <item itemvalue="Python.fixing_beta" />
+        <item itemvalue="Python.QuadraticAnalysis" />
       </list>
     </recent_temporary>
   </component>
@@ -409,7 +410,11 @@
       <workItem from="1693337735913" duration="9795000" />
       <workItem from="1693425857864" duration="24059000" />
       <workItem from="1693579539330" duration="67481000" />
-      <workItem from="1694084720119" duration="20930000" />
+      <workItem from="1694084720119" duration="46256000" />
+      <workItem from="1694389845357" duration="18191000" />
+      <workItem from="1694466318429" duration="6002000" />
+      <workItem from="1694522632268" duration="686000" />
+      <workItem from="1694523330187" duration="12902000" />
     </task>
     <task id="LOCAL-00001" summary="using Path instead of bare strings for file management">
       <created>1681736371953</created>
@@ -585,14 +590,6 @@
       <option name="presentableId" value="LOCAL-00025" />
       <option name="project" value="LOCAL" />
       <updated>1685117287042</updated>
-    </task>
-    <task id="LOCAL-00027" summary="working for paper">
-      <option name="closed" value="true" />
-      <created>1690375626921</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1690375626921</updated>
     </task>
     <task id="LOCAL-00028" summary="add code generate even tempered basis set and run">
       <option name="closed" value="true" />
@@ -778,7 +775,15 @@
       <option name="project" value="LOCAL" />
       <updated>1693589123794</updated>
     </task>
-    <option name="localTasksCounter" value="51" />
+    <task id="LOCAL-00051" summary="No symmetry">
+      <option name="closed" value="true" />
+      <created>1694117396245</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1694117396245</updated>
+    </task>
+    <option name="localTasksCounter" value="52" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -796,7 +801,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Recent changes for the paper" />
     <MESSAGE value="working for paper" />
     <MESSAGE value="add code generate even tempered basis set and run" />
     <MESSAGE value="some plot adjustments" />
@@ -821,7 +825,8 @@
     <MESSAGE value="computes ionization potential" />
     <MESSAGE value="add plot with na and cl ionization potentials" />
     <MESSAGE value="I can generate unit sphere representation of SHG" />
-    <option name="LAST_COMMIT_MESSAGE" value="I can generate unit sphere representation of SHG" />
+    <MESSAGE value="No symmetry" />
+    <option name="LAST_COMMIT_MESSAGE" value="No symmetry" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -832,8 +837,7 @@
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/examples/QuadraticAnalysis/fixing_beta.py</url>
-          <line>20</line>
+          <url>file://$PROJECT_DIR$/examples/QuadraticAnalysis/quadratic_data.py</url>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>
@@ -847,8 +851,10 @@
     <SUITE FILE_PATH="coverage/QuantumResponsePro$comparing_mra_results.coverage" NAME="comparing_mra_results Coverage Results" MODIFIED="1690219814830" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$create_json_files.coverage" NAME="create_json_files Coverage Results" MODIFIED="1692712593241" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$quad_eigen.coverage" NAME="quad_eigen Coverage Results" MODIFIED="1693250122546" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/QuadraticAnalysis" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$QuadraticAnalysis.coverage" NAME="QuadraticAnalysis Coverage Results" MODIFIED="1694466785652" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/QuadraticAnalysis" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$read_madness_quadratic_response.coverage" NAME="read_madness_quadratic_response Coverage Results" MODIFIED="1692626761920" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/QuantumResponsePro$fixing_beta.coverage" NAME="fixing_beta Coverage Results" MODIFIED="1694115117870" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/QuadraticAnalysis" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$fixing_beta.coverage" NAME="fixing_beta Coverage Results" MODIFIED="1694182815838" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/QuadraticAnalysis" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$quadratic_basis_set_analysis.coverage" NAME="quadratic_basis_set_analysis Coverage Results" MODIFIED="1694457192140" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/QuadraticAnalysis" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$daltonrunner.coverage" NAME="daltonrunner Coverage Results" MODIFIED="1694087973029" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/quantumresponsepro/dalton" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$testing_analyzer.coverage" NAME="testing_analyzer Coverage Results" MODIFIED="1683150167994" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$testing_tabler.coverage" NAME="testing_tabler Coverage Results" MODIFIED="1682439826793" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
@@ -865,12 +871,13 @@
     <SUITE FILE_PATH="coverage/QuantumResponsePro$fd_compare2.coverage" NAME="fd_compare2 Coverage Results" MODIFIED="1693588676519" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/FD_compare" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$run_get_dalton_frequency_json.coverage" NAME="run_get_dalton_frequency_json Coverage Results" MODIFIED="1692451012401" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$run_dalton.coverage" NAME="run_dalton Coverage Results" MODIFIED="1690213861699" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/QuantumResponsePro$quadratic_frequency_data.coverage" NAME="quadratic_frequency_data Coverage Results" MODIFIED="1694092210759" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/QuadraticAnalysis" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$quadratic_frequency_data.coverage" NAME="quadratic_frequency_data Coverage Results" MODIFIED="1694192352472" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/QuadraticAnalysis" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$compute_dalton_quad_frequency.coverage" NAME="compute_dalton_quad_frequency Coverage Results" MODIFIED="1693589002545" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="/mnt/data/madness_data/development" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$pytest_for_test_DatabaseGenerator_test_generate_frequeny_json.coverage" NAME="pytest for test_DatabaseGenerator.test_generate_frequeny_json Coverage Results" MODIFIED="1681834497169" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$read_dalton_quadratic_response.coverage" NAME="read_dalton_quadratic_response Coverage Results" MODIFIED="1692577162874" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$step1.coverage" NAME="step1 Coverage Results" MODIFIED="1693322226951" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/creating_database" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$mol_convergence_plots.coverage" NAME="mol_convergence_plots Coverage Results" MODIFIED="1684107544323" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$QuadraticData.coverage" NAME="QuadraticData Coverage Results" MODIFIED="1694552344499" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/QuadraticAnalysis" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$run_dalton_quadratic_response.coverage" NAME="run_dalton_quadratic_response Coverage Results" MODIFIED="1692577095667" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$step2.coverage" NAME="step2 Coverage Results" MODIFIED="1693322265736" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/creating_database" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$FDCompare.coverage" NAME="FDCompare Coverage Results" MODIFIED="1690475554211" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/example_database" />

@@ -27,26 +27,10 @@ tromso_path = Path('/home/adrianhurtado/projects/writing/tromso_poster/figures')
 
 paper_path = thesis_path
 
-database_path = Path('/mnt/data/madness_data/august_high_prec')
-compare_path = fd_path.joinpath('high-high')
+database_path = Path('/mnt/data/madness_data/august_no_symmetry')
 
-database = BasisMRAData(compare_path, new=False)
+database = BasisMRAData(database_path, new=False)
 print(database.all_polar_data)
-
-print(database.molecules)
-print(database.basis_sets)
-
-print(database.available_molecules)
-
-nacl = MadnessResponse('NaCl', 'hf', 'dipole', fd_path.joinpath('high-high'))
-print(nacl.quad_data)
-
-print(database.all_quad_data)
-quad_data = database.all_quad_data.copy()
-# merge the ABC columns into one column called component
-# sort by the component column
-# drop the ABC columns
-quad_data.drop(columns=['A', 'B', 'C'], inplace=True)
 
 # show the entire dataframe by setting the max rows to None
 pd.set_option('display.max_columns', None)
@@ -54,9 +38,7 @@ pd.set_option('display.max_columns', None)
 # get a detailed view of the data
 # now I need to take the difference of each basis set value with the MADNESS value
 # I'll compute the percent error of each value
-quad_data = quad_data.query('Beta.abs() > 1e-2')
 # drop Afreq Bfreq and Cfreq greater than 0
-quad_data = quad_data.query('Afreq == 0 & Bfreq == 0 & Cfreq == 0')
 
 alpha_data = database.all_polar_data.copy()
 alpha_data = alpha_data.query('omega==0')
@@ -78,9 +60,8 @@ class QuadDataAnalyzer:
         mra_data = BasisMRAData(db_path, new=False)
         self.quad_data = mra_data.all_quad_data.copy().query('Afreq==0 &Bfreq==0 &Cfreq==0 & '
                                                              'Beta.abs()>1e-3')
-        self.quad_data['ijk'] = self.quad_data['A'] + self.quad_data['B'] + self.quad_data['C']
+        print(self.quad_data)
         self.quad_data.sort_values(by='ijk', inplace=True)
-        self.quad_data.drop(columns=['A', 'B', 'C'], inplace=True)
 
         quad_diff = self.compute_molecule_quad_diff(self.quad_data, molecule).reset_index()
         quad_diff = make_detailed_df(quad_diff)
@@ -115,9 +96,8 @@ class QuadDataAnalyzer:
         # get the basis set value for the molecule
         basis_data = quad_data.query('molecule==@molecule & basis==@basis').copy().drop_duplicates()
         # from the unique ijk from the basis set data
-        ijk_min = basis_data.ijk.unique()
-        # now remove the ijk values from the madness data that are not in the basis set data
-        mad_data = mad_data.query('ijk.isin(@ijk_min)')
+        print(basis_data)
+        print(mad_data)
 
         basis_data.set_index(multi_index, inplace=True)
         mad_data.set_index(multi_index, inplace=True)
@@ -131,7 +111,8 @@ class QuadDataAnalyzer:
 
     def compute_molecule_quad_diff(self, quad_data, molecule):
         data = []
-        b_data = quad_data.query('basis!="MRA"')
+        b_data = quad_data.query('basis!="MRA"').copy().reset_index()
+        print(b_data)
         for basis in b_data.basis.unique():
             data.append(self.computed_molecule_quad_basis_diff(quad_data, molecule, basis))
 
@@ -274,18 +255,6 @@ def basis_set_analysis_plot(database_path, molecule, valence, type=None):
 
     return r_plot, axes
 
-
-r_plot, axes = basis_set_analysis_plot(compare_path, 'NaCl', ['D', 'T', 'Q', ], type=None)
-r_plot.savefig(paper_path.joinpath("nacl_plot.png"),dpi=1000 )
-
-august_high_path = Path('/mnt/data/madness_data/post_watoc/august_high_prec')
-database = BasisMRAData(august_high_path, new=False)
-
-type = ['aug-cc-pVnZ', 'd-aug-cc-pVnZ', ]
-
-r_plot, axes = basis_set_analysis_plot(compare_path, 'BF', ['D', 'T', 'Q', '5'], type=type)
-r_plot.savefig(paper_path.joinpath("bf_plot.png"), dpi=300)
-
-r_plot, axes = basis_set_analysis_plot(compare_path, 'CO', ['D', 'T', 'Q', '5'], )
-r_plot.savefig(paper_path.joinpath("CO_plot.png"), dpi=300)
-
+mol = 'H2O'
+r_plot, axes = basis_set_analysis_plot(database_path, mol, ['D', 'T', 'Q', ], type=None)
+r_plot.savefig(paper_path.joinpath("{}.png".format(mol)), dpi=1000)

@@ -30,6 +30,7 @@ tromso_path = Path('/home/adrianhurtado/projects/writing/tromso_poster/figures')
 paper_path = thesis_path
 
 database_path = Path('/mnt/data/madness_data/post_watoc/august_high_prec')
+database_path = Path('/mnt/data/madness_data/august_no_symmetry')
 compare_path = fd_path.joinpath('high-high')
 
 pal = sns.color_palette("seismic_r", 4).as_hex()
@@ -104,28 +105,7 @@ class QuadDataAnalyzer:
         basis_data = self.quad_data.query('basis=="aug-cc-pVQZ"').copy(
         ).drop_duplicates()
         unique_index = basis_data.index.unique()
-        # MRA and basis dimension do not mathc after the query
-        # mad_data = self.quad_data.query('molecule==@molecule & basis=="MRA" ').copy()
-        # mad_data = mad_data.query('index.isin(@unique_index)')
-        # self.quad_data = self.quad_data.query('index.isin(@unique_index)')
-        # self.quad_data.drop_duplicates(inplace=True)
 
-        # rename madness data to mad_beta
-        # mad_data.rename(columns={'Beta': 'mad_beta'}, inplace=True)
-        # truncate frequency columns at 5 decimal places
-        # basis_data = pd.concat([basis_data, mad_data], axis=1)
-        # basis_data['sign'] = np.sign(basis_data['Beta'].values * basis_data['mad_beta'].values)
-        # basis_data['Madness'] = basis_data['mad_beta'].values * basis_data['sign'].values
-
-        # print('BASIS DATA:\n', basis_data)
-
-        # set MRA Beta data in quad_data to basis_data
-        # if basis  is MRA Beta data = basis_data
-        # self.quad_data.loc[self.quad_data['basis'] == 'MRA', 'Beta'] = basis_data['Madness']
-
-        # now compute the differences
-        # quad_diff = self.compute_molecule_quad_diff(self.quad_data, molecule).reset_index()
-        # quad_diff = make_detailed_df(quad_diff)
 
         self.alpha_data = mra_data.alpha_eigen.copy()
 
@@ -301,7 +281,7 @@ class QuadDataAnalyzer:
             for j in range(num_points):
                 text.append(basis)
 
-        #minimal_index_ijk = ['XXX', 'YYY', 'ZZZ', 'XYZ', 'XXY', 'YXY', 'ZXX', 'ZXZ', 'YYZ', 'YZZ']
+        # minimal_index_ijk = ['XXX', 'YYY', 'ZZZ', 'XYZ', 'XXY', 'YXY', 'ZXX', 'ZXZ', 'YYZ', 'YZZ']
 
         # for each basis set generate the xyzuvw data
         for i, basis in enumerate(basis_sets):
@@ -311,7 +291,7 @@ class QuadDataAnalyzer:
 
             bdata.set_index('ijk', inplace=True)
             bdata.sort_index(inplace=True)
-            #bdata = bdata.loc[minimal_index_ijk]
+            # bdata = bdata.loc[minimal_index_ijk]
             # Initialize results
             results = []
             # Generate 1000 points on the unit sphere
@@ -520,21 +500,18 @@ def plot_energy_diff(data, valence, ax, color_pal=None):
     return g
 
 
-compare_path = Path('/mnt/data/madness_data/post_watoc/august_high_prec')
-
-molecule = 'LiBH4'
-qda = QuadDataAnalyzer(database_path, molecule, new=False)
+molecule = 'H2O'
 # r_plot, axes = qda.basis_set_analysis_plot(compare_path, 'CH3SH', ['D', 'T', 'Q', ], type=None)
 #########r_plot.savefig(paper_path.joinpath("nacl_plot.png"), dpi=1000)
 # plt.show()
 
 pd.set_option('display.max_columns', None)
 # CH3NH2 CH3OH CH2BH C6H6 CH3SH
-database_path = Path('/mnt/data/madness_data/fd_compare3/high-high')
-database_path = Path('/mnt/data/madness_data/post_watoc/august_high_prec')
+database_path = Path('/mnt/data/madness_data/august_no_symmetry')
+qda = QuadDataAnalyzer(database_path, molecule, new=True)
 
 scatter = ball_and_stick(molecule, database_path)
-quiver = qda.unit_sphere_representation_MRA(['aug-cc-pVQZ', 'MRA', ],
+quiver = qda.unit_sphere_representation_MRA(['d-aug-cc-pVTZ', 'MRA', ],
                                             0.0, 0.0,
                                             sizeref=3.5, shift=2.5, sizemode='scaled')
 

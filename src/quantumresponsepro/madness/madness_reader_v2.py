@@ -511,6 +511,17 @@ class MadnessResponse:
         e_data = pd.Series(ground_data)
         return e_data
 
+    def get_dipole_moment(self):
+        dipole_moment = self.ground_info['scf_dipole_moment']
+        dipole_moment = tensor_to_numpy(dipole_moment)
+        return dipole_moment
+
+    def get_molecule(self):
+        molecule_dict = self.ground_info['molecule']
+        geometry = molecule_dict['geometry']
+        symbols = molecule_dict['symbols']
+        return geometry, symbols
+
     def plot_residuals(self, frequency=0):
         figsize = (10, 8 * 1)
         fig, ax = plt.subplots(nrows=1, ncols=1, figsize=figsize, constrained_layout=False)

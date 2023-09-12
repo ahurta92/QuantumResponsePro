@@ -16,12 +16,12 @@ def get_polar_df(molecules, xc, op, database, basis):
 
 def get_quad_df(molecules, xc, op, database, basis):
     mra_data = get_mra_quad_data(molecules, xc, op, database)
-    #print(mra_data)
+    # print(mra_data)
     b_data = get_basis_quad_data(molecules, basis, xc, op, database)
-    #print(b_data)
+    # print(b_data)
     a_data = pd.concat([mra_data, b_data])
-    #print(a_data)
-    #print(a_data.info())
+    # print(a_data)
+    # print(a_data.info())
     return a_data
 
 
@@ -114,13 +114,13 @@ class BasisMRAData:
         convergence = self.__report_convergence()
         self.available_molecules = convergence[0]
 
-    def __init__(self, data_dir, xc='hf', op='dipole', basis_sets=all_basis_sets, new=True):
+    def __init__(self, data_dir, xc='hf', op='dipole', basis_sets=all_basis_sets, new=True,
+                 molecules=None):
         # set up the data directory
         self.data_dir = data_dir
         self.xc = xc
         self.op = op
         self.molecules = []
-        self.available_molecules = []
         self.basis_sets = basis_sets
 
         # create the feather data directory if it doesn't exist
@@ -134,7 +134,7 @@ class BasisMRAData:
         all_data_path = feather_data.joinpath('all_polar_data.feather')
         all_beta_path = feather_data.joinpath('all_beta_data.feather')
 
-        if new:
+        if new :
             self.__determine_convergence()
             self.all_polar_data = get_polar_df(self.available_molecules, xc, op, self.data_dir,
                                                self.basis_sets)
