@@ -382,7 +382,6 @@ def create_component_diff_df(a_data):
         basis_data = a_data.query('molecule==@mol & basis != "MRA"')
         b_mol_data = basis_data.set_index(multidex).alpha
         rep_mol_mra = pd.concat([a_mra for i in range(len(basis_data.basis.unique()))])
-        print(rep_mol_mra)
 
         diff_data = pd.concat([rep_mol_mra, b_mol_data], axis=1).diff(axis=1).iloc[:, 1]
         bcol = basis_data.set_index(multidex).basis
@@ -390,9 +389,9 @@ def create_component_diff_df(a_data):
 
         ij_diff = pd.concat([mcol, bcol, diff_data], axis=1).query('basis!="MRA"')
         f_ij.append(ij_diff)
-    print(f_ij)
 
     ij_diff = pd.concat(f_ij)
+    ij_diff.reset_index(inplace=True)
     return ij_diff
 
 

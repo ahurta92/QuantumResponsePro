@@ -70,8 +70,7 @@ class QuadraticDatabase:
             df.to_csv(filename, index=False)
 
     def make_all_dfs_detailed(self):
-        data_frame_attributes = ['q_df', 'basis_set_error_df', 'vector_q_df',
-                                 'vector_basis_set_error_df']
+        data_frame_attributes = ['q_df', 'basis_set_error_df', 'vector_q_df']
 
         for attr_name in data_frame_attributes:
             df = getattr(self, attr_name)  # Access the DataFrame attribute
@@ -246,6 +245,7 @@ class QuadraticDatabase:
         b_data['Beta_sign'] = np.sign(b_data['Beta'] * b_data['Beta_MRA'])
         b_data['Beta_MRA_signed'] = b_data['Beta_MRA'] * b_data['Beta_sign']
         b_data['Beta_diff'] = (b_data['Beta'] - b_data['Beta_MRA'])  # / b_data['Beta_MRA'] * 100
+        print(b_data)
 
         b_data['Beta'] = b_data['Beta_diff']
         b_data.drop(columns=['Beta_MRA', 'Beta_sign', 'Beta_MRA_signed', 'Beta_diff'], inplace=True)
@@ -315,13 +315,11 @@ class QuadraticDatabase:
         molecule = b_data['molecule'].unique()[0]
         b_data.drop_duplicates(inplace=True, subset=['ijk'])
         b_data.set_index('ijk', inplace=True)
-        print(b_data)
         # the vector representation of the hyperpolarizability tensor accumulates components
         # whose output are in the same direction.
         # for example ax=beta(xxx)+beta(xyy)+beta(xzz) and ay=beta(yxx)+beta(yyy)+beta(yzz) and
         # az=beta(zxx)+beta(zyy)+beta(zzz)
         # the vector representation is then [ax,ay,az]
-        print(b_data)
 
         ax = 0
         ay = 0
@@ -514,7 +512,7 @@ simple_pal = sns.color_palette(p3)
 sns.set_theme('paper', 'darkgrid', palette=light_pal, font='sans-serif', font_scale=1.0)
 
 
-class basis_set_analysis:
+class basis_set_analaysis:
 
     def __init__(self, qda: QuadraticDatabase, pda: PolarizabilityData):
         self.qda = qda
@@ -554,9 +552,7 @@ class basis_set_analysis:
         axes[1].set_yscale('symlog', linthresh=1e-2, linscale=0.25)
 
         axes[2].set_title(r'$\beta_{ijk}(0;0,0)$')
-        axes[2].set_yscale('symlog', linthresh=1e-2, linscale=0.25)
         # axes[2].set_yscale('symlog', linthresh=1e-2, linscale=0.25)
-        r_plot.suptitle(molecule)
 
         return r_plot, axes
 
@@ -629,7 +625,6 @@ class QuadVisualization:
         for i, basis in enumerate(basis_sets):
 
             bdata = data.query('basis==@basis & Afreq==@omega_1 & Bfreq==@omega_2')
-            print(bdata)
             bdata.reset_index(inplace=True)
 
             bdata.set_index('ijk', inplace=True)
@@ -652,7 +647,7 @@ class QuadVisualization:
             y[i * num_points:(i + 1) * num_points] = p1[:, 1]
             z[i * num_points:(i + 1) * num_points] = p1[:, 2]
 
-            u[i * num_points:(i + 1) * num_points] = p2[:, 0]
+            u[i * num_points:(i + 1) * num_points] = p2[:, 0] + shift * (i - len(basis_sets) / 2)
             v[i * num_points:(i + 1) * num_points] = p2[:, 1]
             w[i * num_points:(i + 1) * num_points] = p2[:, 2]
 
@@ -691,8 +686,8 @@ class QuadVisualization:
             x[i] = 0 + shift * (i - len(basis_sets) / 2)
             y[i] = 0 - shift
             z[i] = 0
-            u[i] = av.loc['x'].Beta
-            v[i] = av.loc['y'].Beta
+            u[i] = av.loc['x'].Beta + shift * (i - len(basis_sets) / 2)
+            v[i] = av.loc['y'].Beta - shift
             w[i] = av.loc['z'].Beta
 
         quiver2 = go.Cone(x=x, y=y, z=z, u=u, v=v, w=w, colorscale='Greens', sizemode=sizemode,
@@ -747,7 +742,7 @@ class QuadVisualization:
             y[i * num_points:(i + 1) * num_points] = p1[:, 1]
             z[i * num_points:(i + 1) * num_points] = p1[:, 2]
 
-            u[i * num_points:(i + 1) * num_points] = p2[:, 0]
+            u[i * num_points:(i + 1) * num_points] = p2[:, 0] + shift * (i - len(basis_sets) / 2)
             v[i * num_points:(i + 1) * num_points] = p2[:, 1]
             w[i * num_points:(i + 1) * num_points] = p2[:, 2]
 
@@ -778,6 +773,7 @@ class QuadVisualization:
 
     def beta_df_np(self, beta_df):
         beta_df = beta_df.copy()
+        print(beta_df)
         xyz_to_012 = {'X': 0, 'Y': 1, 'Z': 2}
         beta_tensor = np.zeros((3, 3, 3))
         beta_df.reset_index(inplace=True)
@@ -810,7 +806,7 @@ class QuadVisualization:
 
         # we will use plotly for this
 
-    def ball_and_stick(self, molecule, shift=1.0):
+    def ball_and_stick(self, molecule):
         mra_mol = MadnessResponse(molecule, self.quad_data.xc, self.quad_data.op,
                                   self.quad_data.database_path)
         molecule_dict = mra_mol.ground_info['molecule']
@@ -822,7 +818,7 @@ class QuadVisualization:
         z = []
         for atom in geometry:
             x.append(atom[0] * 1.0)
-            y.append(atom[1] * 1.0 + shift)
+            y.append(atom[1] * 1.0)
             z.append(atom[2] * 1.0)
 
         # create a dictionary of colors for each atom
@@ -846,7 +842,7 @@ class QuadVisualization:
                                      num_points=1000,
                                      sizeref=0.5, shift=1.0, sizemode='scaled', scene_length=5.0,
                                      basis_error=False):
-        scatter = self.ball_and_stick(mol,shift)
+        scatter = self.ball_and_stick(mol)
         quiver = self.unit_sphere_representation_basis(mol, basis_sets,
                                                        omega_1, omega_2, radius=radius,
                                                        num_points=num_points,
@@ -875,35 +871,14 @@ basis_sets = ['aug-cc-pVDZ', 'aug-cc-pVTZ', 'aug-cc-pVQZ', 'd-aug-cc-pVDZ', 'd-a
               'd-aug-cc-pVQZ'] + ['aug-cc-pCVDZ', 'aug-cc-pCVTZ', 'aug-cc-pCVQZ', 'd-aug-cc-pCVDZ',
                                   'd-aug-cc-pCVTZ', 'd-aug-cc-pCVQZ']
 
-mols = ['CH3SH', 'H2O', 'CH3OH', 'C2H2', 'C2H4', 'CH3F', 'CH3OH', 'NaLi']
+mols = ['CH3SH', ]
 xc = 'hf'
 op = 'dipole'
+mol = 'CH3SH'
 
-freq = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+freq = [0, ]
 overwrite = False
 rdb = QuadraticDatabase(mols, basis_sets, xc, op, freq, database_path, overwrite=overwrite)
 
-print(rdb.vector_q_df)
-rdb.save_dfs()
-
-polarizability_database = Path('/mnt/data/madness_data/post_watoc/august')
-
-polar_data = PolarizabilityData(mols, 'hf', 'dipole', basis_sets=basis_sets,
-                                database=polarizability_database,
-                                overwrite=overwrite)
-polar_data.save_dfs()
-mol = 'CH3F'
-
-b_plotter = basis_set_analysis(rdb, polar_data)
-r_plot, axes = b_plotter.basis_set_analysis_plot(mol, ['D', 'T', 'Q', ], type=None)
-r_plot.show()
-# r_plot.savefig(paper_path.joinpath("nacl_plot.png"), dpi=1000)
-viz = QuadVisualization(rdb)
-viz.plot_basis_sphere_and_vector(mol, ['aug-cc-pVQZ', 'aug-cc-pCVQZ', 'd-aug-cc-pVQZ',
-                                       'd-aug-cc-pCVQZ', 'MRA'], radius=1, shift=4.0,
-                                 num_points=750,
-                                 sizemode='absolute', sizeref=500.0, scene_length=15)
-
-viz.plot_basis_sphere_and_vector(mol, ['aug-cc-pVQZ', 'aug-cc-pCVQZ', 'd-aug-cc-pVQZ',
-                                       'd-aug-cc-pCVQZ'], radius=1, shift=4.0, num_points=500,
-                                 sizemode='scaled', sizeref=5.0, scene_length=15, basis_error=True)
+print(rdb.q_df.query('molecule==@mol & Afreq==0.0'))
+print(rdb.basis_set_error_df.query('molecule==@mol & Afreq==0.0'))
