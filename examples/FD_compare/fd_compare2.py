@@ -170,7 +170,8 @@ for mol in molecules:
                             inplace=True)
 
             result.rename(columns={'Beta Value': 'Beta'}, inplace=True)
-            beta_zzz = result.query('A =="Z" & B=="Z" & C=="Z" ').query(
+            print(result)
+            beta_zzz = result.query('ijk =="ZZZ" ').query(
                 'Afreq==0.0 & '
                 'Bfreq==0.0 & Cfreq ==0.0 ').Beta.values[0]
             polar_data = runner.get_polar_json(mol, 'hf', 'dipole', basis)

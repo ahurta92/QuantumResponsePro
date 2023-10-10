@@ -38,6 +38,9 @@ setup(
         "matplotlib",
         "seaborn",
         'pytest',
+        'vtk',
+        'plotly',
+        'vtkplotter',
         'pyarrow',
         'mergedeep'
         # Add any other required dependencies here

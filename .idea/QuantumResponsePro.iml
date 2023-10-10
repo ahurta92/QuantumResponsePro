@@ -8,7 +8,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="thesis2023" />
+    <orderEntry type="module" module-name="Scripts" />
   </component>
   <component name="PyDocumentationSettings">
     <option name="format" value="PLAIN" />

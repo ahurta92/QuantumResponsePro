@@ -25,6 +25,8 @@ class QuadraticDatabase:
         self.basis_set_error_df = None
         self.vector_q_df = None
         self.vector_basis_set_error_df = None
+        self.beta_hrs_df = None
+        self.bhrs_basis_set_error_df = None
         self.freq = freq
         self.molecules = mols
         self.basis_sets = basis_sets
@@ -37,7 +39,8 @@ class QuadraticDatabase:
 
     def initialize_dfs(self):
         data_frame_attributes = ['q_df', 'basis_set_error_df', 'vector_q_df',
-                                 'vector_basis_set_error_df']
+                                 'vector_basis_set_error_df', 'beta_hrs_df',
+                                 'bhrs_basis_set_error_df']
 
         for attr_name in data_frame_attributes:
             filename = self.database_path.joinpath(f"{attr_name}.csv")
@@ -60,10 +63,15 @@ class QuadraticDatabase:
             return self.__generate_vector_q_df()
         elif attr_name == 'vector_basis_set_error_df':
             return self.__generate_vector_basis_error_df()
+        elif attr_name == 'beta_hrs_df':
+            return self.__generate_bhrs_df()
+        elif attr_name == 'bhrs_basis_set_error_df':
+            return self.__generate_bhrs_basis_error_df()
 
     def save_dfs(self):
         data_frame_attributes = ['q_df', 'basis_set_error_df', 'vector_q_df',
-                                 'vector_basis_set_error_df']
+                                 'vector_basis_set_error_df', 'beta_hrs_df',
+                                 'bhrs_basis_set_error_df']
 
         for attr_name in data_frame_attributes:
             df = getattr(self, attr_name).copy()
@@ -72,7 +80,8 @@ class QuadraticDatabase:
 
     def make_all_dfs_detailed(self):
         data_frame_attributes = ['q_df', 'basis_set_error_df', 'vector_q_df',
-                                 'vector_basis_set_error_df']
+                                 'vector_basis_set_error_df', 'beta_hrs_df',
+                                 'bhrs_basis_set_error_df']
 
         for attr_name in data_frame_attributes:
             df = getattr(self, attr_name)  # Access the DataFrame attribute
@@ -138,14 +147,21 @@ class QuadraticDatabase:
                             print(mol, basis)
                             continue
         vector_df = pd.concat(vector_df, axis=1).T
-        print(vector_df)
         vector_df.dropna(inplace=True)
         vector_df.reset_index(inplace=True)
         return vector_df.copy()
 
-    def bhrs_df(self, mol, basis_set, Bfreq, Cfreq):
+    def bhrs_df(self, mol, basis_set, b, c):
         mol_data, afreq = self.__get_mol_and_freq_data(mol)
-        df_i = self.__get_beta_hrs(basis_set, mol_data, Bfreq, Cfreq)
+        Bfreq = afreq[b]
+        Cfreq = afreq[c]
+        beta_hrs = self.__get_beta_hrs(basis_set, mol_data, Bfreq, Cfreq)
+
+        return beta_hrs
+
+    def beta_tensor(self, mol, basis_set, Bfreq, Cfreq):
+        mol_data, afreq = self.__get_mol_and_freq_data(mol)
+        df_i = self.__get_beta_tensor(basis_set, mol_data, Bfreq, Cfreq)
         return df_i
 
     def __generate_bhrs_df(self):
@@ -161,12 +177,13 @@ class QuadraticDatabase:
                         cf = afreq[c]
                         try:
                             df_i = self.__get_beta_hrs(basis, mol_data, bf, cf)
-                            print(df_i)
                             vector_df.append(df_i)
                         except IndexError as e:
                             print(e)
                             print(mol, basis)
                             continue
+        bshr_df = pd.concat(vector_df, axis=1).T
+        return bshr_df
 
     def __generate_vector_basis_error_df(self):
 
@@ -195,6 +212,33 @@ class QuadraticDatabase:
         basis_error_df.reset_index(inplace=True)
         return basis_error_df.copy()
 
+    def __generate_bhrs_basis_error_df(self):
+
+        basis_error_df = pd.DataFrame()
+        for mol in self.molecules:
+            mol_data, afreq = self.__get_bhrs_mol_and_freq_data(mol)
+            for basis in self.basis_sets:
+                for b in range(len(self.freq)):
+                    bf = afreq[b]
+                    for c in range(b, len(self.freq)):
+                        cf = afreq[c]
+                        try:
+                            df_i = self.__get_quad_bshrs_basis_error_data_df(basis, mol_data, bf,
+                                                                             cf)
+                            basis_error_df = pd.concat([basis_error_df, df_i])
+                        except IndexError as e:
+                            print(e)
+                            print(mol, basis)
+                            continue
+                        except TypeError as t:
+                            print(t)
+                            print(mol, basis, bf, cf)
+                            continue
+
+        basis_error_df.dropna(inplace=True)
+        basis_error_df.reset_index(inplace=True)
+        return basis_error_df.copy()
+
     def __get_mol_and_freq_data(self, mol):
         mol_data = self.q_df.query('molecule == @mol').copy()
         freq = list(mol_data['Afreq'].unique())
@@ -202,6 +246,11 @@ class QuadraticDatabase:
 
     def __get_vector_mol_and_freq_data(self, mol):
         mol_data = self.vector_q_df.query('molecule == @mol').copy()
+        freq = list(mol_data['Afreq'].unique())
+        return mol_data, freq
+
+    def __get_bhrs_mol_and_freq_data(self, mol):
+        mol_data = self.beta_hrs_df.query('molecule == @mol').copy()
         freq = list(mol_data['Afreq'].unique())
         return mol_data, freq
 
@@ -316,6 +365,41 @@ class QuadraticDatabase:
 
         return b_data
 
+    def __get_quad_bshrs_basis_error_data_df(self, basis, mol_data, Bfreq, Cfreq):
+        """
+        This function returns
+        """
+        b_data = mol_data.query('basis == @basis & Bfreq == @Bfreq & Cfreq== @Cfreq').copy()
+
+        # remove the nan values
+        b_data.dropna(inplace=True)
+        # remove Beta less than 1e-4
+        m_data = mol_data.query('basis == "MRA" & Bfreq==@Bfreq & Cfreq == @Cfreq ').copy()
+        # remove the Beta less than .001
+        m_data.dropna(inplace=True)
+        # remove the Beta less than 1e-4
+        BC_index = ['Bfreq', 'Cfreq']
+
+        m_data.set_index(BC_index, inplace=True)
+        m_data.drop_duplicates(inplace=True, )
+        b_data.drop_duplicates(inplace=True)
+
+        b_data = b_data.query('Beta.abs() > .005').copy()
+        m_data = m_data.query('Beta.abs() > .005').copy()
+        # b_data.drop_duplicates(inplace=True, subset=['ijk'])
+
+        basis_beta = b_data.Beta.values[0]
+        mra_beta = m_data.Beta.values[0]
+        print('basis_beta: ', basis_beta)
+        print('mra_beta: ', mra_beta)
+        rel_error = (basis_beta - mra_beta) / mra_beta * 100
+        print('b_data: ', b_data)
+        print('rel error: ', rel_error)
+        b_data['Beta'] = rel_error
+        # insert rel error into b_data series
+
+        return b_data
+
     def __get_basis_freq_df(self, basis, mol_data, Bfreq, Cfreq):
         """
         This function returns
@@ -394,7 +478,69 @@ class QuadraticDatabase:
         """
         This function returns
         """
+        b_data = mol_data.query('basis == @basis & Bfreq == @Bfreq & Cfreq== @Cfreq').copy()
+        molecule = b_data['molecule'].unique()[0]
+        b_data.drop_duplicates(inplace=True, subset=['ijk'])
+        b_data.set_index('ijk', inplace=True)
+        beta = self.beta_df_np(b_data)
+        dipolar, octupolar, beta_hrs = self.__get__beta_dipolar_and_octupolar(beta)
+        # set index
+        index = ['molecule', 'basis', 'Afreq', 'Bfreq', 'Cfreq', 'dipolar', 'octupolar', 'Beta']
+        Afreq = Bfreq + Cfreq
+        beta_hrs = pd.Series([molecule, basis, Afreq, Bfreq, Cfreq, dipolar, octupolar,
+                              beta_hrs], index=index)
 
+        return beta_hrs
+
+    def __get__beta_dipolar_and_octupolar(self, beta):
+
+        term1 = 0
+        term2 = 0
+        term3 = 0
+        term4 = 0
+        term5 = 0
+
+        for i in range(3):
+            term1 += beta[i, i, i] ** 2
+            for j in range(3):
+                if i != j:
+                    term2 += beta[i, i, i] * beta[i, j, j]
+                    term3 += beta[j, i, i] ** 2
+                for k in range(3):
+                    if i != j and i != k and j != k:
+                        term4 += beta[j, i, i,] * beta[j, k, k]
+                        term5 += beta[i, j, k] ** 2
+
+        dipolar = 3 / 5 * term1 + 6 / 5 * term2 + 3 / 5 * term3 + 3 / 5 * term4
+        octupolar = 2 / 5 * term1 - 6 / 5 * term2 + 12 / 5 * term3 - 3 / 5 * term4 + term5
+        beta_hrs = np.sqrt(10 / 45 * dipolar + 10 / 105 * octupolar)
+        return (dipolar, octupolar, beta_hrs)
+
+    def __get__beta_octupolar(self, beta):
+
+        term1 = 0
+        term2 = 0
+        term3 = 0
+        term4 = 0
+
+        for i in range(3):
+            term1 += beta(i, i, i) ** 2
+            for j in range(3):
+                if i != j:
+                    term2 += beta(i, i, i) * beta(i, j, j)
+                    term3 += beta(j, i, i) ** 2
+                for k in range(3):
+                    if i != j and i != k and j != k:
+                        term4 += beta(j, i, i, ) * beta(j, k, k)
+        term1 = 3 / 5 * term1
+        term2 = 6 / 5 * term2
+        term3 = 3 / 5 * term2
+        term4 = 3 / 5 * term2
+
+    def __get_beta_tensor(self, basis, mol_data, Bfreq, Cfreq):
+        """
+        This function returns
+        """
         b_data = mol_data.query('basis == @basis & Bfreq == @Bfreq & Cfreq== @Cfreq').copy()
         molecule = b_data['molecule'].unique()[0]
         b_data.drop_duplicates(inplace=True, subset=['ijk'])
@@ -430,6 +576,115 @@ class QuadraticDatabase:
             beta_tensor[indices[2], indices[0], indices[1]] = row['Beta']
 
         return beta_tensor
+
+    def get_beta_points(self, mol, basis_sets, omega_1, omega_2, radius=1,
+                        num_points=1000,
+                        basis_error=False, xshift=0.0,
+                        yshift=0.0, zshift=0.0):
+
+        if not basis_error:
+
+            data = self.quad_data.q_df.query(
+                'molecule==@mol & Cfreq==@omega_1 & Bfreq==@omega_2 ')
+        else:
+            data = self.quad_data.basis_set_error_df.query(
+                'molecule==@mol & Cfreq==@omega_1 & Bfreq==@omega_2 ')
+
+        x = np.zeros((len(basis_sets) * num_points))
+        y = np.zeros((len(basis_sets) * num_points))
+        z = np.zeros((len(basis_sets) * num_points))
+        u = np.zeros((len(basis_sets) * num_points))
+        v = np.zeros((len(basis_sets) * num_points))
+        w = np.zeros((len(basis_sets) * num_points))
+
+        text = []
+
+        for i, basis in enumerate(basis_sets):
+            for j in range(num_points):
+                text.append(basis)
+
+        # minimal_index_ijk = ['XXX', 'YYY', 'ZZZ', 'XYZ', 'XXY', 'YXY', 'ZXX', 'ZXZ', 'YYZ', 'YZZ']
+
+        # for each basis set generate the xyzuvw data
+        for i, basis in enumerate(basis_sets):
+
+            bdata = data.query('basis==@basis & Afreq==@omega_1 & Bfreq==@omega_2')
+            print(bdata)
+            bdata.reset_index(inplace=True)
+
+            bdata.set_index('ijk', inplace=True)
+            bdata.sort_index(inplace=True)
+            # bdata = bdata.loc[minimal_index_ijk]
+            # Initialize results
+            results = []
+            # Generate 1000 points on the unit sphere
+            points = self.generate_points_on_sphere(radius, num_points)
+
+            beta_tensor = self.beta_df_np(bdata)
+            # Compute projection
+            for p in points:
+                bi = self.beta_proj(beta_tensor, p)
+                results.append(bi)
+            results = np.array(results)
+            p1 = points.copy()
+            p2 = results
+            x[i * num_points:(i + 1) * num_points] = p1[:, 0]
+            y[i * num_points:(i + 1) * num_points] = p1[:, 1]
+            z[i * num_points:(i + 1) * num_points] = p1[:, 2]
+
+            u[i * num_points:(i + 1) * num_points] = p2[:, 0]
+            v[i * num_points:(i + 1) * num_points] = p2[:, 1]
+            w[i * num_points:(i + 1) * num_points] = p2[:, 2]
+
+            coords = np.zeros((len(basis_sets) * num_points, 3))
+            vector_vals = np.zeros((len(basis_sets) * num_points, 3))
+
+            coords[:, 0] = x
+            coords[:, 1] = y
+            coords[:, 2] = z
+            vector_vals[:, 0] = u
+            vector_vals[:, 1] = v
+            vector_vals[:, 2] = w
+            # make an array of the points and vectors
+            return coords, vector_vals
+
+    def beta_to_vtk(self, mol, basis_sets, omega_1=0.0, omega_2=0.0, radius=1,
+                    num_points=1000,
+                    basis_error=False, xshift=0.0,
+                    yshift=0.0, zshift=0.0):
+
+        for basis in basis_sets:
+            coords, vector_vals = self.get_beta_points(mol, [basis], omega_1, omega_2, radius,
+                                                       num_points,
+                                                       basis_error,
+                                                       0,
+                                                       0, 0)
+
+            # Initialize VTK points and vector data structures
+            points = vtk.vtkPoints()
+            vectors = vtk.vtkFloatArray()
+            vectors.SetNumberOfComponents(3)
+            vectors.SetName("Hyperpolarizability")
+
+            # Assuming `coords` is a list of (x, y, z) coordinates and `vector_vals` is a list of (vx, vy, vz) vectors
+            for (x, y, z), (vx, vy, vz) in zip(coords, vector_vals):
+                print(vx, vy, vz)
+                points.InsertNextPoint(x, y, z)
+                vectors.InsertNextTuple((vx, vy, vz))
+
+            # Set up the polydata object
+            polydata = vtk.vtkPolyData()
+            polydata.SetPoints(points)
+            polydata.GetPointData().SetVectors(vectors)
+
+            # Write to VTK file
+            writer = vtk.vtkXMLPolyDataWriter()
+
+            file_name = self.q_df.database_path.joinpath(f'{mol}_{basis}_{omega_1}_'
+                                                         f'{omega_2}.vtp')
+            writer.SetFileName(file_name)
+            writer.SetInputData(polydata)
+            writer.Write()
 
 
 class PolarizabilityData:
@@ -467,10 +722,10 @@ class PolarizabilityData:
         if attr_name == 'energy_df':
             return get_energy_data(self.molecules, self.xc, self.op, self.basis_sets, self.database)
         elif attr_name == 'energy_diff_df':
-            return get_energy_diff_data(mols, self.xc, self.op, basis_sets,
+            return get_energy_diff_data(self.molecules, self.xc, self.op, self.basis_sets,
                                         self.database)
         elif attr_name == 'polar_data':
-            return get_polar_df(mols, self.xc, self.op, self.database, basis_sets)
+            return get_polar_df(self.molecules, self.xc, self.op, self.database, self.basis_sets)
         elif attr_name == 'alpha_eigen':
             return get_ij_eigen(self.polar_data)
         elif attr_name == 'eigen_diff':
@@ -514,6 +769,46 @@ def plot_component_diff(data, valence, component, ax, color_pal=None):
     # font scale *2
     g = sns.lineplot(data=data, x='valence', y='diff', hue='Type',
                      style=component,
+                     markers=True, ax=ax, markersize=10, legend='full', dashes=False,
+                     palette=color_pal)
+
+    handles, labels = g.get_legend_handles_labels()
+    N = math.ceil(len(handles) / 2)
+    print(N)
+    filtered_handles = handles[N:]
+    filtered_labels = labels[N:]
+    g.legend(filtered_handles, filtered_labels)
+
+    ax.get_xaxis().set_minor_locator(mpl.ticker.AutoMinorLocator())
+    ax.get_yaxis().set_minor_locator(mpl.ticker.AutoMinorLocator())
+    ax.minorticks_on()
+    ax.grid(which='major', color='w', linewidth=1.0)
+    ax.grid(which='minor', color='w', linewidth=0.5)
+    ax.set_xlabel('Valence')
+    ax.set_ylabel('Percent Error')
+    ax.axhline(y=0, color='k')
+
+    # for the line plots, only keep the "style" legend not the hue legend
+    handles, labels = ax.get_legend_handles_labels()
+
+    # add the legends for the components only
+
+    return g
+
+
+def plot_BHRS_diff(data, valence, ax, color_pal=None):
+    data = data.copy()
+    data['valence'] = pd.Categorical(data['valence'], valence)
+    # make the polarization order ['V','CV']
+    # make the polarization order ['V','CV']
+    try:
+        data['polarization'] = pd.Categorical(data['polarization'], ['V', 'CV'])
+    except ValueError as v:
+        print(v)
+        print(data)
+        pass
+    # font scale *2
+    g = sns.lineplot(data=data, x='valence', y='diff', hue='Type',
                      markers=True, ax=ax, markersize=10, legend='full', dashes=False,
                      palette=color_pal)
 
@@ -589,7 +884,8 @@ class basis_set_analysis:
         self.pda = pda
         self.pda.make_all_dfs_detailed()
 
-    def basis_set_analysis_plot(self, molecule, valence, omega_1=0.0, omega_2=0.0, type=None, ):
+    def basis_set_analysis_plot(self, molecule, valence, omega_1=0.0, omega_2=0.0, type=None,
+                                q_measure='BHRS'):
 
         r_plot, axes = plt.subplots(1, 3, figsize=(9, 4), frameon=True, layout='constrained')
 
@@ -602,26 +898,50 @@ class basis_set_analysis:
         a_diff = self.pda.eigen_diff.query('molecule == @molecule & omega==@omega_1').copy()
         # rename alpha to diff
         a_diff.rename(columns={'alpha': 'diff'}, inplace=True)
-        q_diff = self.qda.vector_basis_set_error_df.query('molecule == @molecule & '
-                                                          'Bfreq==@omega_1 & '
-                                                          'Cfreq==@omega_2').copy()
-        q_diff.rename(columns={'Beta': 'diff'}, inplace=True)
 
         plot_energy_diff(e_diff, valence, axes[0], color_pal=pal)
         alpha_plot = plot_component_diff(a_diff, valence, 'ij', axes[1],
                                          color_pal=pal)
-
-        print(q_diff)
-        beta_plot = plot_component_diff(q_diff, valence, 'component', axes[2],
-                                        color_pal=pal)
 
         axes[0].set_title('Energy')
 
         axes[1].set_title(r'$\alpha_{ij}(0;0,0)$')
         axes[1].set_yscale('symlog', linthresh=1e-2, linscale=0.25)
 
-        axes[2].set_title(r'$\beta_{ijk}(0;0,0)$')
-        axes[2].set_yscale('symlog', linthresh=1e-2, linscale=0.25)
+        if q_measure == 'BHRS':
+
+            q_diff = self.qda.bhrs_basis_set_error_df.query('molecule == @molecule & '
+                                                            'Bfreq==@omega_1 & '
+                                                            'Cfreq==@omega_2').copy()
+            q_diff.rename(columns={'Beta': 'diff'}, inplace=True)
+            print(q_diff)
+            beta_plot = plot_BHRS_diff(q_diff, valence, axes[2],
+                                       color_pal=pal)
+            axes[2].set_title(
+                r'$\beta_{HRS}$' + '({};{},{})'.format(omega_1 + omega_2, omega_1, omega_2))
+        elif q_measure == 'vector':
+            q_diff = self.qda.vector_basis_set_error_df.query('molecule == @molecule & '
+                                                              'Bfreq==@omega_1 & '
+                                                              'Cfreq==@omega_2').copy()
+
+            q_diff.rename(columns={'Beta': 'diff'}, inplace=True)
+            beta_plot = plot_component_diff(a_diff, valence, 'component', axes[2],
+                                            color_pal=pal)
+            print(q_diff)
+            axes[2].set_title(
+                r'$V$' + '({};{},{})'.format(omega_1 + omega_2, omega_1, omega_2))
+        elif q_measure == 'ijk':
+            q_diff = self.qda.basis_set_error_df.query('molecule == @molecule & '
+                                                       'Bfreq==@omega_1 & '
+                                                       'Cfreq==@omega_2').copy()
+            q_diff.rename(columns={'Beta': 'diff'}, inplace=True)
+            print(q_diff)
+            beta_plot = plot_component_diff(a_diff, valence, 'ijk', axes[1],
+                                            color_pal=pal)
+            axes[2].set_title(
+                r'$\beta_{ijk}$' + '({};{},{})'.format(omega_1 + omega_2, omega_1, omega_2))
+
+        # axes[2].set_yscale('symlog', linthresh=1e-2, linscale=0.25)
         # axes[2].set_yscale('symlog', linthresh=1e-2, linscale=0.25)
         r_plot.suptitle(molecule)
 
@@ -973,19 +1293,25 @@ class QuadVisualization:
         fig.show()
         return fig
 
-    def get_beta_points(self, mol, basis_sets, omega_1, omega_2, radius=1,
+    def get_beta_points(self, mol, basis_sets, omega_1=0.0, omega_2=0.0, radius=1,
                         num_points=1000,
                         basis_error=False, xshift=0.0,
                         yshift=0.0, zshift=0.0):
 
+        # get the frequencies from the database
+
         if not basis_error:
+            print('omega_1', omega_1)
+            print('omega_2', omega_2)
 
             data = self.quad_data.q_df.query(
-                'molecule==@mol & Cfreq==@omega_1 & Bfreq==@omega_2 ')
+                'molecule==@mol & Bfreq==@omega_1 & Cfreq==@omega_2 ')
+
         else:
             data = self.quad_data.basis_set_error_df.query(
                 'molecule==@mol & Cfreq==@omega_1 & Bfreq==@omega_2 ')
 
+        print(data)
         x = np.zeros((len(basis_sets) * num_points))
         y = np.zeros((len(basis_sets) * num_points))
         z = np.zeros((len(basis_sets) * num_points))
@@ -1004,7 +1330,7 @@ class QuadVisualization:
         # for each basis set generate the xyzuvw data
         for i, basis in enumerate(basis_sets):
 
-            bdata = data.query('basis==@basis & Afreq==@omega_1 & Bfreq==@omega_2')
+            bdata = data.query('basis==@basis')
             print(bdata)
             bdata.reset_index(inplace=True)
 
@@ -1024,9 +1350,10 @@ class QuadVisualization:
             results = np.array(results)
             p1 = points.copy()
             p2 = results
-            x[i * num_points:(i + 1) * num_points] = p1[:, 0]
-            y[i * num_points:(i + 1) * num_points] = p1[:, 1]
-            z[i * num_points:(i + 1) * num_points] = p1[:, 2]
+            x[i * num_points:(i + 1) * num_points] = p1[:, 0]+ xshift * (i % 4) - (2 * xshift)
+            y[i * num_points:(i + 1) * num_points] = p1[:, 1]+ yshift * (math.floor(i / 4)) - (
+                    2 * yshift)
+            z[i * num_points:(i + 1) * num_points] = p1[:, 2]+ zshift
 
             u[i * num_points:(i + 1) * num_points] = p2[:, 0]
             v[i * num_points:(i + 1) * num_points] = p2[:, 1]
@@ -1044,27 +1371,28 @@ class QuadVisualization:
             # make an array of the points and vectors
             return coords, vector_vals
 
-    def beta_to_vtk(self, mol, basis_sets, omega_1=0.0, omega_2=0.0, radius=1,
+    def beta_to_vtk(self, mol, basis_sets, omega_1=0, omega_2=0, radius=1,
                     num_points=1000,
                     basis_error=False, xshift=0.0,
                     yshift=0.0, zshift=0.0):
 
         for basis in basis_sets:
-            coords, vector_vals = viz.get_beta_points(mol, [basis], omega_1, omega_2, radius,
-                                                      num_points,
-                                                      basis_error,
-                                                      0,
-                                                      0, 0)
+
+            coords, vector_vals = self.get_beta_points(mol, [basis], omega_1=omega_1,
+                                                       omega_2=omega_2, radius=radius,
+                                                       num_points=num_points,
+                                                       basis_error=basis_error,
+                                                       xshift=xshift,
+                                                       yshift=yshift, zshift=zshift)
 
             # Initialize VTK points and vector data structures
             points = vtk.vtkPoints()
             vectors = vtk.vtkFloatArray()
             vectors.SetNumberOfComponents(3)
-            vectors.SetName("Hyperpolarizability")
+            vectors.SetName("vectors")
 
             # Assuming `coords` is a list of (x, y, z) coordinates and `vector_vals` is a list of (vx, vy, vz) vectors
             for (x, y, z), (vx, vy, vz) in zip(coords, vector_vals):
-                print(vx, vy, vz)
                 points.InsertNextPoint(x, y, z)
                 vectors.InsertNextTuple((vx, vy, vz))
 
@@ -1076,58 +1404,63 @@ class QuadVisualization:
             # Write to VTK file
             writer = vtk.vtkXMLPolyDataWriter()
 
-            file_name = self.quad_data.database_path.joinpath(f'{mol}_{basis}_{omega_1}_'
-                                                              f'{omega_2}.vtp')
+            # set up vtk folder if it doesn't exist
+            vtk_folder = self.quad_data.database_path.joinpath('vtk')
+            if not vtk_folder.exists():
+                vtk_folder.mkdir()
+            # set up vtk/mol folder name
+            mol_folder = self.quad_data.database_path.joinpath('vtk', mol)
+            if not mol_folder.exists():
+                mol_folder.mkdir()
+            # i need to enforce omega_1 and omega_2 to have 3 decimal points
+
+            file_name = mol_folder.joinpath(f'{mol}_{basis}_{omega_1:.3f}_{omega_2:.3f}.vtp')
             writer.SetFileName(file_name)
             writer.SetInputData(polydata)
             writer.Write()
+    def beta_to_vtk_basis_error(self, mol, basis_sets, omega_1=0, omega_2=0, radius=1,
+                    num_points=1000,
+                    xshift=0.0,
+                    yshift=0.0, zshift=0.0):
 
+        for basis in basis_sets:
+            coords, vector_vals = self.get_beta_points(mol, [basis], omega_1=omega_1,
+                                                       omega_2=omega_2, radius=radius,
+                                                       num_points=num_points,
+                                                       basis_error=True,
+                                                       xshift=xshift,
+                                                       yshift=yshift, zshift=zshift)
 
-database_path = Path('/mnt/data/madness_data/august_no_symmetry')
-# get the unique frequencies
-pd.set_option('display.max_rows', None)
-pd.set_option('display.max_columns', None)
+            # Initialize VTK points and vector data structures
+            points = vtk.vtkPoints()
+            vectors = vtk.vtkFloatArray()
+            vectors.SetNumberOfComponents(3)
+            vectors.SetName("vectors")
 
-basis_sets = ['aug-cc-pVDZ', 'aug-cc-pCVDZ', 'd-aug-cc-pVDZ', 'd-aug-cc-pCVDZ'] \
-             + ['aug-cc-pVTZ', 'aug-cc-pCVTZ', 'd-aug-cc-pVTZ', 'd-aug-cc-pCVTZ'] + \
-             ['aug-cc-pVQZ', 'aug-cc-pCVQZ', 'd-aug-cc-pVQZ', 'd-aug-cc-pCVQZ']
-mols = ['CH3SH', 'H2O', 'CH3OH', 'C2H2', 'C2H4', 'CH3F', 'CH3OH', 'NaLi']
-xc = 'hf'
-op = 'dipole'
+            # Assuming `coords` is a list of (x, y, z) coordinates and `vector_vals` is a list of (vx, vy, vz) vectors
+            for (x, y, z), (vx, vy, vz) in zip(coords, vector_vals):
+                points.InsertNextPoint(x, y, z)
+                vectors.InsertNextTuple((vx, vy, vz))
 
-freq = [0, 1, 2, 3, 4, 5, 6, 7, 8]
-overwrite = False
-rdb = QuadraticDatabase(mols, basis_sets, xc, op, freq, database_path, overwrite=overwrite)
+            # Set up the polydata object
+            polydata = vtk.vtkPolyData()
+            polydata.SetPoints(points)
+            polydata.GetPointData().SetVectors(vectors)
 
-print(rdb.vector_q_df)
-rdb.save_dfs()
+            # Write to VTK file
+            writer = vtk.vtkXMLPolyDataWriter()
 
-polarizability_database = Path('/mnt/data/madness_data/post_watoc/august')
+            # set up vtk folder if it doesn't exist
+            vtk_folder = self.quad_data.database_path.joinpath('vtk')
+            if not vtk_folder.exists():
+                vtk_folder.mkdir()
+            # set up vtk/mol folder name
+            mol_folder = self.quad_data.database_path.joinpath('vtk', mol)
+            if not mol_folder.exists():
+                mol_folder.mkdir()
+            # i need to enforce omega_1 and omega_2 to have 3 decimal points
 
-polar_data = PolarizabilityData(mols, 'hf', 'dipole', basis_sets=basis_sets,
-                                database=polarizability_database,
-                                overwrite=overwrite)
-polar_data.save_dfs()
-mol = 'H2O'
-
-b_plotter = basis_set_analysis(rdb, polar_data)
-r_plot, axes = b_plotter.basis_set_analysis_plot(mol, ['D', 'T', 'Q', ], type=None)
-r_plot.show()
-# r_plot.savefig(paper_path.joinpath("nacl_plot.png"), dpi=1000)
-viz = QuadVisualization(rdb)
-viz.plot_basis_sphere_and_vector(mol, ['aug-cc-pVQZ', 'aug-cc-pCVQZ', 'd-aug-cc-pVQZ',
-                                       'd-aug-cc-pCVQZ', 'MRA'], radius=1, xshift=5.0, yshift=5.0,
-                                 zshift=5.0,
-                                 num_points=750,
-                                 sizemode='absolute', sizeref=500.0, scene_length=15)
-
-viz.plot_basis_sphere_and_vector(mol, ['aug-cc-pVQZ', 'aug-cc-pCVQZ', 'd-aug-cc-pVQZ',
-                                       'd-aug-cc-pCVQZ'], radius=1, num_points=500,
-                                 sizemode='scaled', sizeref=1.0, scene_length=15, basis_error=True,
-                                 xshift=5.0, yshift=5.0, zshift=5.0)
-
-fig = viz.HyperpolarizabilityScene(mol, basis_sets, radius=1, num_points=500,
-                                   sizemode='scaled', sizeref=3.0, scene_length=25,
-                                   xshift=5.0, yshift=5.0, zshift=5.0)
-
-viz.beta_to_vtk(mol, ['MRA', 'aug-cc-pVQZ', 'aug-cc-pCVQZ', 'd-aug-cc-pVQZ', 'd-aug-cc-pVCQZ', ])
+            file_name = mol_folder.joinpath(f'{mol}_{basis}_{omega_1:.3f}_{omega_2:.3f}.vtp')
+            writer.SetFileName(file_name)
+            writer.SetInputData(polydata)
+            writer.Write()

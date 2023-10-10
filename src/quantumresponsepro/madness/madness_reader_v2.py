@@ -215,9 +215,26 @@ class MadnessReader:
         # print(path)
 
         with open(path) as json_file:
+            print(mol)
             response_j = json.loads(json_file.read())
 
         return response_j
+
+    def __get_frequency_vtk_path(self, mol, xc, operator, freq):
+
+        sfreq = "%f" % freq
+        # first number before decimal
+        f1 = sfreq.split(".")[0]
+        # second number after decimal
+        f2 = sfreq.split(".")[1]
+
+        moldir = self.data_dir.joinpath(xc, mol)
+        dfile = operator + "_" + xc + "_" + f1 + "-" + f2
+        vtk_plots_dir = "vtk_plots"
+
+        path = moldir.joinpath(dfile, vtk_plots_dir)
+        # print(path)
+        return path
 
     def __get_polar_data(self, rbase_j):
         params = rbase_j["parameters"]
@@ -231,6 +248,13 @@ class MadnessReader:
         polarizability_data = self.__read_protocol_polarizability_data(rbase_j['protocol_data'])
         polarizability_data.index += 1
         return params, num_iters_per_protocol, full_function_data, polarizability_data
+
+    def get_frequency_vtk_path(self, mol, xc, operator):
+        freq = self.freq_json[mol][xc][operator]
+        vtk_path = {}
+        for f in freq:
+            vtk_path[f] = self.__get_frequency_vtk_path(mol, xc, operator, f)
+        return vtk_path
 
     def get_polar_result(self, mol, xc, operator):
         freq = self.freq_json[mol][xc][operator]
