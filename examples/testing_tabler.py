@@ -1,9 +1,6 @@
-from quantumresponsepro import BasisMRADataCollection
-from quantumresponsepro import BasisMRADataAnalyzer
-from quantumresponsepro import Tabler
-import seaborn as sns
-
 from pathlib import Path
+from quantumresponsepro import BasisMRADataCollection
+from quantumresponsepro import Tabler
 
 august = Path('/mnt/data/madness_data/post_watoc/august')
 paper_path = Path('/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/Figures_v2')

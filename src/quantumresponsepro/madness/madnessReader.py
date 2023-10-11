@@ -1,7 +1,8 @@
 import numpy as np
-from ..madness_to_dalton import *
-from ..dalton.daltonrunner import DaltonRunner
 import subprocess
+
+from ..dalton.daltonrunner import DaltonRunner
+from ..madness_to_dalton import *
 
 
 class MadnessReader:

@@ -8,4 +8,3 @@ op = 'dipole'
 
 dg = DatabaseGenerator(database_path)
 freq_json = dg.get_frequency_json(9, xc, op, basis, .5)
-

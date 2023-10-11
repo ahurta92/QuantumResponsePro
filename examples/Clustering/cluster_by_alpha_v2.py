@@ -1,31 +1,20 @@
-import shutil
-
-from quantumresponsepro import BasisMRADataCollection
-from quantumresponsepro import BasisMRADataAnalyzer
-import seaborn as sns
-
-import matplotlib.colors as mcolors
-import matplotlib.cm as cm
-
-from pathlib import Path
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-import matplotlib.pyplot as plt
-import pandas as pd
 import json
-from quantumresponsepro.BasisMRADataAssembler import partition_molecule_list
+import matplotlib.cm as cm
+import matplotlib.colors as mcolors
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import shutil
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from pathlib import Path
+from quantumresponsepro import BasisMRADataAnalyzer
+from quantumresponsepro import BasisMRADataCollection
 from quantumresponsepro import Tabler
 from sklearn.cluster import AgglomerativeClustering
-from sklearn.cluster import DBSCAN
-from sklearn.cluster import KMeans
-from sklearn.mixture import GaussianMixture
-from sklearn.mixture import BayesianGaussianMixture
 from sklearn.metrics import silhouette_score
-from matplotlib.ticker import AutoMinorLocator
-import matplotlib.ticker as mticker
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.mixture import GaussianMixture
 from sklearn.preprocessing import StandardScaler
-import numpy as np
 
 august = Path('/mnt/data/madness_data/post_watoc/august')
 paper_path = Path('/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/Figures_v2')
@@ -452,13 +441,14 @@ cmap = cm.coolwarm
 norm = mcolors.SymLogNorm(linthresh=linthresh, linscale=linscale, base=10, vmin=-vmax,
                           vmax=vmax)
 
+
 def highlight(val):
     color = 'yellow' if abs(val) > 0.8 else 'none'
     return 'background-color: %s' % color
 
 
 plt.figure(figsize=(11, 9))
-ax = sns.heatmap(data=avg_df.T, center=0, norm=norm, annot=True,cmap='PuOr', linewidths=1
+ax = sns.heatmap(data=avg_df.T, center=0, norm=norm, annot=True, cmap='PuOr', linewidths=1
                  )
 for i in range(df.shape[0]):
     for j in range(df.shape[1]):

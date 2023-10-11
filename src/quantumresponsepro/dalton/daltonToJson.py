@@ -1,8 +1,8 @@
-import json
 from collections import OrderedDict
-import re
 
+import json
 import pandas as pd
+import re
 
 
 class daltonToJson:

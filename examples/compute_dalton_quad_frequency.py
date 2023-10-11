@@ -1,7 +1,8 @@
-import os
 import sys
-from quantumresponsepro import DaltonRunner
+
+import os
 from pathlib import Path
+from quantumresponsepro import DaltonRunner
 
 mol = sys.argv[1]
 num_proc = sys.argv[2]
@@ -15,7 +16,7 @@ aug_pc_basis = ['aug-cc-pCVDZ', 'aug-cc-pCVTZ', 'aug-cc-pCVQZ', ]
 daug_pc_basis = ['d-aug-cc-pCVDZ', 'd-aug-cc-pCVTZ', 'd-aug-cc-pCVQZ', ]
 
 basis_list = aug_basis + daug_basis + aug_pc_basis + daug_pc_basis
-#basis_list = ['aug-cc-pVDZ', 'aug-cc-pVTZ']
+# basis_list = ['aug-cc-pVDZ', 'aug-cc-pVTZ']
 BASEDIR = Path(str(os.getcwd()))
 runner = DaltonRunner(BASEDIR, True)
 runner.Np = num_proc

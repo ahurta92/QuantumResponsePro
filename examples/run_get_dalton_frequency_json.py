@@ -1,6 +1,5 @@
-from quantumresponsepro import DatabaseGenerator
 from pathlib import Path
-import os
+from quantumresponsepro import DatabaseGenerator
 
 # dir_path = Path(os.path.dirname(os.path.realpath(__file__)))
 # database_path = dir_path.joinpath('../example_database')
@@ -17,5 +16,5 @@ double_CZ = ['d-aug-cc-pCVDZ', 'd-aug-cc-pCVTZ', 'd-aug-cc-pCVQZ']
 
 basis_list = single_VZ + double_VZ + single_CZ + double_CZ
 
-#dalton_dipole_json = dg.get_dalton_frequency_json('hf', 'dipole', basis_list, run=True)
+# dalton_dipole_json = dg.get_dalton_frequency_json('hf', 'dipole', basis_list, run=True)
 dalton_dipole_json = dg.get_dalton_quad_json('hf', 'dipole', basis_list, run=True)

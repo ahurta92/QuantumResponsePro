@@ -1,14 +1,11 @@
 import math
-import vtk
-from pathlib import Path
-import pandas as pd
+
 import matplotlib as mpl
 import os
-import numpy as np
-from quantumresponsepro.BasisMRADataAssembler import *
 import plotly.graph_objects as go
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-
+import vtk
+from pathlib import Path
+from quantumresponsepro.BasisMRADataAssembler import *
 from quantumresponsepro.BasisMRADataCollection import get_quad_df, get_polar_df
 
 

@@ -1,23 +1,13 @@
 import math
 
-import pandas as pd
 import matplotlib as mpl
-from quantumresponsepro import BasisMRAData, DaltonRunner
-
-from quantumresponsepro import BasisMRADataAnalyzer
-from quantumresponsepro import MadnessResponse
-
-import seaborn as sns
-
-from pathlib import Path
 import matplotlib.pyplot as plt
-from matplotlib.patches import FancyArrow
-import matplotlib.gridspec as gridspec
-import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-
 # Create some example data
 import numpy as np
+import pandas as pd
+import seaborn as sns
+from pathlib import Path
+from quantumresponsepro import BasisMRAData
 from quantumresponsepro.BasisMRADataAssembler import make_detailed_df
 
 fd_path = Path('/mnt/data/madness_data/fd_compare3')
@@ -254,6 +244,7 @@ def basis_set_analysis_plot(database_path, molecule, valence, type=None):
     # axes[2].set_yscale('symlog', linthresh=1e-2, linscale=0.25)
 
     return r_plot, axes
+
 
 mol = 'H2O'
 r_plot, axes = basis_set_analysis_plot(database_path, mol, ['D', 'T', 'Q', ], type=None)

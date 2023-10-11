@@ -1,17 +1,15 @@
-from quantumresponsepro import BasisMRADataCollection
-from quantumresponsepro import BasisMRADataAnalyzer
-import seaborn as sns
-
-from pathlib import Path
 import matplotlib.pyplot as plt
+import seaborn as sns
 from matplotlib.patches import FancyArrow
-import matplotlib.gridspec as gridspec
+from pathlib import Path
+from quantumresponsepro import BasisMRADataAnalyzer
+from quantumresponsepro import BasisMRADataCollection
 
 august = Path('/mnt/data/madness_data/post_watoc/august')
 paper_path = Path('/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/Figures_v2')
 thesis_path = Path('/home/adrianhurtado/projects/writing/thesis2023/Figures_v2')
 paper_path = Path('/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/Figures_v2')
-paper_path=thesis_path
+paper_path = thesis_path
 database = BasisMRADataCollection(august)
 analyzer = BasisMRADataAnalyzer(database, .02)
 sns.set(font_scale=3)

@@ -1,10 +1,9 @@
-from quantumresponsepro import BasisMRADataCollection
-from quantumresponsepro import BasisMRADataAnalyzer
-import seaborn as sns
-
-from pathlib import Path
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import matplotlib.pyplot as plt
+import seaborn as sns
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from pathlib import Path
+from quantumresponsepro import BasisMRADataAnalyzer
+from quantumresponsepro import BasisMRADataCollection
 
 
 def set_ax_inset(g: sns.FacetGrid, mol, loc='upper right', yb=.01, iso_type='alpha',
@@ -41,7 +40,6 @@ thesis_path = Path('/home/adrianhurtado/projects/writing/thesis2023/Figures_v2')
 paper_path = thesis_path
 database = BasisMRADataCollection(august)
 analyzer = BasisMRADataAnalyzer(database, .05, )
-
 
 first_row_path = paper_path.joinpath('molecules/first')
 second_row_path = paper_path.joinpath('molecules/second')

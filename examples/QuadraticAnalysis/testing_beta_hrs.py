@@ -1,19 +1,9 @@
-import math
-import vtk
 from pathlib import Path
-import pandas as pd
-import matplotlib as mpl
-import os
-import numpy as np
 from quantumresponsepro.BasisMRADataAssembler import *
-import plotly.graph_objects as go
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
-from quantumresponsepro.BasisMRADataCollection import get_quad_df, get_polar_df
-
-from QuadraticData_class import QuadraticDatabase
 from QuadraticData_class import PolarizabilityData
 from QuadraticData_class import QuadVisualization
+from QuadraticData_class import QuadraticDatabase
 from QuadraticData_class import basis_set_analysis
 
 database_path = Path('/mnt/data/madness_data/august_no_symmetry')

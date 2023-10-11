@@ -1,10 +1,11 @@
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
 from .dalton.daltonrunner import DaltonRunner
 from .madness.madnessReader import FrequencyData
 from .madness.madness_reader_v2 import MadnessResponse
-import seaborn as sns
 
 polar_keys = ['xx', 'xy', 'xz', 'yx', 'yy', 'yz', 'zx', 'zy', 'zz']
 

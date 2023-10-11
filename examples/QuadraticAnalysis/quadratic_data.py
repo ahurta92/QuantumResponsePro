@@ -1,23 +1,14 @@
 import math
 
-import pandas as pd
 import matplotlib as mpl
-from quantumresponsepro import BasisMRAData, DaltonRunner
-
-from quantumresponsepro import BasisMRADataAnalyzer
-from quantumresponsepro import MadnessResponse
-
-import seaborn as sns
-
-from pathlib import Path
 import matplotlib.pyplot as plt
-from matplotlib.patches import FancyArrow
-import matplotlib.gridspec as gridspec
-import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-
 # Create some example data
 import numpy as np
+import pandas as pd
+import seaborn as sns
+from pathlib import Path
+from quantumresponsepro import BasisMRAData
+from quantumresponsepro import MadnessResponse
 from quantumresponsepro.BasisMRADataAssembler import make_detailed_df
 
 fd_path = Path('/mnt/data/madness_data/fd_compare3')
@@ -276,7 +267,7 @@ def basis_set_analysis_plot(database_path, molecule, valence, type=None):
 
 
 r_plot, axes = basis_set_analysis_plot(compare_path, 'NaCl', ['D', 'T', 'Q', ], type=None)
-r_plot.savefig(paper_path.joinpath("nacl_plot.png"),dpi=1000 )
+r_plot.savefig(paper_path.joinpath("nacl_plot.png"), dpi=1000)
 
 august_high_path = Path('/mnt/data/madness_data/post_watoc/august_high_prec')
 database = BasisMRAData(august_high_path, new=False)
@@ -288,4 +279,3 @@ r_plot.savefig(paper_path.joinpath("bf_plot.png"), dpi=300)
 
 r_plot, axes = basis_set_analysis_plot(compare_path, 'CO', ['D', 'T', 'Q', '5'], )
 r_plot.savefig(paper_path.joinpath("CO_plot.png"), dpi=300)
-

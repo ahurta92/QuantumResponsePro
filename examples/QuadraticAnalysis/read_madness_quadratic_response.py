@@ -1,10 +1,7 @@
 import json
-from pathlib import Path
-import re
-
-import numpy as np
 import pandas as pd
-from matplotlib import pyplot as plt
+import re
+from pathlib import Path
 
 
 class ReadDaltonQuadraticResponse:

@@ -1,10 +1,9 @@
 import pandas as pd
 import seaborn as sns
 from matplotlib import pyplot as plt
-
+from pathlib import Path
 from quantumresponsepro import DaltonRunner, BasisMRADataCollection, BasisMRADataAnalyzer
 from quantumresponsepro.BasisMRADataAssembler import make_detailed_df
-from pathlib import Path
 
 mol = "H2"
 

@@ -1,28 +1,18 @@
-import shutil
-
-from quantumresponsepro import BasisMRADataCollection
-from quantumresponsepro import BasisMRADataAnalyzer
-import seaborn as sns
-
-from pathlib import Path
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-import matplotlib.pyplot as plt
-import pandas as pd
 import json
-from quantumresponsepro.BasisMRADataAssembler import partition_molecule_list
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import shutil
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from pathlib import Path
+from quantumresponsepro import BasisMRADataAnalyzer
+from quantumresponsepro import BasisMRADataCollection
 from quantumresponsepro import Tabler
 from sklearn.cluster import AgglomerativeClustering
-from sklearn.cluster import DBSCAN
-from sklearn.cluster import KMeans
-from sklearn.mixture import GaussianMixture
-from sklearn.mixture import BayesianGaussianMixture
 from sklearn.metrics import silhouette_score
-from matplotlib.ticker import AutoMinorLocator
-import matplotlib.ticker as mticker
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.mixture import GaussianMixture
 from sklearn.preprocessing import StandardScaler
-import numpy as np
 
 august = Path('/mnt/data/madness_data/post_watoc/august')
 paper_path = Path('/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/Figures_v2')
@@ -537,15 +527,15 @@ for ax in g.axes_dict.values():
 axs = g.axes  # Get the axes object from the FacetGrid
 print(axs)
 axs[0, 4].text(0.05, 0.95, 'O$_3$', ha='left', va='top', transform=axs[0, 4].transAxes,
-               bbox=dict(facecolor='red', alpha=0.5, edgecolor='black'),fontsize=20)
+               bbox=dict(facecolor='red', alpha=0.5, edgecolor='black'), fontsize=20)
 axs[0, 5].text(0.05, 0.95, 'Be', ha='left', va='top', transform=axs[0, 5].transAxes,
-               bbox=dict(facecolor='red', alpha=0.5, edgecolor='black'),fontsize=20)
+               bbox=dict(facecolor='red', alpha=0.5, edgecolor='black'), fontsize=20)
 
 axs[1, 4].text(0.05, 0.95, 'BF', ha='left', va='top', transform=axs[1, 4].transAxes,
-               bbox=dict(facecolor='red', alpha=0.5, edgecolor='black'),fontsize=20)
+               bbox=dict(facecolor='red', alpha=0.5, edgecolor='black'), fontsize=20)
 
 axs[2, 2].text(0.05, 0.95, 'SiH$_3$Cl,  PH$_3$', ha='left', va='top', transform=axs[2, 2].transAxes,
-               bbox=dict(facecolor='red', alpha=0.5, edgecolor='black'),fontsize=20)
+               bbox=dict(facecolor='red', alpha=0.5, edgecolor='black'), fontsize=20)
 
 # Add 'N2' text to the second subplot
 g.fig.savefig(cluster_path.joinpath('alpha_convergence.svg'))

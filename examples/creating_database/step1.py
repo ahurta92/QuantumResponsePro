@@ -12,4 +12,4 @@ basis = 'aug-cc-pVTZ'
 
 db_gen.get_dalton_excited_json(xc, [basis], True)
 
-#freq_json = dg.get_frequency_json(9, xc, op, basis, .5)
+# freq_json = dg.get_frequency_json(9, xc, op, basis, .5)

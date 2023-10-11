@@ -1,26 +1,16 @@
 import math
 
-import pandas as pd
 import matplotlib as mpl
-from quantumresponsepro import BasisMRAData, DaltonRunner
-
-from quantumresponsepro import BasisMRADataAnalyzer
-from quantumresponsepro import MadnessResponse
-
-import seaborn as sns
-
-from pathlib import Path
 import matplotlib.pyplot as plt
-from matplotlib.patches import FancyArrow
-import matplotlib.gridspec as gridspec
-import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-
 # Create some example data
 import numpy as np
-from quantumresponsepro.BasisMRADataAssembler import make_detailed_df
-from ipywidgets import interact
+import pandas as pd
 import plotly.graph_objects as go
+import seaborn as sns
+from pathlib import Path
+from quantumresponsepro import BasisMRAData
+from quantumresponsepro import MadnessResponse
+from quantumresponsepro.BasisMRADataAssembler import make_detailed_df
 
 fd_path = Path('/mnt/data/madness_data/fd_compare3')
 thesis_path = Path('/home/adrianhurtado/projects/writing/thesis2023/Figures_v2')
@@ -105,7 +95,6 @@ class QuadDataAnalyzer:
         basis_data = self.quad_data.query('basis=="aug-cc-pVQZ"').copy(
         ).drop_duplicates()
         unique_index = basis_data.index.unique()
-
 
         self.alpha_data = mra_data.alpha_eigen.copy()
 

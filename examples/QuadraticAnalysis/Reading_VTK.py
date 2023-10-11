@@ -1,10 +1,8 @@
-from vtkmodules.util import numpy_support
-import numpy as np
-import plotly.graph_objects as go
-from pathlib import Path
 import vtk
+from pathlib import Path
 from quantumresponsepro import MadnessReader
 from quantumresponsepro import MadnessResponse
+from vtkmodules.util import numpy_support
 
 # Read the .vts file
 reader = vtk.vtkXMLStructuredGridReader()

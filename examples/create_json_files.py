@@ -1,6 +1,5 @@
 import argparse
 from pathlib import Path
-import json
 
 from quantumresponsepro.utils import DatabaseGenerator
 

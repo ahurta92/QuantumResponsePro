@@ -1,12 +1,11 @@
-from quantumresponsepro import BasisMRADataCollection
-from quantumresponsepro import BasisMRADataAnalyzer
-import seaborn as sns
-
-from pathlib import Path
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+import json
 import matplotlib.pyplot as plt
 import pandas as pd
-import json
+import seaborn as sns
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from pathlib import Path
+from quantumresponsepro import BasisMRADataAnalyzer
+from quantumresponsepro import BasisMRADataCollection
 from quantumresponsepro.BasisMRADataAssembler import partition_molecule_list
 
 
@@ -89,7 +88,6 @@ print(conv_df.loc['molecules'])
 # fluorine_path = paper_path.joinpath('molecules/fluorine')
 
 omega = [0, 4, 8]
-
 
 width = '30%'
 height = '20%'

@@ -1,22 +1,8 @@
-import pandas as pd
-import matplotlib as mpl
-from quantumresponsepro import BasisMRAData, DaltonRunner
-
-from quantumresponsepro import BasisMRADataAnalyzer
-from quantumresponsepro import MadnessResponse
-
-import seaborn as sns
-
-from pathlib import Path
-import matplotlib.pyplot as plt
-from matplotlib.patches import FancyArrow
-import matplotlib.gridspec as gridspec
-import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-
 # Create some example data
 import numpy as np
-from quantumresponsepro.BasisMRADataAssembler import make_detailed_df
+from pathlib import Path
+from quantumresponsepro import BasisMRAData, DaltonRunner
+from quantumresponsepro import MadnessResponse
 
 
 def tensor_to_numpy(j):

@@ -1,15 +1,12 @@
-from quantumresponsepro import BasisMRADataCollection
-from quantumresponsepro import BasisMRADataAnalyzer
-from quantumresponsepro import Tabler
-import seaborn as sns
-
 from pathlib import Path
+from quantumresponsepro import BasisMRADataCollection
+from quantumresponsepro import Tabler
 
 august = Path('/mnt/data/madness_data/post_watoc/august')
 paper_path = Path('/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/Figures_v2')
 paper_path = Path('/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/Figures_v2')
 thesis_path = Path('/home/adrianhurtado/projects/writing/thesis2023/Figures_v2')
-#paper_path = thesis_path
+# paper_path = thesis_path
 database = BasisMRADataCollection(august)
 tabler = Tabler(database)
 
@@ -69,7 +66,7 @@ gamma2.to_latex(paper_path.joinpath(Path("gamma_molecules_2.tex")),
                 multicol_align='|c|',
                 convert_css=True,
                 siunitx=True)
-#energy1, energy2 = tabler.get_styled_molecules('energy')
+# energy1, energy2 = tabler.get_styled_molecules('energy')
 
 # energy1.to_latex(paper_path.joinpath(Path("energy_molecules_1.tex")),
 #                  hrules=True,

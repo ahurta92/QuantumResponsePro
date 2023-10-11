@@ -1,7 +1,7 @@
-from quantumresponsepro import DatabaseGenerator
-from pathlib import Path
-import os
 import json
+import os
+from pathlib import Path
+from quantumresponsepro import DatabaseGenerator
 
 
 def test_generate_frequeny_json():

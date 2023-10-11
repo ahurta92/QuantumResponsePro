@@ -1,14 +1,9 @@
 import json
-from quantumresponsepro import DaltonRunner
-import os
-
-from matplotlib import pyplot as plt
-from quantumresponsepro import MadnessResponse, BasisMRADataAnalyzer
-from quantumresponsepro.BasisMRADataCollection import get_polar_df, BasisMRADataCollection
-from pathlib import Path
 import pandas as pd
-import re
+from pathlib import Path
+from quantumresponsepro import DaltonRunner
 from quantumresponsepro import DatabaseGenerator
+from quantumresponsepro import MadnessResponse
 
 
 def get_mad_series(data_dir, molecules):
@@ -167,7 +162,7 @@ for mol in molecules:
             result = runner.get_quad_json(mol, 'hf', 'dipole', basis)
 
             result.rename(columns={'A-freq': 'Afreq', 'B-freq': 'Bfreq', 'C-freq': 'Cfreq'},
-                            inplace=True)
+                          inplace=True)
 
             result.rename(columns={'Beta Value': 'Beta'}, inplace=True)
             print(result)
@@ -190,18 +185,14 @@ basis_beta = pd.DataFrame(beta_dict).T
 # for each column i'd like to compute the percent error with respect to the FD data column
 
 
-
 fd_data_copy.set_index('System', inplace=True)
 
 fd_alpha = fd_data_copy['alpha'].copy()
 fd_beta = fd_data_copy['beta'].copy()
 
-
 # concat the basis set data with the fd data
 basis_alpha = pd.concat([fd_alpha, basis_alpha], axis=1)
 basis_beta = pd.concat([fd_beta, basis_beta], axis=1)
-
-
 
 
 def compute_percent_error(df, target):

@@ -1,9 +1,8 @@
-from pathlib import Path
-import re
-
 import numpy as np
 import pandas as pd
+import re
 from matplotlib import pyplot as plt
+from pathlib import Path
 
 
 # Write a class that reads a Dalton quadratic response output file
@@ -178,7 +177,7 @@ max_frequency = 1
 
 divisions = 8
 
-#plot_beta(df)
+# plot_beta(df)
 freq = np.linspace(min_frequency, max_frequency, divisions + 1)
 dir = ["Z", "Y", "X"]
 
@@ -244,7 +243,7 @@ max_frequency = 1
 
 divisions = 8
 
-#plot_beta(df)
+# plot_beta(df)
 freq = np.linspace(min_frequency, max_frequency, divisions + 1)
 dir = ["Z", "Y", "X"]
 

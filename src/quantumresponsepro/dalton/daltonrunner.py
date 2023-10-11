@@ -1,15 +1,15 @@
-import subprocess
 from math import ceil
 
+import json
 import numpy as np
-import shutil
 import os
 import pandas as pd
-import json
+import shutil
+import subprocess
+from pathlib import Path
 
 from .daltonToJson import daltonToJson
 from ..madness_to_dalton import madnessToDalton
-from pathlib import Path
 
 
 class DaltonRunner:

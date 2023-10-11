@@ -1,28 +1,18 @@
-import shutil
-
-from quantumresponsepro import BasisMRADataCollection
-from quantumresponsepro import BasisMRADataAnalyzer
-import seaborn as sns
-
-from pathlib import Path
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-import matplotlib.pyplot as plt
-import pandas as pd
 import json
-from quantumresponsepro.BasisMRADataAssembler import partition_molecule_list, make_detailed_df
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import shutil
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from pathlib import Path
+from quantumresponsepro import BasisMRADataAnalyzer
+from quantumresponsepro import BasisMRADataCollection
 from quantumresponsepro import Tabler
 from sklearn.cluster import AgglomerativeClustering
-from sklearn.cluster import DBSCAN
-from sklearn.cluster import KMeans
-from sklearn.mixture import GaussianMixture
-from sklearn.mixture import BayesianGaussianMixture
 from sklearn.metrics import silhouette_score
-from matplotlib.ticker import AutoMinorLocator
-import matplotlib.ticker as mticker
-
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.mixture import GaussianMixture
 from sklearn.preprocessing import StandardScaler
-import numpy as np
 
 august = Path('/mnt/data/madness_data/post_watoc/august')
 paper_path = Path('/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/Figures_v2')
@@ -30,7 +20,7 @@ thesis_path = Path('/home/adrianhurtado/projects/writing/thesis2023/Figures_v2')
 tromso_poster_path = Path('/home/adrianhurtado/projects/writing/tromso_poster/figures')
 paper_path = tromso_poster_path
 database = BasisMRADataCollection(august)
-analyzer = BasisMRADataAnalyzer(database, .05,)
+analyzer = BasisMRADataAnalyzer(database, .05, )
 tabler = Tabler(database)
 
 sns.set_context('poster', )
@@ -374,7 +364,6 @@ def plot_iso_valence_cluster_convergence(data, iso_type, valence, omega, sharey=
         # f.axes[0].legend(shadow=True, fancybox=True,fontsize=12)
 
         f.set(yscale='symlog')
-    from matplotlib.ticker import LogFormatterSciNotation, LogLocator, SymmetricalLogLocator
 
     plt.tight_layout()
     return f
@@ -523,7 +512,6 @@ if True:
             g = analyzer.plot_iso_valence_convergence_v2(mol, 'alpha', ['D', 'T', 'Q', '5', '6'],
                                                          omega)
             g.fig.savefig(cluster_path_i.joinpath(f'{mol}_alpha_converge.svg'), dpi=300)
-
 
 #
 # g = analyzer.plot_iso_valence_convergence(mol, 'gamma', ['D', 'T', 'Q', '5'], omega, sharey=True)

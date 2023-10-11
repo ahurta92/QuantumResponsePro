@@ -1,12 +1,9 @@
 import os
-
 import pandas as pd
 from matplotlib import pyplot as plt
-
-from quantumresponsepro import EvenTemperedBasis
 from pathlib import Path
-from quantumresponsepro import MadnessResponse
 from quantumresponsepro import DaltonRunner
+from quantumresponsepro import EvenTemperedBasis
 
 
 # Path: examples/even_tempered_basis.py

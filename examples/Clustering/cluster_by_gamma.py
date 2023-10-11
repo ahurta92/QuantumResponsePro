@@ -1,28 +1,18 @@
-import shutil
-
-from quantumresponsepro import BasisMRADataCollection
-from quantumresponsepro import BasisMRADataAnalyzer
-import seaborn as sns
-
-from pathlib import Path
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-import matplotlib.pyplot as plt
-import pandas as pd
 import json
-from quantumresponsepro.BasisMRADataAssembler import partition_molecule_list
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import shutil
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from pathlib import Path
+from quantumresponsepro import BasisMRADataAnalyzer
+from quantumresponsepro import BasisMRADataCollection
 from quantumresponsepro import Tabler
 from sklearn.cluster import AgglomerativeClustering
-from sklearn.cluster import DBSCAN
-from sklearn.cluster import KMeans
-from sklearn.mixture import GaussianMixture
-from sklearn.mixture import BayesianGaussianMixture
 from sklearn.metrics import silhouette_score
-from matplotlib.ticker import AutoMinorLocator
-import matplotlib.ticker as mticker
-
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.mixture import GaussianMixture
 from sklearn.preprocessing import StandardScaler
-import numpy as np
 
 august = Path('/mnt/data/madness_data/post_watoc/august')
 paper_path = Path('/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/Figures_v2')
@@ -450,12 +440,12 @@ if True:
             g = analyzer.plot_alpha_component_convergence(mol, valence=['D', 'T', 'Q', '5'],
                                                           omega=omega, )
             g = analyzer.plot_iso_valence_convergence_v2(mol, 'gamma', ['D', 'T', 'Q', '5'], omega)
-            #set_ax_inset(g, mol, loc='lower right', yb=.10, iso_type='alpha', width=width,
+            # set_ax_inset(g, mol, loc='lower right', yb=.10, iso_type='alpha', width=width,
             #             height=height)
             g.fig.savefig(cluster_path_i.joinpath(f'{mol}_gamma_converge.svg'), dpi=300)
             g = analyzer.plot_alpha_component_convergence(mol, valence=['D', 'T', 'Q', '5'],
                                                           omega=omega, )
-            #set_ax_inset(g, mol, loc='lower right', yb=.10, iso_type='alpha', width=width,
+            # set_ax_inset(g, mol, loc='lower right', yb=.10, iso_type='alpha', width=width,
             #             height=height)
             g.fig.savefig(cluster_path_i.joinpath(f'{mol}_gamma_component_converge.svg'), dpi=300)
 

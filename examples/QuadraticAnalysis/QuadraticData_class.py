@@ -1,14 +1,10 @@
 import math
-import vtk
-from pathlib import Path
-import pandas as pd
+
 import matplotlib as mpl
 import os
-import numpy as np
-from quantumresponsepro.BasisMRADataAssembler import *
 import plotly.graph_objects as go
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-
+import vtk
+from quantumresponsepro.BasisMRADataAssembler import *
 from quantumresponsepro.BasisMRADataCollection import get_quad_df, get_polar_df
 
 
@@ -1350,10 +1346,10 @@ class QuadVisualization:
             results = np.array(results)
             p1 = points.copy()
             p2 = results
-            x[i * num_points:(i + 1) * num_points] = p1[:, 0]+ xshift * (i % 4) - (2 * xshift)
-            y[i * num_points:(i + 1) * num_points] = p1[:, 1]+ yshift * (math.floor(i / 4)) - (
+            x[i * num_points:(i + 1) * num_points] = p1[:, 0] + xshift * (i % 4) - (2 * xshift)
+            y[i * num_points:(i + 1) * num_points] = p1[:, 1] + yshift * (math.floor(i / 4)) - (
                     2 * yshift)
-            z[i * num_points:(i + 1) * num_points] = p1[:, 2]+ zshift
+            z[i * num_points:(i + 1) * num_points] = p1[:, 2] + zshift
 
             u[i * num_points:(i + 1) * num_points] = p2[:, 0]
             v[i * num_points:(i + 1) * num_points] = p2[:, 1]
@@ -1418,10 +1414,11 @@ class QuadVisualization:
             writer.SetFileName(file_name)
             writer.SetInputData(polydata)
             writer.Write()
+
     def beta_to_vtk_basis_error(self, mol, basis_sets, omega_1=0, omega_2=0, radius=1,
-                    num_points=1000,
-                    xshift=0.0,
-                    yshift=0.0, zshift=0.0):
+                                num_points=1000,
+                                xshift=0.0,
+                                yshift=0.0, zshift=0.0):
 
         for basis in basis_sets:
             coords, vector_vals = self.get_beta_points(mol, [basis], omega_1=omega_1,

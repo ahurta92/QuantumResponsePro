@@ -1,8 +1,8 @@
-from matplotlib import pyplot as plt
-from quantumresponsepro import MadnessResponse, BasisMRADataAnalyzer
-from quantumresponsepro.BasisMRADataCollection import get_polar_df, BasisMRADataCollection
-from pathlib import Path
 import pandas as pd
+from matplotlib import pyplot as plt
+from pathlib import Path
+from quantumresponsepro import MadnessResponse
+
 
 class ReadDaltonQuadraticResponse:
     # input quadratic response file
@@ -50,6 +50,8 @@ class ReadDaltonQuadraticResponse:
                         else:
                             break
             self.df = pd.concat(rows, axis=1).transpose()
+
+
 def get_mad_series(data_dir, molecules):
     mad_zz_data = {}
     for mol in molecules:

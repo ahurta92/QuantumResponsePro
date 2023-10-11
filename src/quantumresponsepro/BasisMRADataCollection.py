@@ -1,9 +1,7 @@
-import os
-
-from .BasisMRADataAssembler import *
-from pathlib import Path
 import glob
 import json
+
+from .BasisMRADataAssembler import *
 
 
 def get_polar_df(molecules, xc, op, database, basis):
@@ -134,7 +132,7 @@ class BasisMRAData:
         all_data_path = feather_data.joinpath('all_polar_data.feather')
         all_beta_path = feather_data.joinpath('all_beta_data.feather')
 
-        if new :
+        if new:
             self.__determine_convergence()
             self.all_polar_data = get_polar_df(self.available_molecules, xc, op, self.data_dir,
                                                self.basis_sets)

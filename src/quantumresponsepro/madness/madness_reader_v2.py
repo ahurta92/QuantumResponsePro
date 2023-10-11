@@ -1,9 +1,6 @@
-import subprocess
-import seaborn as sns
-import numpy as np
-
 import matplotlib.pyplot as plt
-from setuptools import glob
+import numpy as np
+import subprocess
 
 from .madnessReader import FrequencyData
 from ..dalton.daltonrunner import DaltonRunner

@@ -1,12 +1,10 @@
 import json
-
-import seaborn as sns
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from matplotlib import pyplot as plt
-
-from quantumresponsepro import DaltonRunner
 from pathlib import Path
+from quantumresponsepro import DaltonRunner
 from quantumresponsepro.BasisMRADataAssembler import make_detailed_df
 
 mol = 'Cl'

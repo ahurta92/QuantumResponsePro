@@ -1,15 +1,11 @@
-from quantumresponsepro import BasisMRADataCollection
-from quantumresponsepro.BasisMRADataAssembler import get_frequency_compare
-from quantumresponsepro.BasisMRADataAssembler import partition_molecule_list
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-
-import seaborn as sns
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
-import pandas as pd
-import matplotlib.colors as mcolors
 import matplotlib.cm as cm
+import matplotlib.colors as mcolors
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from quantumresponsepro import BasisMRADataCollection
+from quantumresponsepro.BasisMRADataAssembler import partition_molecule_list
 
 
 class BasisMRADataAnalyzer:
