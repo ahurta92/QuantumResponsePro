@@ -1,6 +1,9 @@
 import matplotlib.pyplot as plt
+import json
 import numpy as np
 import subprocess
+
+import pandas as pd
 
 from .madnessReader import FrequencyData
 from ..dalton.daltonrunner import DaltonRunner
@@ -368,6 +371,8 @@ class MadnessResponse:
         # drop the dash from A-freq and B-freq and C-freq columns names
         beta_json.columns = beta_json.columns.str.replace('-', '')
 
+        pd.set_option('display.max_columns', None)
+        print(beta_json)
         beta_json['ijk'] = beta_json['A'].astype(str) + beta_json['B'].astype(str) + \
                            beta_json['C'].astype(str)
         beta_json.drop(columns=['A', 'B', 'C'], inplace=True)

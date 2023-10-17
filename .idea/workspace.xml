@@ -5,20 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7af674dd-5e62-47db-810a-177fa0259216" name="Changes" comment="some new files">
-      <change afterPath="$PROJECT_DIR$/examples/QuadraticAnalysis/QuadraticData_class.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/QuadraticAnalysis/Reading_VTK.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/QuadraticAnalysis/dataview.ipynb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/QuadraticAnalysis/paraview_script.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/QuadraticAnalysis/testing_beta_hrs.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/QuantumResponsePro.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/QuantumResponsePro.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/FD_compare/fd_compare2.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/FD_compare/fd_compare2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/QuadraticAnalysis/QuadraticData.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/QuadraticAnalysis/QuadraticData.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/madness/madness_reader_v2.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/madness/madness_reader_v2.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -49,7 +36,7 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../writing/thesis2023" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="ROOT_SYNC" value="SYNC" />
   </component>
   <component name="GitToolBoxStore">
@@ -78,11 +65,12 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "/home/adrianhurtado/projects/copilot",
+    "last_opened_file_path": "/home/adrianhurtado/projects/thesis2023",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -109,7 +97,7 @@
       <recent name="$PROJECT_DIR$/src/quantumresponsepro" />
     </key>
   </component>
-  <component name="RunManager" selected="LaTeX.main">
+  <component name="RunManager" selected="Python.testing_beta_hrs">
     <configuration name="main" type="LATEX_RUN_CONFIGURATION" factoryName="LaTeX configuration factory">
       <texify>
         <compiler>PDFLATEX</compiler>
@@ -347,10 +335,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.testing_beta_hrs" />
-        <item itemvalue="Python.all_frequencies" />
-        <item itemvalue="Python.QuadraticData" />
-        <item itemvalue="Python.Reading_VTK" />
         <item itemvalue="Python.testing_QuadraticData" />
+        <item itemvalue="Python.all_frequencies" />
+        <item itemvalue="Python.Reading_VTK" />
+        <item itemvalue="Python.QuadraticData" />
       </list>
     </recent_temporary>
   </component>
@@ -432,6 +420,7 @@
       <workItem from="1696542203972" duration="633000" />
       <workItem from="1696605522710" duration="2474000" />
       <workItem from="1696939379754" duration="2013000" />
+      <workItem from="1697545394942" duration="1202000" />
     </task>
     <task id="LOCAL-00001" summary="using Path instead of bare strings for file management">
       <created>1681736371953</created>
@@ -895,8 +884,8 @@
     <SUITE FILE_PATH="coverage/QuantumResponsePro$pytest_for_test_DatabaseGenerator_test_get_dalton_dipole_json.coverage" NAME="pytest for test_DatabaseGenerator.test_get_dalton_dipole_json Coverage Results" MODIFIED="1681836393187" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$dalton_ionization.coverage" NAME="dalton_ionization Coverage Results" MODIFIED="1695935130001" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/IonizationPotential" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$cluster_by_alpha_v3.coverage" NAME="cluster_by_alpha_v3 Coverage Results" MODIFIED="1688425659740" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/QuantumResponsePro$testing_beta_hrs.coverage" NAME="testing_beta_hrs Coverage Results" MODIFIED="1695676858544" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/QuadraticAnalysis" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$fd_compare2.coverage" NAME="fd_compare2 Coverage Results" MODIFIED="1695935124537" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/FD_compare" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$testing_beta_hrs.coverage" NAME="testing_beta_hrs Coverage Results" MODIFIED="1697545518638" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/QuadraticAnalysis" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$run_get_dalton_frequency_json.coverage" NAME="run_get_dalton_frequency_json Coverage Results" MODIFIED="1692451012401" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$run_dalton.coverage" NAME="run_dalton Coverage Results" MODIFIED="1690213861699" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$quadratic_frequency_data.coverage" NAME="quadratic_frequency_data Coverage Results" MODIFIED="1694192352472" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/QuadraticAnalysis" />
@@ -912,7 +901,7 @@
     <SUITE FILE_PATH="coverage/QuantumResponsePro$FDCompare.coverage" NAME="FDCompare Coverage Results" MODIFIED="1690475554211" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/example_database" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$convergence_analysis.coverage" NAME="convergence_analysis Coverage Results" MODIFIED="1690285895341" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$making_tables.coverage" NAME="making_tables Coverage Results" MODIFIED="1683832376630" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/QuantumResponsePro$testing_QuadraticData.coverage" NAME="testing_QuadraticData Coverage Results" MODIFIED="1694722254546" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/QuadraticAnalysis" />
+    <SUITE FILE_PATH="coverage/QuantumResponsePro$testing_QuadraticData.coverage" NAME="testing_QuadraticData Coverage Results" MODIFIED="1697545471816" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/QuadraticAnalysis" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$make_freq_iso_plots_v2.coverage" NAME="make_freq_iso_plots_v2 Coverage Results" MODIFIED="1688423815576" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$make_outlier_plots.coverage" NAME="make_outlier_plots Coverage Results" MODIFIED="1690206204551" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/QuantumResponsePro$pytest_in_test_mol_convergence_graphs_py.coverage" NAME="pytest in mol_convergence_plots.py Coverage Results" MODIFIED="1683037766962" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />

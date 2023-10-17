@@ -2,6 +2,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from pathlib import Path
 from quantumresponsepro import MadnessResponse
+import re
 
 
 class ReadDaltonQuadraticResponse:
