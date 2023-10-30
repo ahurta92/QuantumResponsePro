@@ -1,9 +1,7 @@
-import matplotlib.pyplot as plt
 import json
+import matplotlib.pyplot as plt
 import numpy as np
 import subprocess
-
-import pandas as pd
 
 from .madnessReader import FrequencyData
 from ..dalton.daltonrunner import DaltonRunner
@@ -215,7 +213,7 @@ class MadnessReader:
         # print(path)
 
         with open(path) as json_file:
-            print(mol)
+            print(mol, path)
             response_j = json.loads(json_file.read())
 
         return response_j
@@ -333,7 +331,12 @@ class MadnessResponse:
             self.full_polar_data,
             self.polar_data,
         ) = mad_reader.get_polar_result(mol, xc, operator)
-        self.quad_data = self.get_quad_data(self.moldir)
+        try:
+            self.quad_data = self.get_quad_data(self.moldir)
+        except FileNotFoundError as f:
+            print(f)
+            self.quad_data = None
+            pass
 
         self.num_states = self.params['0.0']["states"]
         self.num_orbitals = self.params['0.0']["num_orbitals"]
@@ -363,6 +366,7 @@ class MadnessResponse:
 
     def get_quad_data(self, moldir):
         beta_json_path = moldir.joinpath('beta.json')
+        print(beta_json_path)
         loaded_json = json.loads(beta_json_path.read_text())
         # add a column for the molecule in the beginning
         beta_json = pd.DataFrame(loaded_json)
@@ -437,7 +441,8 @@ class MadnessResponse:
                 if k == 'r_x':
                     df = pd.DataFrame(tensor_to_numpy(val[0]), columns=pdx).pow(1 / 2.)
                     data_r[k] = df.dropna(axis=1)
-                if k == 'x_relative_residuals' or k == 'density_norms' or k == 'd' or k == 'r_d' or k == "density_residuals":
+                if (k == 'x_relative_residuals' or k == 'density_norms' or k == 'd' or k == 'r_d'
+                        or k == "density_residuals" or k== 'x_residuals'):
                     df = pd.DataFrame(tensor_to_numpy(val[0]), columns=['x', 'y', 'z'])
                     # if k == 'r_d':
                     #    print(k, df)
@@ -549,14 +554,21 @@ class MadnessResponse:
         return geometry, symbols
 
     def plot_residuals(self, frequency=0):
-        figsize = (10, 8 * 1)
+        scale = 1.1
+        figsize = (scale * 5, scale * 4)
         fig, ax = plt.subplots(nrows=1, ncols=1, figsize=figsize, constrained_layout=False)
         freq_key = self.frequencies[frequency]
         rd = self.data['convergence'][freq_key]['density_residuals'] \
             .rename(columns={'x': 'dx', 'y': 'dy', 'z': 'dz'})
-        rx = self.data['convergence'][freq_key]['x_relative_residuals'] \
-                 .loc[:, ['x', 'y', 'z']] \
-            .rename(columns={'x': 'rx', 'y': 'ry', 'z': 'rz'})
+        try:
+            rx = self.data['convergence'][freq_key]['x_relative_residuals'] \
+                     .loc[:, ['x', 'y', 'z']] \
+                .rename(columns={'x': 'rx', 'y': 'ry', 'z': 'rz'})
+        except KeyError as ke:
+            rx = self.data['convergence'][freq_key]['x_residuals'] \
+                     .loc[:, ['x', 'y', 'z']] \
+                .rename(columns={'x': 'rx', 'y': 'ry', 'z': 'rz'})
+
 
         rd.plot(logy=True, ax=ax, colormap='Accent', markersize=12, kind='line', style='.-')
         rx.plot(logy=True, ax=ax, colormap='Accent', grid=True, markersize=12, kind='line',
@@ -597,6 +609,7 @@ class MadnessResponse:
         ax.legend(loc='center', bbox_to_anchor=(0.5, 1.15), fancybox=True, shadow=False, ncol=3, )
 
         return fig, ax
+
 
     def get_line_plots(self):
         x_plots = {}

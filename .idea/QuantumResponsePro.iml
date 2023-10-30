@@ -9,6 +9,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Scripts" />
+    <orderEntry type="module" module-name="mra-tdhf-polarizability" />
   </component>
   <component name="PyDocumentationSettings">
     <option name="format" value="PLAIN" />

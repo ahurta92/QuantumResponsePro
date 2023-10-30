@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+
 from quantumresponsepro import BasisMRADataCollection
 from quantumresponsepro.BasisMRADataAssembler import partition_molecule_list
 
@@ -267,6 +268,8 @@ class BasisMRADataAnalyzer:
 
         ax.set(xlabel=None)
         ax.set(ylabel=None)
+        linthresh = 1e-2
+        linscale = 1
 
     def cluster_iso_plot_ax(self, iso_diff_detailed, ax, v_level, b_type, iso_type,
                             omegas=[0, 1, 2, 3, 4, 5, 6, 7, 8], border=0.0,
@@ -322,31 +325,34 @@ class BasisMRADataAnalyzer:
 
     def freq_iso_plot_v2(self, v_level, iso_type, mol_set="all", sharey=False,
                          omegas=[0, 1, 2, 3, 4, 5, 6, 7, 8], border=0.0,
-                         pal='colorblind'):
+                         pal='colorblind', aspect=0.50, height=5):
         iso_diff_detailed = self.data_collection.detailed_iso_diff.copy()
         if mol_set == "all":
             data = iso_diff_detailed.query('omega.isin(@omegas) & valence.isin(@v_level)')
+        else:
+            data = iso_diff_detailed.query(
+                'omega.isin(@omegas) & valence.isin(@v_level) & molecule.isin(@mol_set)')
         mdata = data.copy()
         mdata['valence'] = data.valence.cat.remove_unused_categories()
         mdata['Type'] = data.Type.cat.remove_unused_categories()
         g = sns.FacetGrid(data=mdata, col='Type', row='valence', margin_titles=True,
-                          sharex=True, sharey=sharey, despine=False, legend_out=True,
+                          height=height, aspect=aspect,
+                          sharex=True, sharey=sharey, despine=True, legend_out=True,
                           palette=pal)
 
         g.map_dataframe(sns.stripplot, x="omega", y=iso_type, hue="mol_system", dodge=True,
                         jitter=True, legend="full",
                         palette=pal, )
 
-        g.add_legend(title=None, ncol=3, loc='lower center', frameon=False, borderaxespad=0.0, )
         # sns.move_legend(g, title=None, ncol=1, loc='upper right', frameon=False,
         #                bbox_to_anchor=(1.0, 0.95), borderaxespad=0.0, )
-        g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0).tight_layout()
+        # g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0)
         g.map(plt.axhline, y=self.mra_ref, color='green', dashes=(2, 1), zorder=0,
               alpha=0.5)
         g.map(plt.axhline, y=-self.mra_ref, color='green', dashes=(2, 1), zorder=0,
               alpha=0.5)
         g.set_axis_labels(r"", "Percent Error")
-        g.figure.subplots_adjust(wspace=0.00, hspace=0.0)
+        # g.figure.subplots_adjust(wspace=0.00, hspace=0.0)
         g.set_titles(row_template="{row_name}", col_template="{col_name}")
         if iso_type == 'alpha':
             title = r'Error in $\alpha(\omega)$'
@@ -357,8 +363,57 @@ class BasisMRADataAnalyzer:
             for spine in ax.spines.values():
                 spine.set_linewidth(1)
                 spine.set_color('black')
-        plt.subplots_adjust(right=0.97, bottom=0.10)
-        g.figure.subplots_adjust(wspace=0.00, hspace=0.0)
+        # plt.subplots_adjust(right=0.97, bottom=0.10)
+        # g.tight_layout()
+        # g.figure.subplots_adjust(wspace=0.00, hspace=0.0)
+        return g
+
+    def freq_iso_plot_v2_molecules(self, v_level, iso_type, mol_set="all", sharey=False,
+                                   omegas=[0, 1, 2, 3, 4, 5, 6, 7, 8], border=0.0,
+                                   pal='colorblind', aspect=0.50, height=5):
+        iso_diff_detailed = self.data_collection.detailed_iso_diff.copy()
+        if mol_set == "all":
+            data = iso_diff_detailed.query('omega.isin(@omegas) & valence.isin(@v_level)')
+        else:
+            data = iso_diff_detailed.query(
+                'omega.isin(@omegas) & valence.isin(@v_level) & molecule.isin(@mol_set)')
+        mdata = data.copy()
+        mdata['valence'] = data.valence.cat.remove_unused_categories()
+        mdata['Type'] = data.Type.cat.remove_unused_categories()
+        g = sns.FacetGrid(data=mdata, col='Type', row='valence', margin_titles=True,
+                          height=height, aspect=aspect,
+                          sharex=True, sharey=sharey, despine=True, legend_out=True,
+                          palette=pal)
+
+        g.map_dataframe(sns.lineplot, x="omega", y=iso_type, hue="molecule",
+                        style='molecule',
+                        legend="full",
+                        markers=True,
+                        dashes=False,
+                        )
+
+        # sns.move_legend(g, title=None, ncol=1, loc='upper right', frameon=False,
+        #                bbox_to_anchor=(1.0, 0.95), borderaxespad=0.0, )
+        # g.map(plt.axhline, y=0, color='k', dashes=(2, 1), zorder=0)
+        g.map(plt.axhline, y=self.mra_ref, color='green', dashes=(2, 1), zorder=0,
+              alpha=0.5)
+        g.map(plt.axhline, y=-self.mra_ref, color='green', dashes=(2, 1), zorder=0,
+              alpha=0.5)
+        g.set_axis_labels(r"", "Percent Error")
+        # g.figure.subplots_adjust(wspace=0.00, hspace=0.0)
+        g.set_titles(row_template="{row_name}", col_template="{col_name}")
+        if iso_type == 'alpha':
+            title = r'Error in $\alpha(\omega)$'
+        else:
+            title = r'Error in $\gamma(\omega)$'
+
+        for ax in g.axes.flat:
+            for spine in ax.spines.values():
+                spine.set_linewidth(1)
+                spine.set_color('black')
+        # plt.subplots_adjust(right=0.97, bottom=0.10)
+        # g.tight_layout()
+        # g.figure.subplots_adjust(wspace=0.00, hspace=0.0)
         return g
 
     def freq_iso_plot(self, v_level, iso_type, mol_set="all", sharey=False,
@@ -744,7 +799,7 @@ class Tabler:
         # Define the maximum data value (in absolute terms) for normalization
         styled_df = summary.style.apply(bnorm)
         styled_df.format(fmt)
-        return styled_df
+        return summary.style.format(fmt)
 
     def get_styled_summary(self, iso_type):
         if iso_type == 'energy':

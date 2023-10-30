@@ -3,6 +3,7 @@ import subprocess
 
 from ..dalton.daltonrunner import DaltonRunner
 from ..madness_to_dalton import *
+import json
 
 
 class MadnessReader:

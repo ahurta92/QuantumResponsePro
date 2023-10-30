@@ -586,7 +586,6 @@ class DaltonRunner:
                 with(open(output_json, "w")) as f:
                     f.write(json.dumps(dalton_json, indent=4))
         except (FileNotFoundError, IndexError) as e:
-            print(e)
             if self.run:
                 print("Trying to run ", output_stem, " in ", run_directory)
                 print('dal_input:', dal_input)

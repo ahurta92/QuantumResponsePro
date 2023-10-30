@@ -5,12 +5,14 @@ from quantumresponsepro import BasisMRADataAnalyzer
 from quantumresponsepro import BasisMRADataCollection
 
 august = Path('/mnt/data/madness_data/post_watoc/august')
+august = Path('/mnt/data/madness_data/august_no_symmetry')
 paper_path = Path('/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/Figures_v2')
 thesis_path = Path('/home/adrianhurtado/projects/writing/thesis2023/Figures_v2')
 paper_path = Path('/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/Figures_v2')
 tromso_poster_path = Path('/home/adrianhurtado/projects/writing/tromso_poster/figures')
 paper_path = paper_path
-database = BasisMRADataCollection(august)
+database = BasisMRADataCollection(august,new=True)
+
 analyzer = BasisMRADataAnalyzer(database, .02, )
 sns.set_context('paper')
 sns.set_theme(style="whitegrid", font_scale=1.5, rc={'ytick.left': True, 'xtick.bottom': False, })

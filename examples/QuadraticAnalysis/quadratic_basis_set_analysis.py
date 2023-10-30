@@ -19,7 +19,7 @@ paper_path = thesis_path
 
 database_path = Path('/mnt/data/madness_data/august_no_symmetry')
 
-database = BasisMRAData(database_path, new=False)
+database = BasisMRAData(database_path, new=True)
 print(database.all_polar_data)
 
 # show the entire dataframe by setting the max rows to None

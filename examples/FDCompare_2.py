@@ -66,7 +66,6 @@ fd_base = Path("/mnt/data/madness_data/fd_compare2")
 
 def get_fd_data(fd_base):
     fd_low_path = fd_base.joinpath("low-low")
-    fd_highlow_path = fd_base.joinpath("high-low")
     fd_high_path = fd_base.joinpath("high-high")
 
     fd_data_path = Path("/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/FD_data.csv")
@@ -82,10 +81,9 @@ def get_fd_data(fd_base):
     print(molecules)
 
     lowlow = get_mad_series(fd_low_path, molecules)
-    highlow = get_mad_series(fd_highlow_path, molecules)
     highhigh = get_mad_series(fd_high_path, molecules)
 
-    mad_data = pd.concat([lowlow, highlow, highhigh], axis=1)
+    mad_data = pd.concat([lowlow, highhigh], axis=1)
     # rename index to Molecules and reset_index
     mad_data.index.name = 'Molecule'
     mad_data.reset_index(inplace=True)
@@ -95,8 +93,6 @@ def get_fd_data(fd_base):
     # FD data is in column FD
     # madness data is in other columns
     mad_data['Percent Error (low-low)'] = (mad_data['low-low'] - mad_data['FD']) / mad_data[
-        'FD'] * 100
-    mad_data['Percent Error (high-low)'] = (mad_data['high-low'] - mad_data['FD']) / mad_data[
         'FD'] * 100
     mad_data['Percent Error (high-high)'] = (mad_data['high-high'] - mad_data['FD']) / mad_data[
         'FD'] * \
@@ -109,12 +105,11 @@ def get_fd_data(fd_base):
     print(mad_data)
     # create a copy with just the percent error columns and FD column
     mad_data_percent_error = mad_data[
-        ['Molecule', 'Percent Error (low-low)', 'Percent Error (high-low)',
+        ['Molecule', 'Percent Error (low)', 'Percent Error (high)',
          'Percent Error (high-high)', 'FD']].copy()
     # rename the columns to be just low-low, high-low, high-high
-    mad_data_percent_error.rename(columns={'Percent Error (low-low)': 'low-low',
-                                           'Percent Error (high-low)': 'high-low',
-                                           'Percent Error (high-high)': 'high-high'}, inplace=True)
+    mad_data_percent_error.rename(columns={'Percent Error (low)': 'low-low',
+                                           'Percent Error (high)': 'high-high'}, inplace=True)
     # set the index to be the molecule
     mad_data_percent_error.set_index('Molecule', inplace=True, drop=True)
     return mad_data_percent_error, mad_data_out
@@ -125,7 +120,6 @@ def get_fd_data(fd_base):
 
 mad_data_percent_error, mad_data = get_fd_data(fd_base)
 mad_data_styled = mad_data_percent_error.style.format({'low-low': '{:.2e}',
-                                                       'high-low': '{:.2e}',
                                                        'high-high': '{:.2e}', })
 
 mad_data_styled.to_latex(
@@ -134,9 +128,8 @@ mad_data_styled.to_latex(
 print(mad_data_styled)
 fd_base = Path("/mnt/data/madness_data/fd_compare2")
 mad_data_percent_error, mad_data_2 = get_fd_data(fd_base)
-mad_data_styled = mad_data_percent_error.style.format({'low-low': '{:.2e}',
-                                                       'high-low': '{:.2e}',
-                                                       'high-high': '{:.2e}', })
+mad_data_styled = mad_data_percent_error.style.format({'low': '{:.2e}',
+                                                       'high': '{:.2e}', })
 
 mad_data_styled.to_latex(
     Path("/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/FD_data2.tex"),

@@ -81,11 +81,6 @@ def get_convergence_data(mol_list):
 first, second, fluorine = partition_molecule_list(database.molecules)
 conv_df = get_convergence_data(first)
 
-print(conv_df.loc['molecules'])
-
-# first_row_path = paper_path.joinpath('molecules/first')
-# second_row_path = paper_path.joinpath('molecules/second')
-# fluorine_path = paper_path.joinpath('molecules/fluorine')
 
 omega = [0, 4, 8]
 

@@ -29,8 +29,8 @@ def get_basis_e_data(mols, basis_sets, xc, op, database):
                 print(mol, basis)
                 pass
 
-        dd = [pd.Series(basis_dict, name='basis'),
-              pd.Series(basis_energy, name='energy')]
+        dd = [pd.Series(basis_dict, name='basis',dtype='category'),
+              pd.Series(basis_energy, name='energy',dtype='float64')]
         df = pd.concat([df, pd.concat(dd, axis=1)], axis=0)
 
     return df
@@ -229,6 +229,7 @@ def compare_database(mol, xc, op, database, basis_sets):
 
 
 def get_basis_polar_data(mols, basis_sets, xc, op, database):
+    print(database)
     d = DaltonRunner(database, False)
     bd = []
     for mol in mols:
@@ -240,6 +241,7 @@ def get_basis_polar_data(mols, basis_sets, xc, op, database):
             except TypeError:
                 print(mol, basis)
                 pass
+    print(bd)
     return pd.concat(bd)
 
 
@@ -383,6 +385,14 @@ def create_component_diff_df(a_data):
         basis_data = a_data.query('molecule==@mol & basis != "MRA"')
         b_mol_data = basis_data.set_index(multidex).alpha
         rep_mol_mra = pd.concat([a_mra for i in range(len(basis_data.basis.unique()))])
+        # set rep_mol_mra index to match b_mol_data
+        rep_mol_mra.index = b_mol_data.index
+
+        # figure out which how many omega rep_mol_mra has
+        # set b_mol_data to query the same omegas that rep_mol_mra has
+        b_mol_data = b_mol_data.loc[rep_mol_mra.index]
+
+
 
         diff_data = pd.concat([rep_mol_mra, b_mol_data], axis=1).diff(axis=1).iloc[:, 1]
         bcol = basis_data.set_index(multidex).basis

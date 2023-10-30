@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/QuantumResponsePro.iml" filepath="$PROJECT_DIR$/.idea/QuantumResponsePro.iml" />
       <module fileurl="file://$USER_HOME$/.config/ParaView/Scripts/.idea/Scripts.iml" filepath="$USER_HOME$/.config/ParaView/Scripts/.idea/Scripts.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../writing/mra-tdhf-polarizability/.idea/mra-tdhf-polarizability.iml" filepath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/.idea/mra-tdhf-polarizability.iml" />
     </modules>
   </component>
 </project>
