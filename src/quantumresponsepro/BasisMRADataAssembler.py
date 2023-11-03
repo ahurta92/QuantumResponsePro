@@ -29,11 +29,17 @@ def get_basis_e_data(mols, basis_sets, xc, op, database):
                 print(mol, basis)
                 pass
 
-        dd = [pd.Series(basis_dict, name='basis',dtype='category'),
-              pd.Series(basis_energy, name='energy',dtype='float64')]
+        dd = [pd.Series(basis_dict, name='basis', dtype='category'),
+              pd.Series(basis_energy, name='energy', dtype='float64')]
         df = pd.concat([df, pd.concat(dd, axis=1)], axis=0)
 
     return df
+
+
+class MRAMolDataDoesNotExist(Exception):
+    def __init__(self, message="MRA Data for molecule does not exist in database"):
+        self.message = message
+        super().__init__(self.message)
 
 
 def get_mra_energy_data(mols, xc, op, database):
@@ -45,11 +51,19 @@ def get_mra_energy_data(mols, xc, op, database):
             mad_r = MadnessResponse(mol, xc, op, database)
             mra_e_dict[mol] = mad_r.ground_e['e_tot']
             basis_dict[mol] = 'MRA'
+            # if file not found then try the old database
 
-        except FileNotFoundError as f:
-            mad_r = FrequencyData(mol, xc, op, database)
-            mra_e_dict[mol] = mad_r.ground_e['e_tot']
-            basis_dict[mol] = 'MRA'
+        except (FileNotFoundError , KeyError) as f:
+            try:
+                mad_r = FrequencyData(mol, xc, op, database)
+                mra_e_dict[mol] = mad_r.ground_e['e_tot']
+                basis_dict[mol] = 'MRA'
+            except FileNotFoundError as f:
+                print(f)
+                print('Did not find the old or new mra data for {}'.format(mol))
+                # raise a custom exception indicating that the molecule was not found to be
+                pass
+
 
     dd = [pd.Series(basis_dict, name='basis'),
           pd.Series(mra_e_dict, name='energy')]
@@ -92,7 +106,7 @@ def get_mra_polar_data(mols, xc, op, database):
             polar_df = mad_r.polar_data[polar_keys]
             polar_df.index.name = 'frequencies'
             polar_df = polar_df.reset_index()
-        except FileNotFoundError as f:
+        except (FileNotFoundError,KeyError) as f:
             mad_r = FrequencyData(mol, xc, op, database)
             polar_df = mad_r.polar_df[polar_keys]
             polar_df.index.name = 'frequencies'
@@ -257,6 +271,10 @@ def get_basis_quad_data(mols, basis_sets, xc, op, database):
             except TypeError:
                 print(mol, basis)
                 pass
+            except AttributeError as e:
+                print(e)
+                pass
+    print(bd)
 
     b_data = pd.concat(bd)
     # here we need to process the Beta Value coluns.  First we change the name to Beta
@@ -391,8 +409,6 @@ def create_component_diff_df(a_data):
         # figure out which how many omega rep_mol_mra has
         # set b_mol_data to query the same omegas that rep_mol_mra has
         b_mol_data = b_mol_data.loc[rep_mol_mra.index]
-
-
 
         diff_data = pd.concat([rep_mol_mra, b_mol_data], axis=1).diff(axis=1).iloc[:, 1]
         bcol = basis_data.set_index(multidex).basis

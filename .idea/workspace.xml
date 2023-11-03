@@ -4,32 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7af674dd-5e62-47db-810a-177fa0259216" name="Changes" comment="some new files">
-      <change afterPath="$PROJECT_DIR$/.idea/jupyter-settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/PolarizabilityPaper/ConvergenceAnalysis.ipynb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/PolarizabilityPaper/ConvergenceAnalysis.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/PolarizabilityPaper/ConvergenceAnalysisBeta.ipynb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/PolarizabilityPaper/DataAnalysisClass.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/PolarizabilityPaper/QuadraticViz.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/QuantumResponsePro.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/QuantumResponsePro.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="7af674dd-5e62-47db-810a-177fa0259216" name="Changes" comment="Cleaned up caption">
+      <change afterPath="$PROJECT_DIR$/examples/PolarizabilityPaper/august_convergence.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/FDCompare_2.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/FDCompare_2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/PolarizabilityPaper/make_violin_strip_plots.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/PolarizabilityPaper/make_violin_strip_plots.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/QuadraticAnalysis/quadratic_basis_set_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/QuadraticAnalysis/quadratic_basis_set_analysis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/convergence_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/convergence_analysis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataAnalyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataAnalyzer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/PolarizabilityPaper/ConvergenceAnalysis.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/examples/PolarizabilityPaper/ConvergenceAnalysis.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/PolarizabilityPaper/ConvergenceAnalysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/PolarizabilityPaper/ConvergenceAnalysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/PolarizabilityPaper/ConvergenceAnalysisBeta.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/examples/PolarizabilityPaper/ConvergenceAnalysisBeta.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/PolarizabilityPaper/DataAnalysisClass.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/PolarizabilityPaper/DataAnalysisClass.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataAssembler.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataAssembler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataCollection.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataCollection.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/dalton/daltonrunner.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/dalton/daltonrunner.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/madness/madnessReader.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/madness/madnessReader.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/madness/madness_reader_v2.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/madness/madness_reader_v2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/FD_data2.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/FD_data2.tex" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/FD_dataOctober.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/FD_dataOctober.tex" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/FD_dataOctober_tight.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/FD_dataOctober_tight.tex" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/acs-main.bib" beforeDir="false" afterPath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/acs-main.bib" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/out/main.blg" beforeDir="false" afterPath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/out/main.blg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/sections/Methods.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/sections/Methods.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/Figures_v2/alpha_error.png" beforeDir="false" afterPath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/Figures_v2/alpha_error.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/Figures_v2/alpha_freq_error.png" beforeDir="false" afterPath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/Figures_v2/alpha_freq_error.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/Figures_v2/gamma_error.png" beforeDir="false" afterPath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/Figures_v2/gamma_error.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/out/main.synctex(busy)" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/sections/Results_v2.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/sections/Results_v2.tex" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,8 +64,18 @@
     <setting file="file://$PROJECT_DIR$/venv/lib/python3.10/site-packages/matplotlib/ticker.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/venv/lib/python3.10/site-packages/pandas/core/frame.py" root0="SKIP_INSPECTION" />
   </component>
+  <component name="LogFilters">
+    <option name="FILTER_ERRORS" value="false" />
+    <option name="FILTER_WARNINGS" value="false" />
+    <option name="FILTER_INFO" value="true" />
+    <option name="FILTER_DEBUG" value="true" />
+    <option name="CUSTOM_FILTER" />
+  </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
@@ -86,29 +86,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/home/adrianhurtado/projects/writing/mra-tdhf-polarizability",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "org.jetbrains.plugins.notebooks.jupyter.connections.configuration.JupyterServerConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;full.screen.before.presentation.mode&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/adrianhurtado/Desktop/dracula/themes/jetbrains/dracula-pro.zip&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
-      "Python"
+  &quot;keyToStringList&quot;: {
+    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
+      &quot;Python&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/examples/PolarizabilityPaper" />
@@ -122,7 +123,74 @@
       <recent name="$PROJECT_DIR$/src/quantumresponsepro" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.make_freq_iso_plots_v2">
+  <component name="RunManager" selected="LaTeX.main (1)">
+    <configuration default="true" type="BIBTEX_RUN_CONFIGURATION" factoryName="LaTeX configuration factory">
+      <texify-bibtex>
+        <compiler />
+        <compiler-path />
+        <compiler-arguments />
+        <envs />
+        <main-file>$USER_HOME$</main-file>
+        <aux-dir>$USER_HOME$</aux-dir>
+      </texify-bibtex>
+      <method v="2" />
+    </configuration>
+    <configuration name="main bibliography" type="BIBTEX_RUN_CONFIGURATION" factoryName="LaTeX configuration factory">
+      <texify-bibtex>
+        <compiler>BIBTEX</compiler>
+        <compiler-path />
+        <compiler-arguments />
+        <envs>
+          <env name="BIBINPUTS" value="$PROJECT_DIR$/../writing/mra-tdhf-polarizability" />
+          <env name="BSTINPUTS" value="$PROJECT_DIR$/../writing/mra-tdhf-polarizability:" />
+        </envs>
+        <main-file>$PROJECT_DIR$/../writing/mra-tdhf-polarizability/main.tex</main-file>
+        <aux-dir>$PROJECT_DIR$/../writing/mra-tdhf-polarizability/out</aux-dir>
+      </texify-bibtex>
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="LATEX_RUN_CONFIGURATION" factoryName="LaTeX configuration factory">
+      <texify>
+        <compiler>PDFLATEX</compiler>
+        <compiler-path />
+        <sumatra-path />
+        <pdf-viewer>EVINCE</pdf-viewer>
+        <viewer-command />
+        <compiler-arguments />
+        <envs />
+        <main-file />
+        <output-path>{projectDir}/out</output-path>
+        <auxil-path>{projectDir}/auxil</auxil-path>
+        <compile-twice>false</compile-twice>
+        <output-format>PDF</output-format>
+        <latex-distribution>TEXLIVE</latex-distribution>
+        <has-been-run>false</has-been-run>
+        <bib-run-config>[]</bib-run-config>
+        <makeindex-run-config>[]</makeindex-run-config>
+      </texify>
+      <method v="2" />
+    </configuration>
+    <configuration name="main (1)" type="LATEX_RUN_CONFIGURATION" factoryName="LaTeX configuration factory" temporary="true">
+      <texify>
+        <compiler>PDFLATEX</compiler>
+        <compiler-path />
+        <sumatra-path />
+        <pdf-viewer>EVINCE</pdf-viewer>
+        <viewer-command />
+        <compiler-arguments>--shell-escape</compiler-arguments>
+        <envs />
+        <main-file>$PROJECT_DIR$/../writing/mra-tdhf-polarizability/main.tex</main-file>
+        <output-path>$PROJECT_DIR$/../writing/mra-tdhf-polarizability/out</output-path>
+        <auxil-path>{projectDir}/auxil</auxil-path>
+        <compile-twice>false</compile-twice>
+        <output-format>PDF</output-format>
+        <latex-distribution>TEXLIVE</latex-distribution>
+        <has-been-run>true</has-been-run>
+        <bib-run-config>[BibTeX.main bibliography]</bib-run-config>
+        <makeindex-run-config>[]</makeindex-run-config>
+      </texify>
+      <method v="2" />
+    </configuration>
     <configuration name="main" type="LATEX_RUN_CONFIGURATION" factoryName="LaTeX configuration factory">
       <texify>
         <compiler>PDFLATEX</compiler>
@@ -146,28 +214,6 @@
         <option name="RunConfigurationTask" enabled="true" run_configuration_name="fd_compare2" run_configuration_type="PythonConfigurationType" />
         <option name="RunConfigurationTask" enabled="true" run_configuration_name="dalton_ionization" run_configuration_type="PythonConfigurationType" />
       </method>
-    </configuration>
-    <configuration name="BasisMRADataAnalyzer" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="QuantumResponsePro" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/quantumresponsepro" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataAnalyzer.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
     </configuration>
     <configuration name="FDCompare" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="QuantumResponsePro" />
@@ -346,7 +392,9 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="BibTeX.main bibliography" />
       <item itemvalue="LaTeX.main" />
+      <item itemvalue="LaTeX.main (1)" />
       <item itemvalue="Python.compute_dalton_quad_frequency" />
       <item itemvalue="Python.quadratic_data" />
       <item itemvalue="Python.fd_compare2" />
@@ -354,16 +402,15 @@
       <item itemvalue="Python.make_freq_iso_plots_v2" />
       <item itemvalue="Python.make_violin_strip_plots" />
       <item itemvalue="Python.convergence_analysis" />
-      <item itemvalue="Python.BasisMRADataAnalyzer" />
       <item itemvalue="Python.FDCompare" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="LaTeX.main (1)" />
         <item itemvalue="Python.make_violin_strip_plots" />
         <item itemvalue="Python.make_freq_iso_plots_v2" />
         <item itemvalue="Python.convergence_analysis" />
         <item itemvalue="Python.FDCompare" />
-        <item itemvalue="Python.BasisMRADataAnalyzer" />
       </list>
     </recent_temporary>
   </component>
@@ -455,7 +502,11 @@
       <workItem from="1698327020744" duration="165000" />
       <workItem from="1698327196040" duration="8503000" />
       <workItem from="1698412484332" duration="16172000" />
-      <workItem from="1698667086913" duration="3295000" />
+      <workItem from="1698667086913" duration="20769000" />
+      <workItem from="1698691712673" duration="15076000" />
+      <workItem from="1698929101882" duration="99000" />
+      <workItem from="1698929206844" duration="27874000" />
+      <workItem from="1699018844147" duration="10858000" />
     </task>
     <task id="LOCAL-00001" summary="using Path instead of bare strings for file management">
       <created>1681736371953</created>
@@ -632,30 +683,6 @@
       <option name="project" value="LOCAL" />
       <updated>1685117287042</updated>
     </task>
-    <task id="LOCAL-00030" summary="push the linear response accuracy">
-      <option name="closed" value="true" />
-      <created>1691416758046</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1691416758046</updated>
-    </task>
-    <task id="LOCAL-00031" summary="add even tempered basis set">
-      <option name="closed" value="true" />
-      <created>1691416860795</created>
-      <option name="number" value="00031" />
-      <option name="presentableId" value="LOCAL-00031" />
-      <option name="project" value="LOCAL" />
-      <updated>1691416860795</updated>
-    </task>
-    <task id="LOCAL-00032" summary="read quadratic response calculation">
-      <option name="closed" value="true" />
-      <created>1691416887194</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1691416887194</updated>
-    </task>
     <task id="LOCAL-00033" summary="beging writing quadratic response calculation">
       <option name="closed" value="true" />
       <created>1692372511205</created>
@@ -824,7 +851,31 @@
       <option name="project" value="LOCAL" />
       <updated>1694724432738</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="Some new plots in the methods section">
+      <option name="closed" value="true" />
+      <created>1698670454544</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1698670454544</updated>
+    </task>
+    <task id="LOCAL-00055" summary="Clean up z convergence code">
+      <option name="closed" value="true" />
+      <created>1698670715264</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1698670715264</updated>
+    </task>
+    <task id="LOCAL-00056" summary="Cleaned up caption">
+      <option name="closed" value="true" />
+      <created>1698681464285</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1698681464285</updated>
+    </task>
+    <option name="localTasksCounter" value="57" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -842,9 +893,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="some plot adjustments" />
-    <MESSAGE value="push the linear response accuracy" />
-    <MESSAGE value="add even tempered basis set" />
     <MESSAGE value="read quadratic response calculation" />
     <MESSAGE value="beging writing quadratic response calculation" />
     <MESSAGE value="prepared to run quadratic response dalton" />
@@ -867,7 +915,10 @@
     <MESSAGE value="No symmetry" />
     <MESSAGE value="now take in data from multiple directory sources" />
     <MESSAGE value="lot's of clean up" />
-    <option name="LAST_COMMIT_MESSAGE" value="lot's of clean up" />
+    <MESSAGE value="Some new plots in the methods section" />
+    <MESSAGE value="Clean up z convergence code" />
+    <MESSAGE value="Cleaned up caption" />
+    <option name="LAST_COMMIT_MESSAGE" value="Cleaned up caption" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -894,6 +945,11 @@
           <url>notebook:///home/adrianhurtado/projects/QuantumResponsePro/examples/PolarizabilityPaper/ConvergenceAnalysis.ipynb</url>
           <line>186</line>
           <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="jupyter-line">
+          <url>notebook:///home/adrianhurtado/projects/QuantumResponsePro/examples/PolarizabilityPaper/august_convergence.ipynb</url>
+          <line>97</line>
+          <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

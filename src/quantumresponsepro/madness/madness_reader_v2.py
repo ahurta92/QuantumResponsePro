@@ -309,17 +309,23 @@ class MadnessResponse:
         self.operator = operator
         self.moldir = self.data_dir.joinpath(self.xc).joinpath(self.mol)
 
-        mad_reader = MadnessReader(self.data_dir)
-        (
-            self.ground_params,
-            self.ground_scf_data,
-            self.ground_timing,
-            self.ground_info,
-        ) = mad_reader.get_ground_scf_data(mol, xc)
-        e_name_list = ["e_coulomb", "e_kinetic", "e_local", "e_nrep", "e_tot"]
-        self.ground_e = {}
-        for e_name in e_name_list:
-            self.ground_e[e_name] = self.ground_scf_data[e_name][-1]
+
+        try:
+            mad_reader = MadnessReader(self.data_dir)
+            (
+                self.ground_params,
+                self.ground_scf_data,
+                self.ground_timing,
+                self.ground_info,
+            ) = mad_reader.get_ground_scf_data(mol, xc)
+            e_name_list = ["e_coulomb", "e_kinetic", "e_local", "e_nrep", "e_tot"]
+            self.ground_e = {}
+            for e_name in e_name_list:
+                self.ground_e[e_name] = self.ground_scf_data[e_name][-1]
+        except FileNotFoundError as f:
+            print(f)
+            raise
+
 
         (
             self.params,

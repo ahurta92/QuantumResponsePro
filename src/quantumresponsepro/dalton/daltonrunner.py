@@ -669,6 +669,8 @@ class DaltonRunner:
                 beta_json.rename(columns={'Beta Value': 'Beta'}, inplace=True)
                 # remove if ijk is empty
                 self.quad_data = beta_json
+            else:
+                return None
 
         except KeyError as k:
             print(k)

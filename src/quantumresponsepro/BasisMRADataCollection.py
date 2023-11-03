@@ -14,12 +14,13 @@ def get_polar_df(molecules, xc, op, database, basis):
 
 def get_quad_df(molecules, xc, op, database, basis):
     mra_data = get_mra_quad_data(molecules, xc, op, database)
-    # print(mra_data)
     b_data = get_basis_quad_data(molecules, basis, xc, op, database)
+    print(mra_data)
+    print(b_data)
     # print(b_data)
     a_data = pd.concat([mra_data, b_data])
-    # print(a_data)
-    # print(a_data.info())
+    a_data.reset_index(drop=False, inplace=True)
+    print(a_data.info())
     return a_data
 
 

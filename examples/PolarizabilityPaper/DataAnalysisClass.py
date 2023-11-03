@@ -38,14 +38,23 @@ class QuadraticDatabase:
                                  'bhrs_basis_set_error_df']
 
         for attr_name in data_frame_attributes:
-            filename = self.database_path.joinpath(f"{attr_name}.csv")
+            try:
+                filename = self.database_path.joinpath(f"{attr_name}.csv")
 
-            if not self.overwrite and os.path.exists(filename):
-                df = pd.read_csv(filename)
-            else:
-                df = self.generate_df(attr_name)
+                if not self.overwrite and os.path.exists(filename):
+                    df = pd.read_csv(filename)
+                else:
+                    df = self.generate_df(attr_name)
 
-            setattr(self, attr_name, df)
+                setattr(self, attr_name, df)
+            except AttributeError as a:
+                print(a)
+                print(f"Could not initialize {attr_name}")
+                continue
+            except ValueError as v:
+                print(v)
+                print(f"Could not initialize {attr_name}")
+                continue
 
     def generate_df(self, attr_name):
         # Replace this section with your specific data generating code
@@ -85,18 +94,20 @@ class QuadraticDatabase:
 
     def __generate_quad_df(self):
         q_df = get_quad_df(self.molecules, self.xc, self.op, self.database_path, self.basis_sets)
-        q_df_i = q_df.reset_index()
+        print('q_df: ', q_df)
+        print('q_df index: ', q_df.keys())
+        q_df_i = q_df.copy()
         # truncate the Afreq Bfreq and Cfreq to 3 decimal places
 
-        q_df_i['Afreq'] = q_df_i['Afreq'].apply(lambda x: round(x, 3))
-        q_df_i['Bfreq'] = q_df_i['Bfreq'].apply(lambda x: round(x, 3))
-        q_df_i['Cfreq'] = q_df_i['Cfreq'].apply(lambda x: round(x, 3))
+        q_df_i['Afreq'] = q_df_i['Afreq'].apply(lambda x: round(x, 6))
+        q_df_i['Bfreq'] = q_df_i['Bfreq'].apply(lambda x: round(x, 6))
+        q_df_i['Cfreq'] = q_df_i['Cfreq'].apply(lambda x: round(x, 6))
 
         # Function to round to n significant figures
 
         # Apply the function to the float column
         q_df_i['Beta'] = q_df_i['Beta'].apply(
-            lambda x: round_to_n_significant_figures(x, 3))
+            lambda x: round_to_n_significant_figures(x, 6))
 
         # q_df_i['Beta'] = q_df_i['Beta'].apply(lambda x: round(x, 2))
 
@@ -644,7 +655,6 @@ class QuadraticDatabase:
             return coords, vector_vals
 
 
-
 class PolarizabilityData:
 
     def __init__(self, molecules, xc, op, basis_sets, database, overwrite=False):
@@ -676,10 +686,14 @@ class PolarizabilityData:
                     df = self.generate_df(attr_name)
 
                 setattr(self, attr_name, df)
-            except:
+            except AttributeError as a:
+                print(a)
                 print(f"Could not initialize {attr_name}")
                 pass
-
+            except ValueError as v:
+                print(v)
+                print(f"Could not initialize {attr_name}")
+                pass
 
     def generate_df(self, attr_name):
         if attr_name == 'energy_df':
@@ -703,9 +717,14 @@ class PolarizabilityData:
                                  'eigen_diff', 'iso_data']
 
         for attr_name in data_frame_attributes:
-            df = getattr(self, attr_name).copy()
-            filename = self.database.joinpath(f"{attr_name}.csv")
-            df.to_csv(filename, index=False)
+            try:
+                df = getattr(self, attr_name).copy()
+                filename = self.database.joinpath(f"{attr_name}.csv")
+                df.to_csv(filename, index=False)
+            except AttributeError as a:
+                print(a)
+                print(f"Could not save {attr_name}")
+                pass
 
     def make_all_dfs_detailed(self):
         data_frame_attributes = ['energy_df', 'energy_diff_df', 'polar_data', 'alpha_eigen',
@@ -836,8 +855,9 @@ p3 = [pal2[1], pal2[2], ]
 light_pal = sns.color_palette(p2)
 simple_pal = sns.color_palette(p3)
 
-sns.set_theme('paper', 'darkgrid', palette=light_pal, font='sans-serif', font_scale=1.0)
 
+#sns.set_theme('paper', 'whitegrid', palette=light_pal, font='sans-serif', font_scale=1.0)
+sns.set_theme('paper', 'whitegrid', palette=pal, font='sans-serif', font_scale=1.0)
 
 class basis_set_analysis:
 
@@ -909,5 +929,3 @@ class basis_set_analysis:
         r_plot.suptitle(molecule)
 
         return r_plot, axes
-
-
