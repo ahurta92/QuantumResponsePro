@@ -109,6 +109,21 @@ class QuadraticDatabase:
         q_df_i['Beta'] = q_df_i['Beta'].apply(
             lambda x: round_to_n_significant_figures(x, 6))
 
+
+        # post process the molecule data
+        f = []
+        for mol in self.molecules:
+            mol_data = q_df_i.query('molecule==@mol').copy()
+            freq_map = mol_data.query('basis=="MRA"').Afreq.unique()
+            print(mol, len(freq_map), freq_map)
+            # create a column representing the index of the frequency
+            freq_dict = {freq_map[i]: i for i in range(len(freq_map))}
+            mol_data['a'] = mol_data.Afreq.map(freq_dict)
+            mol_data['b'] = mol_data.Bfreq.map(freq_dict)
+            mol_data['c'] = mol_data.Cfreq.map(freq_dict)
+            f.append(mol_data)
+        q_df_i = pd.concat(f)
+
         # q_df_i['Beta'] = q_df_i['Beta'].apply(lambda x: round(x, 2))
 
         return q_df_i.copy()
