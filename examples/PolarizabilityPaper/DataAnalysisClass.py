@@ -2,8 +2,8 @@ import math
 
 import matplotlib as mpl
 import os
-from quantumresponsepro.BasisMRADataAssembler import *
 
+from quantumresponsepro.BasisMRADataAssembler import *
 from quantumresponsepro.BasisMRADataCollection import get_quad_df, get_polar_df
 
 
@@ -22,6 +22,7 @@ class QuadraticDatabase:
         self.vector_basis_set_error_df = None
         self.beta_hrs_df = None
         self.bhrs_basis_set_error_df = None
+        self.pq_df=None
         self.freq = freq
         self.molecules = mols
         self.basis_sets = basis_sets
@@ -33,9 +34,7 @@ class QuadraticDatabase:
         self.initialize_dfs()
 
     def initialize_dfs(self):
-        data_frame_attributes = ['q_df', 'basis_set_error_df', 'vector_q_df',
-                                 'vector_basis_set_error_df', 'beta_hrs_df',
-                                 'bhrs_basis_set_error_df']
+        data_frame_attributes = ['q_df', 'vector_q_df','pq_df', ]
 
         for attr_name in data_frame_attributes:
             try:
@@ -60,37 +59,19 @@ class QuadraticDatabase:
         # Replace this section with your specific data generating code
         if attr_name == 'q_df':
             return self.__generate_quad_df()
-        elif attr_name == 'basis_set_error_df':
-            # Implement your data generating logic here
-            return self.__generate_basis_error_df()
         elif attr_name == 'vector_q_df':
             return self.__generate_vector_q_df()
-        elif attr_name == 'vector_basis_set_error_df':
-            return self.__generate_vector_basis_error_df()
-        elif attr_name == 'beta_hrs_df':
-            return self.__generate_bhrs_df()
-        elif attr_name == 'bhrs_basis_set_error_df':
-            return self.__generate_bhrs_basis_error_df()
+        elif attr_name == 'pq_df':
+            return self.__generate_processed_quad_df()
 
     def save_dfs(self):
-        data_frame_attributes = ['q_df', 'basis_set_error_df', 'vector_q_df',
-                                 'vector_basis_set_error_df', 'beta_hrs_df',
-                                 'bhrs_basis_set_error_df']
+        data_frame_attributes = ['q_df', 'vector_q_df','pq_df'
+                                 ]
 
         for attr_name in data_frame_attributes:
             df = getattr(self, attr_name).copy()
             filename = self.database_path.joinpath(f"{attr_name}.csv")
             df.to_csv(filename, index=False)
-
-    def make_all_dfs_detailed(self):
-        data_frame_attributes = ['q_df', 'basis_set_error_df', 'vector_q_df',
-                                 'vector_basis_set_error_df', 'beta_hrs_df',
-                                 'bhrs_basis_set_error_df']
-
-        for attr_name in data_frame_attributes:
-            df = getattr(self, attr_name)  # Access the DataFrame attribute
-            modified_df = make_detailed_df(df)  # Apply the function
-            setattr(self, attr_name, modified_df)  #
 
     def __generate_quad_df(self):
         q_df = get_quad_df(self.molecules, self.xc, self.op, self.database_path, self.basis_sets)
@@ -99,16 +80,15 @@ class QuadraticDatabase:
         q_df_i = q_df.copy()
         # truncate the Afreq Bfreq and Cfreq to 3 decimal places
 
-        q_df_i['Afreq'] = q_df_i['Afreq'].apply(lambda x: round(x, 6))
-        q_df_i['Bfreq'] = q_df_i['Bfreq'].apply(lambda x: round(x, 6))
-        q_df_i['Cfreq'] = q_df_i['Cfreq'].apply(lambda x: round(x, 6))
+        q_df_i['Afreq'] = q_df_i['Afreq'].apply(lambda x: round(x, 3))
+        q_df_i['Bfreq'] = q_df_i['Bfreq'].apply(lambda x: round(x, 3))
+        q_df_i['Cfreq'] = q_df_i['Cfreq'].apply(lambda x: round(x, 3))
 
         # Function to round to n significant figures
 
         # Apply the function to the float column
         q_df_i['Beta'] = q_df_i['Beta'].apply(
             lambda x: round_to_n_significant_figures(x, 6))
-
 
         # post process the molecule data
         f = []
@@ -124,9 +104,60 @@ class QuadraticDatabase:
             f.append(mol_data)
         q_df_i = pd.concat(f)
 
-        # q_df_i['Beta'] = q_df_i['Beta'].apply(lambda x: round(x, 2))
-
         return q_df_i.copy()
+
+    def __generate_processed_quad_df(self):
+
+
+        sample = self.q_df
+        index = ['a', 'b', 'c', 'basis', 'molecule']
+        sample = sample.set_index(index)
+        # if beta is less than 1e-4 then set to zero
+        sample['Beta'] = sample['Beta'].where(sample['Beta'].abs() > 5e-3, 0)
+        xyz_to_012 = {'X': 0, 'Y': 1, 'Z': 2}
+        beta_tensor = np.zeros((3, 3, 3))
+        new_sample = pd.DataFrame()
+        # for each individual index in sample
+        for i in sample.index.unique():
+
+            for j, row in sample.loc[i].iterrows():
+                ijk = row.ijk
+                beta = row.Beta
+                # get the index of the tensor
+                index_1 = [xyz_to_012[ijk[0]], xyz_to_012[ijk[1]], xyz_to_012[ijk[2]]]
+                index_2 = [xyz_to_012[ijk[0]], xyz_to_012[ijk[2]], xyz_to_012[ijk[1]]]
+                index_3 = [xyz_to_012[ijk[2]], xyz_to_012[ijk[0]], xyz_to_012[ijk[1]]]
+
+                beta_tensor[tuple(index_1)] = beta
+                beta_tensor[tuple(index_2)] = beta
+                beta_tensor[tuple(index_3)] = beta
+            # now create the reverse map
+            d = {}
+            for a in range(3):
+                for b in range(3):
+                    for c in range(3):
+                        ijk = '{}{}{}'.format('XYZ'[a], 'XYZ'[b], 'XYZ'[c])
+                        d[ijk] = beta_tensor[a, b, c]
+            # now make dataframe with index i and d
+            # where i is mulitindex of a,b,c,basis,molecule
+            df = pd.Series(d)
+            # set the index name to ijk
+            df.index.name = 'ijk'
+            # set the name of the series to Beta
+            df.name = 'Beta'
+            # set the index to be a,b,c,basis,molecule
+            df = pd.DataFrame(df)
+            # set multiindex to be a,b,c,basis,molecule
+            df['a'] = i[0]
+            df['b'] = i[1]
+            df['c'] = i[2]
+            df['basis'] = i[3]
+            df['molecule'] = i[4]
+            new_sample = pd.concat([new_sample, df])
+        new_sample.reset_index(inplace=True)
+        return new_sample
+            # q_df_i['Beta'] = q_df_i['Beta'].apply(lambda x: round(x, 2))
+
 
     def __generate_basis_error_df(self):
 
@@ -588,6 +619,7 @@ class QuadraticDatabase:
         beta_df.sort_index(inplace=True)
         # for each row in beta_zero
         for i, row in beta_df.iterrows():
+            print(row)
             # get the indices of the row
             indices = [xyz_to_012[x] for x in i]
             # set the value of the tensor at the indices to the value of the row
@@ -870,9 +902,9 @@ p3 = [pal2[1], pal2[2], ]
 light_pal = sns.color_palette(p2)
 simple_pal = sns.color_palette(p3)
 
-
-#sns.set_theme('paper', 'whitegrid', palette=light_pal, font='sans-serif', font_scale=1.0)
+# sns.set_theme('paper', 'whitegrid', palette=light_pal, font='sans-serif', font_scale=1.0)
 sns.set_theme('paper', 'whitegrid', palette=pal, font='sans-serif', font_scale=1.0)
+
 
 class basis_set_analysis:
 
