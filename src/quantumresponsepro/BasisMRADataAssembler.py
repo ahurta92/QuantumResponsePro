@@ -106,11 +106,15 @@ def get_mra_polar_data(mols, xc, op, database):
             polar_df = mad_r.polar_data[polar_keys]
             polar_df.index.name = 'frequencies'
             polar_df = polar_df.reset_index()
-        except (FileNotFoundError,KeyError) as f:
+        except (FileNotFoundError) as f:
             mad_r = FrequencyData(mol, xc, op, database)
             polar_df = mad_r.polar_df[polar_keys]
             polar_df.index.name = 'frequencies'
             polar_df = polar_df.reset_index()
+        except (KeyError) as f:
+            # did not find polar data for mol
+            print("Didn't find polar data for {}".format(mol), f)
+            pass
         md.append(column_polar_df(polar_df, mol, basis))
     df = pd.concat(md)
     df.loc[:, 'alpha'] = df.alpha.apply(lambda x: round(x, N - int(np.floor(np.log10(abs(x))))))
