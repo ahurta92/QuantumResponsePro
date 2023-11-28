@@ -5,18 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7af674dd-5e62-47db-810a-177fa0259216" name="Changes" comment="fix a citation">
-      <change afterPath="$PROJECT_DIR$/examples/PolarizabilityPaper/ConvergenceAnalysisBeta_presentation.ipynb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/PolarizabilityPaper/ConvergenceAnalysis_presentation.ipynb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/PolarizabilityPaper/QuadVisualization.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/PolarizabilityPaper/august_convergence_presentation.ipynb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/PolarizabilityPaper/paperBeta_presentation.ipynb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/examples/PolarizabilityPaper/quad_visualization.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/examples/PolarizabilityPaper/DataAnalysisClass.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/PolarizabilityPaper/DataAnalysisClass.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/PolarizabilityPaper/august_convergence.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/examples/PolarizabilityPaper/august_convergence.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataAssembler.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/quantumresponsepro/BasisMRADataAssembler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/sections/Introduction.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/sections/Introduction.tex" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/sections/Results_v2.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/sections/Results_v2.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/PolarizabilityPaper/paperBeta_presentation.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/examples/PolarizabilityPaper/paperBeta_presentation.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/out/main.blg" beforeDir="false" afterPath="$PROJECT_DIR$/../writing/mra-tdhf-polarizability/out/main.blg" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -514,6 +505,7 @@
       <workItem from="1700410165889" duration="3928000" />
       <workItem from="1700507810196" duration="31000" />
       <workItem from="1700507848918" duration="122000" />
+      <workItem from="1701097704029" duration="2510000" />
     </task>
     <task id="LOCAL-00001" summary="using Path instead of bare strings for file management">
       <created>1681736371953</created>

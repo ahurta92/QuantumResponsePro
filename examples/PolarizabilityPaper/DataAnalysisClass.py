@@ -2,7 +2,6 @@ import math
 
 import matplotlib as mpl
 import os
-
 from quantumresponsepro.BasisMRADataAssembler import *
 from quantumresponsepro.BasisMRADataCollection import get_quad_df, get_polar_df
 
@@ -22,7 +21,7 @@ class QuadraticDatabase:
         self.vector_basis_set_error_df = None
         self.beta_hrs_df = None
         self.bhrs_basis_set_error_df = None
-        self.pq_df=None
+        self.pq_df = None
         self.freq = freq
         self.molecules = mols
         self.basis_sets = basis_sets
@@ -34,7 +33,7 @@ class QuadraticDatabase:
         self.initialize_dfs()
 
     def initialize_dfs(self):
-        data_frame_attributes = ['q_df', 'vector_q_df','pq_df', ]
+        data_frame_attributes = ['q_df', 'vector_q_df', 'pq_df', ]
 
         for attr_name in data_frame_attributes:
             try:
@@ -65,7 +64,7 @@ class QuadraticDatabase:
             return self.__generate_processed_quad_df()
 
     def save_dfs(self):
-        data_frame_attributes = ['q_df', 'vector_q_df','pq_df'
+        data_frame_attributes = ['q_df', 'vector_q_df', 'pq_df'
                                  ]
 
         for attr_name in data_frame_attributes:
@@ -80,9 +79,9 @@ class QuadraticDatabase:
         q_df_i = q_df.copy()
         # truncate the Afreq Bfreq and Cfreq to 3 decimal places
 
-        q_df_i['Afreq'] = q_df_i['Afreq'].apply(lambda x: round(x, 3))
-        q_df_i['Bfreq'] = q_df_i['Bfreq'].apply(lambda x: round(x, 3))
-        q_df_i['Cfreq'] = q_df_i['Cfreq'].apply(lambda x: round(x, 3))
+        q_df_i['Afreq'] = q_df_i['Afreq'].apply(lambda x: round(x, 4))
+        q_df_i['Bfreq'] = q_df_i['Bfreq'].apply(lambda x: round(x, 4))
+        q_df_i['Cfreq'] = q_df_i['Cfreq'].apply(lambda x: round(x, 4))
 
         # Function to round to n significant figures
 
@@ -95,19 +94,15 @@ class QuadraticDatabase:
         for mol in self.molecules:
             mol_data = q_df_i.query('molecule==@mol').copy()
             freq_map = mol_data.query('basis=="MRA"').Afreq.unique()
-            print(mol, len(freq_map), freq_map)
-            # create a column representing the index of the frequency
-            freq_dict = {freq_map[i]: i for i in range(len(freq_map))}
-            mol_data['a'] = mol_data.Afreq.map(freq_dict)
-            mol_data['b'] = mol_data.Bfreq.map(freq_dict)
-            mol_data['c'] = mol_data.Cfreq.map(freq_dict)
+            mol_data['a'] = mol_data.Afreq.map(lambda x: mol_data.Afreq.unique().tolist().index(x))
+            mol_data['b'] = mol_data.Bfreq.map(lambda x: mol_data.Afreq.unique().tolist().index(x))
+            mol_data['c'] = mol_data.Cfreq.map(lambda x: mol_data.Afreq.unique().tolist().index(x))
             f.append(mol_data)
         q_df_i = pd.concat(f)
 
         return q_df_i.copy()
 
     def __generate_processed_quad_df(self):
-
 
         sample = self.q_df
         index = ['a', 'b', 'c', 'basis', 'molecule']
@@ -156,8 +151,7 @@ class QuadraticDatabase:
             new_sample = pd.concat([new_sample, df])
         new_sample.reset_index(inplace=True)
         return new_sample
-            # q_df_i['Beta'] = q_df_i['Beta'].apply(lambda x: round(x, 2))
-
+        # q_df_i['Beta'] = q_df_i['Beta'].apply(lambda x: round(x, 2))
 
     def __generate_basis_error_df(self):
 
