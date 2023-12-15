@@ -6,13 +6,15 @@ import seaborn as sns
 import shutil
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from pathlib import Path
-from quantumresponsepro import BasisMRADataAnalyzer
-from quantumresponsepro import BasisMRADataCollection
-from quantumresponsepro import Tabler
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import silhouette_score
 from sklearn.mixture import GaussianMixture
 from sklearn.preprocessing import StandardScaler
+
+from quantumresponsepro import BasisMRADataAnalyzer
+from quantumresponsepro import BasisMRADataCollection
+from quantumresponsepro import Tabler
+from quantumresponsepro.BasisMRADataAssembler import make_detailed_df
 
 august = Path('/mnt/data/madness_data/post_watoc/august')
 paper_path = Path('/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/Figures_v2')
@@ -20,7 +22,7 @@ thesis_path = Path('/home/adrianhurtado/projects/writing/thesis2023/Figures_v2')
 tromso_poster_path = Path('/home/adrianhurtado/projects/writing/tromso_poster/figures')
 tromso_poster_path_supple = Path(
     '/home/adrianhurtado/projects/writing/tromso_poster/supplementary/figures')
-paper_path = paper_path
+paper_path = thesis_path
 database = BasisMRADataCollection(august)
 analyzer = BasisMRADataAnalyzer(database, .02)
 tabler = Tabler(database)
@@ -240,7 +242,7 @@ def cluster_gaussian_mixture_with_bic(data):
     plt.ylabel('BIC score')
     plt.title('BIC score per number of clusters')
     plt.tight_layout()
-    plt.savefig(tromso_poster_path.joinpath('BIC.svg'))
+    plt.savefig(paper_path.joinpath('BIC.png'), dpi=300, bbox_inches='tight')
     plt.show()
 
     # Create an AgglomerativeClustering instance with n_clusters
@@ -304,7 +306,7 @@ def cluster_gaussian_mixture_with_bic(data):
     plt.xticks(rotation=60)  # Rotate the x-axis labels for better visibility if needed
     plt.tight_layout()  # Adjust the layout for better visibility if needed
     plt.show()
-    fig.savefig(tromso_poster_path.joinpath('GMM_averages.svg'))
+    fig.savefig(paper_path.joinpath('GMM_averages.png'), dpi=300, bbox_inches='tight')
 
     return data, avg_df
 
@@ -424,20 +426,6 @@ molecules_path = paper_path.joinpath('molecules')
 
 omega = [0, 4, 8]
 aspect = 0.9
-g = analyzer.freq_iso_plot_v2(['D', 'T', 'Q'], 'alpha', 'all', True, omegas=omega,
-                              pal='colorblind',
-                              )
-for ax in g.axes_dict.values():
-    ax.axhline(-analyzer.mra_ref, color='green', linestyle='--')
-    ax.axhline(analyzer.mra_ref, color='green', linestyle='--')
-    ax.set_yscale('symlog', linthresh=linthresh, base=10, linscale=linscale,
-                  subs=subticks)
-    ax.xaxis.grid(True, "minor", linewidth=0.25)
-    ax.yaxis.grid(True, "minor", linewidth=0.25)
-# e_fig.despine(left=True, bottom=True)`
-set_face_color(g.axes_dict)
-# set_ax_inset(g, loc='lower right', iso_type='alpha', width='50%', height='50%')
-g.fig.savefig(paper_path.joinpath('alpha_freq_DTQ.svg'), dpi=300)
 
 from quantumresponsepro.BasisMRADataAssembler import partition_molecule_list
 
@@ -468,13 +456,7 @@ DZ = [
 ]
 
 data = tabler.get_basis_data()[0].dropna()
-# data_first = data.query('molecule in @second')
-# data_first = data_first.query('molecule != "Ne"')
-# X = cluster_basis_data(df.T, n_clusters=4)
-# X = cluster_basis_data_DBSCAN(df.T, eps=0.5, min_samples=5)
 X, avg_vectors = cluster_gaussian_mixture_with_bic(data)
-
-avg_vectors.plot()
 
 cluster_path = molecules_path.joinpath(f'alpha_clusters')
 if not cluster_path.exists():
@@ -506,6 +488,33 @@ iso_diff['cluster'] = iso_diff['molecule'].map(X['cluster'])
 iso_diff['cluster'] = iso_diff['cluster'].astype('category')
 g = plot_iso_valence_cluster_convergence(iso_diff, 'alpha', ['D', 'T', 'Q', '5'], omega,
                                          sharey='row')
+polar_data = database.iso_data.copy()
+polar_data['cluster'] = polar_data['molecule'].map(X['cluster'])
+# isolate the basis set data not MRA
+basis_data = polar_data.query('basis!="MRA"').copy()
+# set index to molecule and omega
+
+# create a column of MRA alpha data for each molecule omega pair
+basis_data = basis_data.set_index(['molecule', 'omega'])
+basis_data['alphaMRA'] = polar_data.query('basis=="MRA"').set_index(['molecule', 'omega'])[
+    'alpha']
+# do the same for gamma
+basis_data['gammaMRA'] = polar_data.query('basis=="MRA"').set_index(['molecule', 'omega'])[
+    'gamma']
+# reset index
+basis_data = basis_data.reset_index()
+# create a column of percent error in alpha
+basis_data['alphaE'] = ((basis_data['alpha'] - basis_data['alphaMRA']) / basis_data['alpha'
+                                                                                    'MRA'
+                                                                                    ''] * 100)
+# do the same for gamma
+basis_data['gammaE'] = ((basis_data['gamma'] - basis_data['gammaMRA']) / basis_data['gamma'
+                                                                                    'MRA'
+                                                                                    ''] * 100)
+basis_data = make_detailed_df(basis_data)
+
+app_path = Path('/home/adrianhurtado/PycharmProjects/beta-dash-app')
+basis_data.to_csv(app_path.joinpath('cluster_data.csv'))
 
 
 # Define a custom formatting function for the axis ticks
@@ -538,7 +547,7 @@ axs[2, 2].text(0.05, 0.95, 'SiH$_3$Cl,  PH$_3$', ha='left', va='top', transform=
                bbox=dict(facecolor='red', alpha=0.5, edgecolor='black'), fontsize=20)
 
 # Add 'N2' text to the second subplot
-g.fig.savefig(cluster_path.joinpath('alpha_convergence.svg'))
+g.fig.savefig(cluster_path.joinpath('alpha_convergence.png'), dpi=300, bbox_inches='tight')
 g.fig.show()
 
 g = analyzer.freq_iso_plot_cluster(iso_diff, ['D', 'T', 'Q'], 'alpha',
@@ -557,7 +566,8 @@ for ax in g.axes_dict.values():
 set_face_color_cluster(g)
 # freq_inset(g, iso_diff, loc='lower right', ylims=[3, .8, .18], width='30%', height='40%',
 # omega=[8])
-g.fig.savefig(cluster_path.joinpath('alpha_frequency_convergence.svg'))
+g.fig.savefig(cluster_path.joinpath('alpha_frequency_convergence.png'), dpi=300,
+              bbox_inches='tight')
 g.fig.show()
 
 plt.figure()
@@ -582,30 +592,4 @@ with sns.axes_style('darkgrid') and sns.plotting_context('paper', font_scale=1.0
     plt.xlabel('')
     # p.subplots_adjust(bottom=0.13, left=0.15, right=0.95, top=0.90)
     plt.show()
-    p.savefig(cluster_path.joinpath('cluster_molecule_count.svg'))
-
-if False:
-
-    for cluster in X['cluster'].unique():
-        mol_list = X.query('cluster==@cluster').index
-        cluster_path_i = cluster_path.joinpath(f'cluster_{cluster + 1}')
-        if not cluster_path_i.exists():
-            cluster_path_i.mkdir()
-        else:
-            shutil.rmtree(cluster_path)
-            cluster_path_i.mkdir()
-
-        for mol in mol_list:
-            g = analyzer.plot_iso_valence_convergence_v2(mol, 'alpha', ['D', 'T', 'Q', '5', '6'],
-                                                         omega)
-            g.fig.savefig(cluster_path_i.joinpath(f'{mol}_alpha_converge.svg'), dpi=300)
-
-# g.fig.show()
-#
-# g = analyzer.plot_iso_valence_convergence(mol, 'gamma', ['D', 'T', 'Q', '5'], omega, sharey=True)
-# g.fig.show()
-# # g = analyzer.plot_iso_valence_convergence('NH3', 'gamma', ['D', 'T', 'Q', '5'], omega)
-# # g.fig.show()
-
-#########g = analyzer.plot_alpha_eigen('NH3', 'gamma', ['D', 'T', 'Q', '5'], omega)
-#########g.fig.show()
+    p.savefig(cluster_path.joinpath('cluster_molecule_count.png'), dpi=300, bbox_inches='tight')

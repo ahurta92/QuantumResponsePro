@@ -23,7 +23,7 @@ tromso_poster_path_supple = Path(
     '/home/adrianhurtado/projects/writing/tromso_poster/supplementary/figures')
 paper_path = tromso_poster_path_supple
 database = BasisMRADataCollection(august)
-analyzer = BasisMRADataAnalyzer(database, .05, font_scale=1.5)
+analyzer = BasisMRADataAnalyzer(database, .02 )
 tabler = Tabler(database)
 
 linthresh = .01

@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import shutil
+from matplotlib.ticker import FormatStrFormatter
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from pathlib import Path
 from sklearn.cluster import AgglomerativeClustering
@@ -14,18 +15,25 @@ from sklearn.preprocessing import StandardScaler
 from quantumresponsepro import BasisMRADataAnalyzer
 from quantumresponsepro import BasisMRADataCollection
 from quantumresponsepro import Tabler
+from quantumresponsepro.BasisMRADataAssembler import make_detailed_df
 
 august = Path('/mnt/data/madness_data/post_watoc/august')
 paper_path = Path('/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/Figures_v2')
 thesis_path = Path('/home/adrianhurtado/projects/writing/thesis2023/Figures_v2')
 tromso_poster_path = Path('/home/adrianhurtado/projects/writing/tromso_poster/figures')
-paper_path = tromso_poster_path
+tromso_poster_path_supple = Path(
+    '/home/adrianhurtado/projects/writing/tromso_poster/supplementary/figures')
+paper_path = thesis_path
 database = BasisMRADataCollection(august)
-analyzer = BasisMRADataAnalyzer(database, .05, )
+analyzer = BasisMRADataAnalyzer(database, .02)
 tabler = Tabler(database)
 
-sns.set_context('poster', )
-sns.set_style('darkgrid')
+linthresh = .01
+subticks = [2, 3, 4, 5, 6, 7, 8, 9]
+linscale = 0.10
+
+sns.set_context('paper')
+sns.set_theme(style="whitegrid", font_scale=1.0, rc={'ytick.left': True, 'xtick.bottom': False, })
 
 
 def set_face_color(ax_dict):
@@ -49,7 +57,7 @@ def set_face_color_cluster(g: sns.FacetGrid):
     axes = g.axes
     for i, axi in enumerate(axes):
         back_color = light_pal[i]
-        back_color = back_color + (0.3,)
+        back_color = back_color + (0.2,)
         print(i, back_color)
         for j, axij in enumerate(axi):
             axij.set_facecolor(back_color)
@@ -120,7 +128,7 @@ def set_ax_inset(g: sns.FacetGrid, mol, loc='upper right', yb=.01, iso_type='alp
     b += 1
 
 
-def mol_valence_matrix(basis_data):
+def mol_valence_matrix(mol):
     df = pd.DataFrame()
     for V in ['D', 'T', 'Q']:
         mol_valence = database.detailed_iso_diff.query(
@@ -197,15 +205,19 @@ def cluster_gaussian_mixture_with_bic(data):
     """
     scaler = StandardScaler()
     data_matrix = data.to_numpy()
-    threshold = 5e-2
+    threshold = analyzer.mra_ref
 
     data_matrix = symlog(data_matrix, threshold)
 
     data_matrix = scaler.fit_transform(data_matrix)
-    # print(data_scaled)
-    print(data_matrix)
 
-    n_clusters_range = range(1, 10)
+    # pca = PCA(n_components=4)
+    # principal_components = pca.fit_transform(data_matrix)
+
+    # print(data_scaled)
+    # data_matrix = principal_components
+
+    n_clusters_range = range(1, 16)
     bic_scores = []
     convergence_type = 'full'
     tol = 1e-3
@@ -222,16 +234,15 @@ def cluster_gaussian_mixture_with_bic(data):
 
     # Find the number of clusters that gives the minimum BIC
     optimal_clusters = n_clusters_range[np.argmin(bic_scores)]
-    # optimal_clusters = 8
+    # optimal_clusters = 4
     print(f"Optimal number of clusters: {optimal_clusters}")
 
-    plt.figure(figsize=(15, 10))  # Adjust the size of the plot as needed
+    plt.figure()  # Adjust the size of the plot as needed
     plt.plot(n_clusters_range, bic_scores, marker='o')
     plt.xlabel('Number of clusters')
     plt.ylabel('BIC score')
     plt.title('BIC score per number of clusters')
     plt.tight_layout()
-    plt.savefig(tromso_poster_path.joinpath('BIC.svg'))
     plt.show()
 
     # Create an AgglomerativeClustering instance with n_clusters
@@ -243,8 +254,7 @@ def cluster_gaussian_mixture_with_bic(data):
                           covariance_type=convergence_type,
                           random_state=42,
                           warm_start=True,
-                          reg_covar=1e-4,
-                          n_init=10,
+                          n_init=40,
                           tol=tol, )
     gmm.fit(data_matrix)
 
@@ -263,12 +273,12 @@ def cluster_gaussian_mixture_with_bic(data):
         average_vectors.append(average_vector)
         std_vectors.append(std_vector)
 
-    avg_df = pd.DataFrame(average_vectors, columns=data.columns[:-1])
+    avg_df = pd.DataFrame(average_vectors, )
     avg_df['mean'] = avg_df.mean(axis=1)
     avg_df = avg_df.sort_values('mean', ascending=False)
     avg_df.drop('mean', axis=1, inplace=True)
 
-    std_df = pd.DataFrame(std_vectors, columns=data.columns[:-1])
+    std_df = pd.DataFrame(std_vectors, )
 
     sorted_index = avg_df.index
     std_df = std_df.reindex(sorted_index)
@@ -284,7 +294,7 @@ def cluster_gaussian_mixture_with_bic(data):
     # avg_df = np.exp(avg_df) + xmin
 
     # Generate a line plot
-    fig = plt.figure(figsize=(20, 15))  # Adjust the size of the plot as needed
+    fig = plt.figure()  # Adjust the size of the plot as needed
     for i, row in avg_df.iterrows():
         plt.plot(row, label=f'Cluster {i}', marker='o')
     # plt.yscale('log')
@@ -296,7 +306,6 @@ def cluster_gaussian_mixture_with_bic(data):
     plt.xticks(rotation=60)  # Rotate the x-axis labels for better visibility if needed
     plt.tight_layout()  # Adjust the layout for better visibility if needed
     plt.show()
-    fig.savefig(tromso_poster_path.joinpath('GMM_averages.svg'))
 
     return data, avg_df
 
@@ -335,7 +344,43 @@ def plot_iso_valence_cluster_frequecy(data, iso_type, valence, omega, sharey=Fal
 
 
 def plot_iso_valence_cluster_convergence(data, iso_type, valence, omega, sharey=False):
-    data = data.query('omega.isin(@omega) & valence.isin(@valence)')
+    data = data.query('omega.isin(@omega) & valence.isin(@valence)').copy()
+    facet_kws = {"sharey": sharey, 'despine': True, 'sharex': True,
+                 "margin_titles": True, }
+
+    mapping = {i: i + 1 for i in range(len(data.cluster.unique()))}
+    data['cluster'] = data['cluster'].map(mapping)
+    data['cluster'] = data['cluster'].astype('category')
+
+    with sns.axes_style("darkgrid") and sns.plotting_context("paper", font_scale=2.3):
+        f = sns.relplot(data=data,
+                        x='valence',
+                        y=iso_type,
+                        col='cluster',
+                        height=5,
+                        aspect=0.5,
+                        kind='line',
+                        hue='Type',
+                        facet_kws=facet_kws,
+                        palette='colorblind',
+                        markers=True,
+                        legend='brief',
+                        errorbar=('ci', 95),
+                        )
+        f.map(plt.axhline, y=0, color='k', dashes=(1, 1), zorder=0, alpha=0.8, ls='--')
+        f.set_titles(row_template="{row_name}", col_template="Cluster {col_name}", template="{"
+                                                                                            "row_name}\
+                                                                                         | {col_name}")
+
+        f.set_xlabels('Valence [n]')
+        f.set_ylabels('Percent Error')
+        #   f.figure.subplots_adjust(top=0.93, right=0.97, left=0.08, bottom=0.08, wspace=0.05)
+
+    return f
+
+
+def plot_iso_valence_cluster_convergence_2(data, iso_type, valence, omega, sharey=False):
+    data = data.query('omega.isin(@omega) & valence.isin(@valence)').copy()
     facet_kws = {"sharey": sharey, 'despine': True, 'sharex': True, }
     mapping = {i: i + 1 for i in range(len(data.cluster.unique()))}
     data['cluster'] = data['cluster'].map(mapping)
@@ -345,28 +390,27 @@ def plot_iso_valence_cluster_convergence(data, iso_type, valence, omega, sharey=
         f = sns.relplot(data=data,
                         x='valence',
                         kind='line',
-                        aspect=0.5,
-                        style='Type',
-                        hue='Type',
-                        col='cluster',
+                        aspect=0.50,
+                        col='Type',
+                        style='cluster',
+                        hue='cluster',
+                        row='mol_system',
                         facet_kws=facet_kws,
                         palette='colorblind',
                         markers=True,
-                        legend=True,
+                        legend='brief',
                         errorbar=('ci', 95),
                         y=iso_type
                         )
         f.map(plt.axhline, y=0, color='k', dashes=(1, 1), zorder=0, alpha=0.8, ls='--')
-        f.set_titles('{col_name}')
+        f.set_titles('Cluster {col_name}')
         f.set_xlabels('Valence [n]')
         f.set_ylabels('Percent Error')
-        sns.move_legend(f, loc='upper center', ncol=4, title=None,
-                        frameon=False)
-        # f.axes[0].legend(shadow=True, fancybox=True,fontsize=12)
+        # sns.move_legend(
+        #    f, "upper center",
+        #    ncol=4, title=None, frameon=False, fontsize=12)
+        f.figure.subplots_adjust(top=0.87, right=0.99, left=0.08, bottom=0.05, wspace=0.05)
 
-        f.set(yscale='symlog')
-
-    plt.tight_layout()
     return f
 
 
@@ -375,7 +419,8 @@ second_row_path = paper_path.joinpath('molecules/second')
 fluorine_path = paper_path.joinpath('molecules/fluorine')
 molecules_path = paper_path.joinpath('molecules')
 
-linthresh = analyzer.mra_ref
+omega = [0, 4, 8]
+aspect = 0.9
 
 from quantumresponsepro.BasisMRADataAssembler import partition_molecule_list
 
@@ -407,7 +452,7 @@ DZ = [
 
 data = tabler.get_basis_data()[0].dropna()
 X, avg_vectors = cluster_gaussian_mixture_with_bic(data)
-avg_vectors.plot()
+
 cluster_path = molecules_path.joinpath(f'alpha_clusters')
 if not cluster_path.exists():
     cluster_path.mkdir()
@@ -416,6 +461,7 @@ else:
     cluster_path.mkdir()
 
 grouped = X.groupby('cluster')
+
 cluster_mol_path = cluster_path.joinpath(f'cluster_molecules.txt')
 with open(cluster_mol_path, 'w') as f:
     for cluster_id, group in grouped:
@@ -435,66 +481,27 @@ for cluster_id, group in grouped:
 iso_diff = database.detailed_iso_diff.copy()
 iso_diff['cluster'] = iso_diff['molecule'].map(X['cluster'])
 iso_diff['cluster'] = iso_diff['cluster'].astype('category')
-g = plot_iso_valence_cluster_convergence(iso_diff, 'alpha', ['D', 'T', 'Q'], omega,
-                                         sharey=True)
-for ax in g.axes_dict.values():
-    ax.set_yscale('symlog', linthresh=linthresh, base=10, linscale=0.50)
-    ax.axhline(-.05, color='green', linestyle='--')
-    ax.axhline(.05, color='green', linestyle='--')
+g = plot_iso_valence_cluster_convergence(iso_diff, 'alpha', ['D', 'T', 'Q', '5'], omega,
+                                         sharey='row')
 
-g.fig.savefig(cluster_path.joinpath('alpha_convergence.svg'))
+
+# Define a custom formatting function for the axis ticks
+def custom_format(value, pos):
+    # Apply your desired formatting logic here
+    formatted_value = "{:.2f}".format(value)  # Format the value as needed
+    return formatted_value
+
+
+for ax in g.axes_dict.values():
+    ax.set_yscale('symlog', linthresh=1e-1)
+    ax.axhline(y=.02, linestyle='--', color='orange')
+    ax.axhline(y=-.02, linestyle='--', color='orange')
+    # for the symlog scale to regular notation with no decimal places for the y axis
+    # make the y limits symmetrical for each plot using the max absolute value
+    ax.yaxis.set_major_formatter(FormatStrFormatter('%2g'))
+
+# e_fig.despine(left=True, bottom=True)
+# Add 'N2' text to the second subplot
+g.fig.savefig(cluster_path.joinpath('alpha_convergence_2.svg'), dpi=1000, bbox_inches='tight')
 g.fig.show()
 
-g = analyzer.freq_iso_plot_cluster(iso_diff, ['D', 'T', 'Q'], 'alpha', omegas=[0, 4, 8],
-                                   sharey='row')
-for ax in g.axes_dict.values():
-    ax.set_yscale('symlog', linthresh=linthresh, base=10, linscale=0.50)
-# set_face_color_cluster(g)
-# freq_inset(g, iso_diff, loc='lower right', ylims=[3, .8, .18], width='30%', height='40%',
-# omega=[8])
-g.fig.savefig(cluster_path.joinpath('alpha_frequency_convergence.svg'))
-g.fig.show()
-
-plt.figure()
-
-with sns.axes_style('darkgrid'):
-    p = plt.figure()
-    ax = p.add_subplot(111)
-
-    sns.histplot(iso_diff.query('omega==0 & basis =="aug-cc-pVQZ"'), x="cluster",
-                 hue="mol_system",
-                 multiple="stack",
-                 ax=ax,
-                 shrink=.8)
-    sns.move_legend(
-        ax, "lower center",
-        bbox_to_anchor=(.5, 1), ncol=3, title=None, frameon=False,
-    )
-    p.subplots_adjust(bottom=0.2)
-    plt.show()
-    p.savefig(cluster_path.joinpath('cluster_molecule_count.svg'))
-
-if True:
-
-    for cluster in X['cluster'].unique():
-        mol_list = X.query('cluster==@cluster').index
-        cluster_path_i = cluster_path.joinpath(f'cluster_{cluster + 1}')
-        if not cluster_path_i.exists():
-            cluster_path_i.mkdir()
-        else:
-            shutil.rmtree(cluster_path)
-            cluster_path_i.mkdir()
-
-        for mol in mol_list:
-            g = analyzer.plot_iso_valence_convergence_v2(mol, 'alpha', ['D', 'T', 'Q', '5', '6'],
-                                                         omega)
-            g.fig.savefig(cluster_path_i.joinpath(f'{mol}_alpha_converge.svg'), dpi=300)
-
-#
-# g = analyzer.plot_iso_valence_convergence(mol, 'gamma', ['D', 'T', 'Q', '5'], omega, sharey=True)
-# g.fig.show()
-# # g = analyzer.plot_iso_valence_convergence('NH3', 'gamma', ['D', 'T', 'Q', '5'], omega)
-# # g.fig.show()
-
-#########g = analyzer.plot_alpha_eigen('NH3', 'gamma', ['D', 'T', 'Q', '5'], omega)
-#########g.fig.show()
