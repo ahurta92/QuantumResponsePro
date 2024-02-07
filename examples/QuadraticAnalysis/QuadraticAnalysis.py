@@ -193,12 +193,9 @@ database_path = Path('/mnt/data/madness_data/august_no_symmetry')
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
 
-
 class QuadVisualization:
-
     def __init__(self, data: QuadraticAnalysisData):
         self.quad_data = data
-
     def unit_sphere_representation(self, data, basis, omega_1, omega_2, radius=1, num_points=1000,
                                    basis_error=False, colormap='Blues', sizeref=0.5):
 

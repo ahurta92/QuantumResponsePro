@@ -81,9 +81,7 @@ def get_convergence_data(mol_list):
 first, second, fluorine = partition_molecule_list(database.molecules)
 conv_df = get_convergence_data(first)
 
-
 omega = [0, 4, 8]
-
 width = '30%'
 height = '20%'
 
@@ -95,15 +93,3 @@ for mol in conv_df.loc['molecules'][i]:
     set_ax_inset(g, mol, loc='lower right', yb=.10, iso_type='alpha', omega=omega, width=width,
                  height=height)
     g.fig.show()
-    # g.fig.savefig(first_row_path.joinpath(f'{mol}_alpha_converge.svg'), dpi=300)
-
-# g = analyzer.plot_iso_valence_convergence_v2(mol, 'alpha', ['D', 'T', 'Q', '5'], omega, sharey=True)
-# g.fig.show()
-#
-# g = analyzer.plot_iso_valence_convergence(mol, 'gamma', ['D', 'T', 'Q', '5'], omega, sharey=True)
-# g.fig.show()
-# # g = analyzer.plot_iso_valence_convergence('NH3', 'gamma', ['D', 'T', 'Q', '5'], omega)
-# # g.fig.show()
-
-#########g = analyzer.plot_alpha_eigen('NH3', 'gamma', ['D', 'T', 'Q', '5'], omega)
-#########g.fig.show()
