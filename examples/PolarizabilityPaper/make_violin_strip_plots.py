@@ -16,8 +16,6 @@ database = BasisMRADataCollection(august,new=True)
 analyzer = BasisMRADataAnalyzer(database, .02, )
 sns.set_context('paper')
 sns.set_theme(style="whitegrid", font_scale=1.5, rc={'ytick.left': True, 'xtick.bottom': False, })
-
-
 def set_ax_inset(g: sns.FacetGrid, loc='upper right', iso_type='alpha', TZ_lim=None,
                  calc_type='response',
                  width='80%', height='50%'):

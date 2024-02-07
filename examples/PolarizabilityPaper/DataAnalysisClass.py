@@ -186,18 +186,11 @@ class QuadraticDatabase:
             new_sample = pd.concat([new_sample, df])
         new_sample.reset_index(inplace=True)
         return new_sample
-        # q_df_i['Beta'] = q_df_i['Beta'].apply(lambda x: round(x, 2))
-
-
-
 
     def beta_tensor(self, mol, basis_set, Bfreq, Cfreq):
         mol_data, afreq = self.__get_mol_and_freq_data(mol)
         df_i = get_beta_tensor(basis_set, mol_data, Bfreq, Cfreq)
         return df_i
-
-
-
 
     def __get_mol_and_freq_data(self, mol):
         mol_data = self.q_df.query('molecule == @mol').copy()
@@ -232,9 +225,6 @@ class QuadraticDatabase:
 
         return df
 
-
-
-
     def __get_basis_freq_df(self, basis, mol_data, Bfreq, Cfreq):
         """
         This function returns
@@ -260,12 +250,6 @@ class QuadraticDatabase:
         molecule = b_data['molecule'].unique()[0]
         b_data.drop_duplicates(inplace=True, subset=['ijk'])
         b_data.set_index('ijk', inplace=True)
-        print(b_data)
-        # the vector representation of the hyperpolarizability tensor accumulates components
-        # whose output are in the same direction.
-        # for example ax=beta(xxx)+beta(xyy)+beta(xzz) and ay=beta(yxx)+beta(yyy)+beta(yzz) and
-        # az=beta(zxx)+beta(zyy)+beta(zzz)
-        # the vector representation is then [ax,ay,az]
         print(b_data)
 
         ax = 0
@@ -382,7 +366,6 @@ class QuadraticDatabase:
 
 
 class PolarizabilityData:
-
     def __init__(self, molecules, xc, op, basis_sets, database, overwrite=False):
         self.energy_diff_df = None
         self.energy_df = None
