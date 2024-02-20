@@ -309,23 +309,17 @@ class MadnessResponse:
         self.operator = operator
         self.moldir = self.data_dir.joinpath(self.xc).joinpath(self.mol)
 
-
-        try:
-            mad_reader = MadnessReader(self.data_dir)
-            (
-                self.ground_params,
-                self.ground_scf_data,
-                self.ground_timing,
-                self.ground_info,
-            ) = mad_reader.get_ground_scf_data(mol, xc)
-            e_name_list = ["e_coulomb", "e_kinetic", "e_local", "e_nrep", "e_tot"]
-            self.ground_e = {}
-            for e_name in e_name_list:
-                self.ground_e[e_name] = self.ground_scf_data[e_name][-1]
-        except FileNotFoundError as f:
-            print(f)
-            raise
-
+        mad_reader = MadnessReader(self.data_dir)
+        (
+            self.ground_params,
+            self.ground_scf_data,
+            self.ground_timing,
+            self.ground_info,
+        ) = mad_reader.get_ground_scf_data(mol, xc)
+        e_name_list = ["e_coulomb", "e_kinetic", "e_local", "e_nrep", "e_tot"]
+        self.ground_e = {}
+        for e_name in e_name_list:
+            self.ground_e[e_name] = self.ground_scf_data[e_name][-1]
 
         (
             self.params,
@@ -448,7 +442,7 @@ class MadnessResponse:
                     df = pd.DataFrame(tensor_to_numpy(val[0]), columns=pdx).pow(1 / 2.)
                     data_r[k] = df.dropna(axis=1)
                 if (k == 'x_relative_residuals' or k == 'density_norms' or k == 'd' or k == 'r_d'
-                        or k == "density_residuals" or k== 'x_residuals'):
+                        or k == "density_residuals" or k == 'x_residuals'):
                     df = pd.DataFrame(tensor_to_numpy(val[0]), columns=['x', 'y', 'z'])
                     # if k == 'r_d':
                     #    print(k, df)
@@ -575,7 +569,6 @@ class MadnessResponse:
                      .loc[:, ['x', 'y', 'z']] \
                 .rename(columns={'x': 'rx', 'y': 'ry', 'z': 'rz'})
 
-
         rd.plot(logy=True, ax=ax, colormap='Accent', markersize=12, kind='line', style='.-')
         rx.plot(logy=True, ax=ax, colormap='Accent', grid=True, markersize=12, kind='line',
                 style='*-')
@@ -615,7 +608,6 @@ class MadnessResponse:
         ax.legend(loc='center', bbox_to_anchor=(0.5, 1.15), fancybox=True, shadow=False, ncol=3, )
 
         return fig, ax
-
 
     def get_line_plots(self):
         x_plots = {}
