@@ -7,7 +7,7 @@ from quantumresponsepro import MadnessResponse
 from DataAnalysisClass import make_detailed_df
 
 xc='hf'
-fd_data_path = Path("/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/FD_data.csv")
+fd_data_path = Path("/home/adrianhurtado/projects/writing/mra-tdhf-polarizability/csv/FD_data.csv")
 
 # read Finite Difference data from csv
 
@@ -48,9 +48,9 @@ def get_z_residuals(mol, path):
     # reindex as low, medium, high
     # if index is size 2 then its just low and medium
     if len(residuals.index) == 2:
-        residuals.index = ['Low', 'Medium']
+        residuals.index = ['Guess', 'Low']
     else:
-        residuals.index = ['Low', 'Medium', 'High']
+        residuals.index = ['Guess', 'Low', 'High']
     # rename columns as max bsh and max density
     residuals.rename(columns={0: 'z bsh', 1: 'z density', 'zz': 'MRA'}, inplace=True)
     # add a column for the FD value of the molecule
@@ -136,8 +136,8 @@ def compare_z_to_basis_set(z_data, y='Percent Error'):
         else:
             ax.set_yscale('log')
         # add the MRA reference line for this data
-        ax.scatter(z_data.query('MRA=="MRA" & Protocol=="Medium"')['molecule'],
-                   z_data.query('MRA=="MRA" & Protocol=="Medium"')[y],
+        ax.scatter(z_data.query('MRA=="MRA" & Protocol=="Low"')['molecule'],
+                   z_data.query('MRA=="MRA" & Protocol=="Low"')[y],
                    color='black', s=100, label='MRA', marker='^')
 
         ax.scatter(z_data.query('MRA=="MRA" & Protocol=="High"')['molecule'],
@@ -191,8 +191,8 @@ def compare_z_beta_to_basis_set(z_data,y='Percent Error'):
             ax.set_yscale('log')
         # add the MRA reference line for this data
         # add the mra data to the plot
-        ax.scatter(z_data.query('MRA=="MRA" & Protocol=="Medium"')['molecule'],
-                   z_data.query('MRA=="MRA" & Protocol=="Medium"')[y],
+        ax.scatter(z_data.query('MRA=="MRA" & Protocol=="Low"')['molecule'],
+                   z_data.query('MRA=="MRA" & Protocol=="Low"')[y],
                    color='black', s=200, label='MRA',marker='^')
 
         ax.scatter(z_data.query('MRA=="MRA" & Protocol=="High"')['molecule'],

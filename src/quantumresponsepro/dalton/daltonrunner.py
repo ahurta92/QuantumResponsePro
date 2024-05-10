@@ -519,6 +519,7 @@ class DaltonRunner:
                                                                        )
         output_stem = "freq_" + "-".join([mol, basis])
         output_file = run_directory.joinpath(output_stem + ".out")
+        print('output_file:', output_file)
         output_json = run_directory.joinpath(output_stem + ".json")
 
         d_out, d_error = None, None

@@ -1,9 +1,9 @@
+import json
 import numpy as np
 import subprocess
 
 from ..dalton.daltonrunner import DaltonRunner
 from ..madness_to_dalton import *
-import json
 
 
 class MadnessReader:

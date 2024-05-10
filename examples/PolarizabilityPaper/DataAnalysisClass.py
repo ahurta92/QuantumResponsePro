@@ -387,6 +387,7 @@ class PolarizabilityData:
                                  'eigen_diff', 'iso_data']
 
         for attr_name in data_frame_attributes:
+            print(attr_name)
             try:
                 filename = self.database.joinpath(f"{attr_name}.csv")
                 if not self.overwrite and os.path.exists(filename):
@@ -395,12 +396,17 @@ class PolarizabilityData:
                     df = self.generate_df(attr_name)
 
                 setattr(self, attr_name, df)
+                print(f"Could not initialize {attr_name}")
             except AttributeError as a:
                 print(a)
                 print(f"Could not initialize {attr_name}")
                 pass
             except ValueError as v:
                 print(v)
+                print(f"Could not initialize {attr_name}")
+                pass
+            except FileNotFoundError as f:
+                print(f)
                 print(f"Could not initialize {attr_name}")
                 pass
 
@@ -444,3 +450,22 @@ class PolarizabilityData:
             print(df)
             modified_df = make_detailed_df(df)  # Apply the function
             setattr(self, attr_name, modified_df)  #
+
+class MRAComparedBasisDF(pd.DataFrame):
+    def __init__(self, polar_data, index, values: list, PercentError: bool, *args, **kwargs):
+        # Use the special_parameter to modify the DataFrame or perform additional initialization
+        basis_data = polar_data.query('basis!="MRA"').copy()
+        basis_data = basis_data.set_index(index)
+
+        for value in values:
+            basis_data[f'{value}MRA'] = polar_data.query('basis=="MRA"').set_index(index)[
+                value]
+            if PercentError:
+                basis_data[f'{value}E'] = ((basis_data[value] - basis_data[f'{value}MRA']) / basis_data[f'{value}MRA'] * 100)
+            else:
+                basis_data[f'{value}E'] = (basis_data[value] - basis_data[f'{value}MRA'])
+        basis_data = basis_data.reset_index()
+        # create a column of percent error in alpha
+        basis_data = make_detailed_df(basis_data)
+        super().__init__(basis_data, *args, **kwargs)
+

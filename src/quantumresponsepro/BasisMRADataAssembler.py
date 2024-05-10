@@ -48,13 +48,16 @@ def get_mra_energy_data(mols, xc, op, database):
     basis_dict = {}
     for mol in mols:
         try:
+            print(mol, xc, op, database)
             mad_r = MadnessResponse(mol, xc, op, database)
             mra_e_dict[mol] = mad_r.ground_e['e_tot']
             basis_dict[mol] = 'MRA'
             # if file not found then try the old database
-
-        except (FileNotFoundError , KeyError) as f:
+        except (FileNotFoundError, KeyError) as f:
             try:
+                print(f)
+                print("Did not find the new mra data for {}".format(mol))
+                print("Trying FrequencyData")
                 mad_r = FrequencyData(mol, xc, op, database)
                 mra_e_dict[mol] = mad_r.ground_e['e_tot']
                 basis_dict[mol] = 'MRA'
@@ -63,7 +66,6 @@ def get_mra_energy_data(mols, xc, op, database):
                 print('Did not find the old or new mra data for {}'.format(mol))
                 # raise a custom exception indicating that the molecule was not found to be
                 pass
-
 
     dd = [pd.Series(basis_dict, name='basis'),
           pd.Series(mra_e_dict, name='energy')]
