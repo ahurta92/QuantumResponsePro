@@ -39,6 +39,7 @@ setup(
         "seaborn",
         "pytest",
         "vtk",
+        "scikit-learn",
         "plotly",
         "pyarrow",
         "mergedeep",

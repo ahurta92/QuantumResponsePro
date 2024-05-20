@@ -68,7 +68,7 @@ class QuadraticDatabase:
         self.initialize_dfs()
 
     def initialize_dfs(self):
-        data_frame_attributes = ['q_df', 'vector_q_df', 'pq_df', ]
+        data_frame_attributes = ['q_df', 'pq_df', ]
 
         for attr_name in data_frame_attributes:
             try:
@@ -93,13 +93,11 @@ class QuadraticDatabase:
         # Replace this section with your specific data generating code
         if attr_name == 'q_df':
             return self.__generate_quad_df()
-        elif attr_name == 'vector_q_df':
-            return self.__generate_vector_q_df()
         elif attr_name == 'pq_df':
             return self.__generate_processed_quad_df()
 
     def save_dfs(self):
-        data_frame_attributes = ['q_df', 'vector_q_df', 'pq_df'
+        data_frame_attributes = ['q_df',  'pq_df'
                                  ]
 
         for attr_name in data_frame_attributes:

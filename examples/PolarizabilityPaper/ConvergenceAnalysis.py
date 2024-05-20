@@ -7,16 +7,18 @@ from quantumresponsepro import MadnessResponse
 from DataAnalysisClass import make_detailed_df
 
 xc='hf'
-fd_data_path = Path("/home/ahurta92/Projects/Latex/mra-tdhf-polarizability/csv/FD_data.csv")
+
+fd_csv_path=Path("/home/ahurta92/data/FD_CSV")
+fd_data_path = fd_csv_path/ 'FD_data.csv'
 
 # read Finite Difference data from csv
 
 with open(fd_data_path, 'r') as f:
     fd_data = pd.read_csv(f)
 
-#fd_beta_data_path = Path("/mnt/data/madness_data/fd_compare3/FD_compare_2.csv")
-#with open(fd_beta_data_path, 'r') as f:
-#    fd_beta_data = pd.read_csv(f)
+fd_beta_data_path = fd_csv_path / 'FD_compare_2.csv'
+with open(fd_beta_data_path, 'r') as f:
+    fd_beta_data = pd.read_csv(f)
 
 
 

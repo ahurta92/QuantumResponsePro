@@ -5,8 +5,8 @@ import pandas as pd
 import plotly.express as px
 from dash import dcc, html, Input, Output
 
-data_path_hrs = Path('beta_hrs.csv')
-data_path_para = Path('beta_parallel.csv')
+data_path_hrs = Path('csv/beta_hrs.csv')
+data_path_para = Path('csv/beta_parallel.csv')
 
 # read in data
 data_hrs = pd.read_csv(data_path_hrs)
