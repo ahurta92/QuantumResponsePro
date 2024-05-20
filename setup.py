@@ -11,7 +11,7 @@ setup(
     author="Adrian Hurtado",
     author_email="ahurta92@gmail.com",
     description="A molecular analysis tool for computing and analyzing dynamic response properties using MADNESS and "
-                "dalton quantum chemistry packages",
+    "dalton quantum chemistry packages",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/yourusername/quantumresponsepro",
@@ -29,7 +29,7 @@ setup(
     keywords="quantum chemistry, molecular analysis, TDDFT, TDHF, MADNESS, dalton",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
-    python_requires=">=3.6, <4",
+    python_requires=">=3.6",
     install_requires=[
         "numpy",
         "scipy",
@@ -37,12 +37,11 @@ setup(
         "jupyter",
         "matplotlib",
         "seaborn",
-        'pytest',
-        'vtk',
-        'plotly',
-        'vtkplotter',
-        'pyarrow',
-        'mergedeep'
+        "pytest",
+        "vtk",
+        "plotly",
+        "pyarrow",
+        "mergedeep",
         # Add any other required dependencies here
     ],
     extras_require={
