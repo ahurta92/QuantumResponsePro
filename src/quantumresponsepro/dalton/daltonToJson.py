@@ -205,6 +205,54 @@ class daltonToJson:
             # if beta_json is not empty process
 
             return beta_json
+    def readAlphaFromQUADResponse(self, outfile):
+        #print("READING QUAD RESPONSE from {}".format(outfile))
+        self.outfile = outfile
+
+        with open(self.outfile, "r") as file:
+            rows = []
+            for line in file:
+                if line.startswith("@ QRLRVE:  <<"):
+                 #   print(line)
+                    line_split = line.split()
+                 #   print(line_split)
+                    i=line_split[3][0]
+                    j=line_split[5][0]
+                    omega=line_split[8].split(")")[0]
+                    alpha=line_split[9]
+                 #   print(i,j,omega,alpha)
+                    rows.append(pd.Series({
+                        "ij": i+j,
+                        "omega": float(omega),
+                        "alpha": float(alpha)
+                    }))
+                    # Check if beta_value is another beta function call
+                    # not a good idea
+                    # if "beta" in beta_value:
+                    # If it is, replace it with the original letters
+                    # beta_value = f"beta({letter1};{letter2},{letter3})"
+
+                    #a_freq = -(float(b_freq) + float(c_freq))
+                    # Append the data to the DataFrame
+                    #rows.append(pd.Series({
+                    #    "A-freq": a_freq,
+                    #    "B-freq": float(b_freq),
+                    #    "C-freq": float(c_freq),
+                    #    "A": letter1,
+                    #    "B": letter2,
+                    #    "C": letter3,
+                    #    "Beta Value": beta_value if "," in beta_value else float(
+                    #        beta_value)
+                    #}))
+            try:
+                alpha_json = pd.concat(rows, axis=1).transpose()
+            except ValueError as verror:
+                print("ValueError: {}".format(verror))
+                print("rows: {}".format(rows))
+                alpha_json = pd.DataFrame()
+            # if beta_json is not empty process
+
+            return alpha_json
 
     def readResponse(self, line, streamIn):
         self.calcTask["calculationType"] = "LinearResponse"
