@@ -9,7 +9,7 @@ import subprocess
 from pathlib import Path
 
 from .daltonToJson import daltonToJson
-from ..madness_to_dalton import madnessToDalton
+from .madness_to_dalton import madnessToDalton
 
 
 class DaltonRunner:
