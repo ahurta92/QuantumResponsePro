@@ -1,6 +1,12 @@
+import math
 
-from DataAnalysisClass import *
+import numpy as np
 import plotly.graph_objects as go
+import vtk
+
+from quantumresponsepro import MadnessResponse
+
+
 class QuadVisualization:
 
     def __init__(self, data: QuadraticDatabase):
@@ -128,8 +134,10 @@ class QuadVisualization:
         for i, basis in enumerate(basis_sets):
             bdata = data.query('basis==@basis & Bfreq==@omega_1 & Cfreq==@omega_2')
             av = bdata.copy()
+            print('av', av)
             av.set_index('component', inplace=True)
             av.drop_duplicates(inplace=True)
+            print('av', av)
 
             x[i] = 0 + xshift * (i % 4)
             y[i] = 0 + yshift * (i * math.floor(i / 4))
@@ -311,7 +319,7 @@ class QuadVisualization:
                        zaxis=dict(range=[-scene_length, scene_length])))
         fig.show()
 
-    def HyperpolarizabilityScene(self, mol, basis_sets, omega_1=0, omega_2=0, radius=1,
+    def HyperpolarizabilityScene(self, mol, basis_sets: list, omega_1=0, omega_2=0, radius=1,
                                  num_points=1000,
                                  sizeref=0.5, sizemode='scaled', scene_length=5.0,
                                  xshift=0.0, yshift=0.0, zshift=0.0,
