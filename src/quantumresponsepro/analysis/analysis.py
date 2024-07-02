@@ -344,7 +344,7 @@ class MRAData:
             )
         )
         self.alpha["basis"] = "MRA"
-        self.alpha["mol"] = mol
+        self.alpha["molecule"] = mol
         self.beta = process_beta_df(
             pd.DataFrame(
                 json.load(
@@ -651,9 +651,7 @@ class MRAComparedBasisDF(pd.DataFrame):
         basis_data = basis_data.set_index(index)
 
         for value in values:
-            basis_data[f"{value}MRA"] = polar_data.query('basis=="MRA"').set_index(
-                index
-            )[value]
+            basis_data[f"{value}MRA"] = polar_data.query('basis=="MRA"').set_index(index)[value]
             if PercentError:
                 basis_data[f"{value}E"] = (
                     (basis_data[value] - basis_data[f"{value}MRA"])
@@ -668,9 +666,8 @@ class MRAComparedBasisDF(pd.DataFrame):
 
         super().__init__(basis_data, *args, **kwargs)
         
-    def to_csv(self, path):
-        self.to_csv(path, index=False)
-
+    def get_df(self):
+        return self.basis_data.copy()
     
     def molecule(self,mol):
         return self.query(f"molecule=='{mol}'")

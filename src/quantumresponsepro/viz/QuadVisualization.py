@@ -295,64 +295,7 @@ class QuadVisualization:
 
         return scatter
 
-    def plot_basis_sphere_and_vector(self, mol, basis_sets, omega_1=0, omega_2=0, radius=1,
-                                     num_points=1000,
-                                     sizeref=0.5, sizemode='scaled', scene_length=5.0,
-                                     basis_error=False, xshift=0.0, yshift=0.0, zshift=0.0):
 
-        scatter = self.ball_and_stick(mol, xshift, zshift=zshift)
-        quiver = self.unit_sphere_representation_basis(mol, basis_sets,
-                                                       omega_1, omega_2, radius=radius,
-                                                       num_points=num_points,
-                                                       sizeref=sizeref, xshift=xshift,
-                                                       sizemode=sizemode, basis_error=basis_error)
-        quiver2 = self.vector_representation_basis(mol, basis_sets,
-                                                   omega_1, omega_2, sizeref=0.5,
-                                                   sizemode='scaled', xshift=xshift, yshift=yshift,
-                                                   zshift=0)
-
-        # Create the figure and plot
-        fig = go.Figure(data=[scatter, quiver, quiver2])
-        fig.update_layout(
-            scene=dict(aspectmode='cube', xaxis=dict(range=[-scene_length, scene_length]),
-                       yaxis=dict(range=[-scene_length, scene_length]),
-                       zaxis=dict(range=[-scene_length, scene_length])))
-        fig.show()
-
-    def HyperpolarizabilityScene(self, mol, basis_sets: list, omega_1=0, omega_2=0, radius=1,
-                                 num_points=1000,
-                                 sizeref=0.5, sizemode='scaled', scene_length=5.0,
-                                 xshift=0.0, yshift=0.0, zshift=0.0,
-                                 ):
-
-        molecule_viz = self.ball_and_stick(mol, xshift=0.0, yshift=0.0, zshift=3 * zshift)
-        MRA_quiver = self.unit_sphere_representation_basis(mol, ['MRA'],
-                                                           omega_1, omega_2, radius=radius,
-                                                           num_points=num_points,
-                                                           sizeref=2 * sizeref, xshift=0.0,
-                                                           yshift=0.0, zshift=5.0,
-                                                           sizemode=sizemode, basis_error=False)
-        MRA_vector = self.vector_representation_basis(mol, basis_sets,
-                                                      omega_1, omega_2, sizeref=3.5,
-                                                      sizemode='absolute', xshift=0,
-                                                      yshift=0, zshift=1.5 * zshift)
-
-        basis_Error = self.unit_sphere_representation_basis(mol, basis_sets,
-                                                            omega_1, omega_2, radius=radius,
-                                                            num_points=num_points,
-                                                            sizeref=5 * sizeref,
-                                                            sizemode=sizemode, basis_error=True,
-                                                            xshift=xshift, yshift=yshift,
-                                                            zshift=0.0)
-
-        # Create the figure and plot
-        fig = go.Figure(data=[molecule_viz, MRA_quiver, MRA_vector, basis_Error])
-        fig.update_layout(
-            scene=dict(aspectmode='cube', xaxis=dict(range=[-scene_length, scene_length]),
-                       yaxis=dict(range=[-scene_length, scene_length]),
-                       zaxis=dict(range=[-scene_length, scene_length])))
-        fig.show()
-        return fig
 
     def get_beta_points(self, mol, basis_sets, omega_1=0.0, omega_2=0.0, radius=1,
                         num_points=1000,
