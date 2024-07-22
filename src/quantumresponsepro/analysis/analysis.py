@@ -57,6 +57,27 @@ def make_detailed_df(data):
         "d-aug-cc-pV5Z",
         "d-aug-cc-pV6Z",
     ]
+    triple = [
+        "t-aug-cc-pVDZ",
+        "t-aug-cc-pVTZ",
+        "t-aug-cc-pVQZ",
+        "t-aug-cc-pCVDZ",
+        "t-aug-cc-pCVTZ",
+        "t-aug-cc-pCVQZ",
+        "t-aug-cc-pV5Z",
+        "t-aug-cc-pV6Z",
+    ]
+    quad = [
+        "q-aug-cc-pVDZ",
+        "q-aug-cc-pVTZ",
+        "q-aug-cc-pVQZ",
+        "q-aug-cc-pCVDZ",
+        "q-aug-cc-pCVTZ",
+        "q-aug-cc-pCVQZ",
+        "q-aug-cc-pV5Z",
+        "q-aug-cc-pV6Z",
+    ]
+
     zero_polarized = [
         "cc-pCVDZ",
         "cc-pCVTZ",
@@ -72,6 +93,16 @@ def make_detailed_df(data):
         "d-aug-cc-pCVTZ",
         "d-aug-cc-pCVQZ",
     ]
+    triple_polarized = [
+        "t-aug-cc-pCVDZ",
+        "t-aug-cc-pCVTZ",
+        "t-aug-cc-pCVQZ",
+    ]
+    quadruple_polarized = [
+        "q-aug-cc-pCVDZ",
+        "q-aug-cc-pCVTZ",
+        "q-aug-cc-pCVQZ",
+    ]
 
     DZ = [
         "cc-pVDZ",
@@ -79,6 +110,10 @@ def make_detailed_df(data):
         "d-aug-cc-pVDZ",
         "aug-cc-pCVDZ",
         "d-aug-cc-pCVDZ",
+        "t-aug-cc-pVDZ",
+        "q-aug-cc-pVDZ",
+        "t-aug-cc-pCVDZ",
+        "q-aug-cc-pCVDZ",
     ]
     TZ = [
         "cc-pVTZ",
@@ -86,6 +121,10 @@ def make_detailed_df(data):
         "d-aug-cc-pVTZ",
         "aug-cc-pCVTZ",
         "d-aug-cc-pCVTZ",
+        "t-aug-cc-pVTZ",
+        "q-aug-cc-pVTZ",
+        "t-aug-cc-pCVTZ",
+        "q-aug-cc-pCVTZ",
     ]
     QZ = [
         "cc-pVQZ",
@@ -93,6 +132,10 @@ def make_detailed_df(data):
         "d-aug-cc-pVQZ",
         "aug-cc-pCVQZ",
         "d-aug-cc-pCVQZ",
+        "t-aug-cc-pVQZ",
+        "q-aug-cc-pVQZ",
+        "t-aug-cc-pCVQZ",
+        "q-aug-cc-pCVQZ",
     ]
     FZ = ["cc-pV5Z", "aug-cc-pV5Z", "d-aug-cc-pV5Z"]
     SZ = ["cc-pV6Z", "aug-cc-pV6Z", "d-aug-cc-pV6Z"]
@@ -101,11 +144,19 @@ def make_detailed_df(data):
     data["augmentation"] = ""
     data.loc[data["basis"].isin(double), "augmentation"] = "d-aug"
     data.loc[data["basis"].isin(single), "augmentation"] = "aug"
+    data.loc[data["basis"].isin(triple), "augmentation"] = "t-aug"
+    data.loc[data["basis"].isin(quad), "augmentation"] = "q-aug"
     data["augmentation"] = data["augmentation"].astype("category")
 
     data["polarization"] = "V"
     data.loc[
-        data["basis"].isin(zero_polarized + single_polarized + double_polarized),
+        data["basis"].isin(
+            zero_polarized
+            + single_polarized
+            + double_polarized
+            + triple_polarized
+            + quadruple_polarized
+        ),
         "polarization",
     ] = "CV"
     data["polarization"] = data["polarization"].astype("category")
@@ -164,6 +215,10 @@ def make_detailed_df(data):
         "aug-cc-pCVnZ",
         "d-aug-cc-pVnZ",
         "d-aug-cc-pCVnZ",
+        "t-aug-cc-pVnZ",
+        "t-aug-cc-pCVnZ",
+        "q-aug-cc-pVnZ",
+        "q-aug-cc-pCVnZ",
     ]
     # drop if not in the actual types
     actual_types = list(data["Type"].unique())
@@ -175,8 +230,6 @@ def make_detailed_df(data):
     )
 
     return data
-
-
 
 
 def read_quad_basis_data(output_file, output_json, mol, basis):
@@ -510,24 +563,24 @@ class BasisDataFrames:
     def available_data(self):
         """
         Returns the list of available data.
-        
+
         Returns:
             pd.Series: The list of available data.
         """
-        return self._available_data_dict   
+        return self._available_data_dict
+
     def not_available_data(self):
         """
         Returns the list of not available data.
-        
+
         Returns:
             pd.Series: The list of not available data.
         """
         return self._not_available_data_dict
 
 
-
-
 import pandas as pd
+
 
 class MRADataFrames:
     """
@@ -626,7 +679,7 @@ class MRADataFrames:
     def available_data(self):
         """
         Returns the list of available data.
-        
+
         Returns:
             pd.Series: The list of available data.
         """
@@ -635,7 +688,7 @@ class MRADataFrames:
     def not_available_data(self):
         """
         Returns the list of not available data.
-        
+
         Returns:
             pd.Series: The list of not available data.
         """
@@ -651,7 +704,9 @@ class MRAComparedBasisDF(pd.DataFrame):
         basis_data = basis_data.set_index(index)
 
         for value in values:
-            basis_data[f"{value}MRA"] = polar_data.query('basis=="MRA"').set_index(index)[value]
+            basis_data[f"{value}MRA"] = polar_data.query('basis=="MRA"').set_index(
+                index
+            )[value]
             if PercentError:
                 basis_data[f"{value}E"] = (
                     (basis_data[value] - basis_data[f"{value}MRA"])
@@ -665,13 +720,15 @@ class MRAComparedBasisDF(pd.DataFrame):
         basis_data = make_detailed_df(basis_data)
 
         super().__init__(basis_data, *args, **kwargs)
-        
+
     def get_df(self):
         return self.basis_data.copy()
-    
-    def molecule(self,mol):
+
+    def molecule(self, mol):
         return self.query(f"molecule=='{mol}'")
-    def basis(self,basis):
+
+    def basis(self, basis):
         return self.query(f"basis=='{basis}'")
-    def freq(self,om1,om2):
-        return query_beta_data(self,om1,om2)
+
+    def freq(self, om1, om2):
+        return query_beta_data(self, om1, om2)
