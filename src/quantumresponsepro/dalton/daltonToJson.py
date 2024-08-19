@@ -15,8 +15,9 @@ class daltonToJson:
         self.calcRes = {}
         self.calcTask = {}
         self.simulationTime = {"cpuTime": 0.0, "wallTime": 0.0, "units": "second"}
+        self.symmetry = {}
         self.calculations = []
-        self.taskNumber = 0
+        self.taskNumber = 1
         self.setupCount = 0
         self.subTask = False
 
@@ -42,6 +43,7 @@ class daltonToJson:
                 ("Linear Response calculation", self.readResponse),
                 ("Singlet electronic excitation energies", self.readExcited),
                 ("Nuclear contribution to dipole moments", self.readDipole),
+                ("SYMGRP: Point group information", self.readSymGrp),
             ]
         )
         collectingInput = False
@@ -69,6 +71,7 @@ class daltonToJson:
                 "simulation": {
                     "calculations": self.calculations,
                     "simulationTime": self.simulationTime,
+                    "symmetry": self.symmetry,
                 }
             },
             indent=2,
@@ -175,7 +178,14 @@ class daltonToJson:
                             match = re.search(pattern, line)
 
                             if match:
-                                b_freq, c_freq, letter1, letter2, letter3, beta_value = match.groups()
+                                (
+                                    b_freq,
+                                    c_freq,
+                                    letter1,
+                                    letter2,
+                                    letter3,
+                                    beta_value,
+                                ) = match.groups()
                                 # Check if beta_value is another beta function call
                                 # not a good idea
                                 # if "beta" in beta_value:
@@ -184,16 +194,23 @@ class daltonToJson:
 
                                 a_freq = -(float(b_freq) + float(c_freq))
                                 # Append the data to the DataFrame
-                                rows.append(pd.Series({
-                                    "A-freq": a_freq,
-                                    "B-freq": float(b_freq),
-                                    "C-freq": float(c_freq),
-                                    "A": letter1,
-                                    "B": letter2,
-                                    "C": letter3,
-                                    "Beta Value": beta_value if "," in beta_value else float(
-                                        beta_value)
-                                }))
+                                rows.append(
+                                    pd.Series(
+                                        {
+                                            "A-freq": a_freq,
+                                            "B-freq": float(b_freq),
+                                            "C-freq": float(c_freq),
+                                            "A": letter1,
+                                            "B": letter2,
+                                            "C": letter3,
+                                            "Beta Value": (
+                                                beta_value
+                                                if "," in beta_value
+                                                else float(beta_value)
+                                            ),
+                                        }
+                                    )
+                                )
                         else:
                             break
             try:
@@ -205,36 +222,37 @@ class daltonToJson:
             # if beta_json is not empty process
 
             return beta_json
+
     def readAlphaFromQUADResponse(self, outfile):
-        #print("READING QUAD RESPONSE from {}".format(outfile))
+        # print("READING QUAD RESPONSE from {}".format(outfile))
         self.outfile = outfile
 
         with open(self.outfile, "r") as file:
             rows = []
             for line in file:
                 if line.startswith("@ QRLRVE:  <<"):
-                 #   print(line)
+                    #   print(line)
                     line_split = line.split()
-                 #   print(line_split)
-                    i=line_split[3][0]
-                    j=line_split[5][0]
-                    omega=line_split[8].split(")")[0]
-                    alpha=line_split[9]
-                 #   print(i,j,omega,alpha)
-                    rows.append(pd.Series({
-                        "ij": i+j,
-                        "omega": float(omega),
-                        "alpha": float(alpha)
-                    }))
+                    #   print(line_split)
+                    i = line_split[3][0]
+                    j = line_split[5][0]
+                    omega = line_split[8].split(")")[0]
+                    alpha = line_split[9]
+                    #   print(i,j,omega,alpha)
+                    rows.append(
+                        pd.Series(
+                            {"ij": i + j, "omega": float(omega), "alpha": float(alpha)}
+                        )
+                    )
                     # Check if beta_value is another beta function call
                     # not a good idea
                     # if "beta" in beta_value:
                     # If it is, replace it with the original letters
                     # beta_value = f"beta({letter1};{letter2},{letter3})"
 
-                    #a_freq = -(float(b_freq) + float(c_freq))
+                    # a_freq = -(float(b_freq) + float(c_freq))
                     # Append the data to the DataFrame
-                    #rows.append(pd.Series({
+                    # rows.append(pd.Series({
                     #    "A-freq": a_freq,
                     #    "B-freq": float(b_freq),
                     #    "C-freq": float(c_freq),
@@ -243,7 +261,7 @@ class daltonToJson:
                     #    "C": letter3,
                     #    "Beta Value": beta_value if "," in beta_value else float(
                     #        beta_value)
-                    #}))
+                    # }))
             try:
                 alpha_json = pd.concat(rows, axis=1).transpose()
             except ValueError as verror:
@@ -263,7 +281,7 @@ class daltonToJson:
             freq = line.split()[2:]
             num_freq = int(line.split()[0])
             if len(freq) != num_freq:
-                nextline = streamIn.readline();
+                nextline = streamIn.readline()
                 next_freq = nextline.split()
                 freq = freq + next_freq
             self.calcSetup["frequencies"] = []
@@ -403,13 +421,52 @@ class daltonToJson:
         self.calcTask["calculationResults"] = self.calcRes
         self.calculations.append(self.calcTask)
 
+    def readSymGrp(self, line, streamIn):
+        # print("READING SYMGRP")
+        # Two options for symmetry... 
+        # Either is no symmetry aka C1 
+        #  - full_point_group = 'C1'
+        #  - Representation point group: C1
+        #  - Irrep name for each symmetry: symmetry:  ['A']
+        # else there is symmetry and we need to read the point group and irreps
+
+        line = streamIn.readline()
+        line = streamIn.readline()
+        group_line = streamIn.readline()
+        full_point_group = group_line.split(" ")
+        # remove all empty strings
+        full_point_group = list(filter(None, full_point_group))[-2]
+        print("full point group:", full_point_group)
+        if(full_point_group == "C1"):
+            self.symmetry["point_group"] = full_point_group
+            self.symmetry["representation"] = full_point_group
+            self.symmetry["irreps"] = ["A"]
+            print("Symmetry:", self.symmetry)
+        else:
+            symrep_line = streamIn.readline()  # Representation
+            symrep_line = list(filter(None, symrep_line.split(" ")))[-2]
+            print("Representation point group:", full_point_group)
+            line = streamIn.readline()  # Representation
+            irrep_line = streamIn.readline()  # Irrep name for each symmetry:
+            irrep_line = list(filter(None, irrep_line.split(" ")))
+            # search for the index of the string symmetry:
+            sym_index = irrep_line.index("symmetry:")
+            # collect from the index to the end of the list -1
+            sym_list = irrep_line[sym_index + 1 : -1]
+            # grab every other element starting at 1
+            sym_list = sym_list[1::2]
+            print("sym_list:", sym_list)
+            self.symmetry["point_group"] = full_point_group
+            self.symmetry["representation"] = symrep_line
+            self.symmetry["irreps"] = sym_list
+            print("Symmetry:", self.symmetry)
+
+
+
+
     def readDipole(self, line, streamIn):
         self.calcTask["calculationType"] = "Dipole"
-        self.dipole_dict = {
-            "x": 0,
-            "y": 0,
-            "z": 0
-        }
+        self.dipole_dict = {"x": 0, "y": 0, "z": 0}
         # if the line matches to one of these inputs we will take the line
         line = streamIn.readline()
         line = streamIn.readline()
@@ -421,7 +478,10 @@ class daltonToJson:
             else:
                 line_split = line.split()
                 if len(line_split) > 0 and (
-                        (line_split[0] == 'x') or (line_split[0] == 'y') or (line_split[0] == 'z')):
+                    (line_split[0] == "x")
+                    or (line_split[0] == "y")
+                    or (line_split[0] == "z")
+                ):
                     opKey = line_split[0]
                     dipole_value = line_split[1]
                     if opKey:

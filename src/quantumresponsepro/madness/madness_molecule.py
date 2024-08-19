@@ -3,17 +3,27 @@ import json
 
 
 class geometry_parameters:
-    def __init__(self, eprec=None, field=None, no_orient=None, psp_calc=None, pure_ae=None, symtol=None, core_type=None, units=None):
+    def __init__(
+        self,
+        eprec=None,
+        field=None,
+        no_orient=None,
+        psp_calc=None,
+        pure_ae=None,
+        symtol=None,
+        core_type=None,
+        units=None,
+    ):
 
         self.eprec = 1e-4
         self.field = [0.0, 0.0, 0.0]
         self.no_orient = False
         self.psp_calc = False
         self.pure_ae = True
-        self.symtol =-1e-2
+        self.symtol = -1e-2
         self.core_type = "none"
         self.units = "atomic"
-        
+
         if eprec is not None:
             self.eprec = float(eprec)
         if field is not None:
@@ -30,23 +40,33 @@ class geometry_parameters:
             self.core_type = core_type
         if units is not None:
             self.units = units
-            
 
     def __repr__(self):
         return f"eprec: {self.eprec}, field: {self.field}, no_orient: {self.no_orient}, psp_calc: {self.psp_calc}, pure_ae: {self.pure_ae}, symtol: {self.symtol}, core_type: {self.core_type}, units: {self.units}"
+
     def __to_json__(self):
-        return {"eprec": float(self.eprec), "field": self.field, "no_orient": self.no_orient, "psp_calc": self.psp_calc, "pure_ae": self.pure_ae, "symtol": self.symtol, "core_type": self.core_type, "units": self.units}
+        return {
+            "eprec": float(self.eprec),
+            "field": self.field,
+            "no_orient": self.no_orient,
+            "psp_calc": self.psp_calc,
+            "pure_ae": self.pure_ae,
+            "symtol": self.symtol,
+            "core_type": self.core_type,
+            "units": self.units,
+        }
 
 
 class MADMolecule:
-    def __init__(self, geometry=None, symbols=None, parameters=None):
-        
+    def __init__(self, name=None, geometry=None, symbols=None, parameters=None):
+
         self.geometry = []
         self.symbols = []
         self.parameters = geometry_parameters()
-        
+        self.name=name
+
         if geometry is not None:
-            self.geometry = geometry 
+            self.geometry = geometry
         if symbols is not None:
             self.symbols = symbols
         if parameters is not None:
@@ -63,21 +83,40 @@ class MADMolecule:
                     split = line.split()
                     if split[0] in self.parameters.__dict__.keys():
                         self.parameters.__dict__[split[0]] = split[1]
-                        
+
                     else:
                         if len(split) != 4:
                             break
                         else:
                             self.symbols.append(split[0])
                             self.geometry.append([float(i) for i in split[1:]])
+    def to_molfile(self, molfile: Path):
+        with open(molfile, "w") as f:
+            f.write("geometry\n")
+            # write parameters
+            if self.parameters is not None:
+                for key, value in self.parameters.__dict__.items():
+                    f.write(f"  {key} {value}\n")
+            for i, symbol in enumerate(self.symbols):
+                f.write(f"  {symbol} {self.geometry[i][0]} {self.geometry[i][1]} {self.geometry[i][2]}\n")
+            f.write("end\n")
+
+        
+
+    def add_atom(self, symbol, x, y, z):
+        self.symbols.append(symbol)
+        self.geometry.append([x, y, z])
 
     def __to_json__(self):
-        return {"geometry": self.geometry, "symbols": self.symbols, "parameters": self.parameters.__to_json__()}
-        
+        return {
+            "geometry": self.geometry,
+            "symbols": self.symbols,
+            "parameters": self.parameters.__to_json__(),
+        }
+
     def __repr__(self):
         return f"parameters: {self.parameters}\ngeometry: {self.geometry}\nsymbols: {self.symbols}"
 
 
 def dict_to_object(obj_class, data):
     return obj_class(**data)
-
