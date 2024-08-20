@@ -71,7 +71,7 @@ class DaltonRunner:
             dalton_inp.append(".HF")
         else:
             dalton_inp.append(".DFT")
-            dalton_inp.append(xc.capitalize())
+            dalton_inp.append(xc.upper())
         # RESPONSE
 
         dalton_inp.append("**END OF DALTON INPUT")
@@ -132,7 +132,7 @@ class DaltonRunner:
             dalton_inp.append(".HF")
         else:
             dalton_inp.append(".DFT")
-            dalton_inp.append(xc.capitalize())
+            dalton_inp.append(xc.upper())
         # RESPONSE
         dalton_inp.append("**RESPONSE")
         # LINEAR
@@ -207,7 +207,7 @@ class DaltonRunner:
             dalton_inp.append(".HF")
         else:
             dalton_inp.append(".DFT")
-            dalton_inp.append(xc.capitalize())
+            dalton_inp.append(xc.upper())
         # RESPONSE
         dalton_inp.append("**PROPERTIES")
         dalton_inp.append("**RESPONSE")
@@ -293,27 +293,29 @@ class DaltonRunner:
             dalton_inp.append("*MOLBAS ")
             dalton_inp.append(".UNCONT ")
         dalton_inp.append("**WAVE FUNCTIONS")
-        dalton_inp.append("."+model.capitalize())
+        dalton_inp.append("."+model.upper())
 
-        if model == "hf":
-            pass
-        elif model == "dft":
-            xc = model_input["xc"]
-            dalton_inp.append(xc.capitalize())
-        elif model == "cc":
-            dalton_inp.append("*CC")
-            dalton_inp.append(model_input["cc_type"])
+        if model=="cc":
+            dalton_inp.append("*CC INPUT")
+            dalton_inp.append("."+model_input["cc_type"].upper())
+            dalton_inp.append("*CCEXCI")
+            dalton_inp.append(".NCCEXCI")
 
-        dalton_inp.append("**PROPERTIES")
-        dalton_inp.append(".EXCITA")
-        dalton_inp.append("*EXCITA")
-        dalton_inp.append(".NEXCIT")
+        else:
+            if model == "hf":
+                pass
+            elif model == "dft":
+                xc = model_input["xc"]
+                dalton_inp.append(xc.upper())
+            dalton_inp.append("**PROPERTIES")
+            dalon_inp.append(".EXCITA")
+            dalton_inp.append("*EXCITA")
+            dalton_inp.append(".NEXCIT")
 
         states = []
         for i in range(10):
             states.append(str(num_states))
         dalton_inp.append("   " + "  ".join(states))
-
         dalton_inp.append("**END OF DALTON INPUT")
         dalton_inp = "\n".join(dalton_inp)
         if model == "cc":
@@ -466,26 +468,27 @@ class DaltonRunner:
             data[dkeys].append(float(e_data["calculationResults"][dkeys]["value"]))
         # print(r_data)
 
+        calc_res= r_data["calculationResults"]
         # sort the frequencies
         freq = r_data["calculationResults"]["frequencies"]
-        freq = [f for l in freq for f in l]
-        freq = np.array(freq)
-        sort_f = np.argsort(freq)
-        freq = freq[sort_f]
+        if "eV" in calc_res:
+            eV = calc_res["eV"]
+            s_dict["eV"] = eV
 
-        # Sort by frequency
+        if "cc2_energy" in calc_res:
+            s_dict["cc2_energy"] = calc_res["cc2_energy"]
+        if "mp2_energy" in calc_res:
+            s_dict["mp2_energy"] = calc_res["mp2_energy"]
+        if "scf_energy" in calc_res:
+            s_dict["scf_energy"] = calc_res["scf_energy"]
+
+        
         Mode = r_data["calculationResults"]["Mode"]
-        Mode = [m for mo in Mode for m in mo]
-        Mode = np.array(Mode)
-        Mode = Mode[sort_f]
         Sym = r_data["calculationResults"]["Sym"]
-        Sym = [s for so in Sym for s in so]
-        Sym = np.array(Sym)
-        Sym = Sym[sort_f]
 
-        s_dict["Sym"] = Sym.tolist()
-        s_dict["Mode"] = Mode.tolist()
-        s_dict["freq"] = freq.tolist()
+        s_dict["Sym"] = Sym
+        s_dict["Mode"] = Mode
+        s_dict["freq"] = freq 
         s_dict["calculationTime"] = r_data["calculationTime"]
 
         return {

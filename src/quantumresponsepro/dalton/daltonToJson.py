@@ -41,6 +41,7 @@ class daltonToJson:
                     self.readScfDft,
                 ),
                 ("Linear Response calculation", self.readResponse),
+                ("*                   SUMMARY OF COUPLED CLUSTER CALCULATION                    *",self.readExcitedCC),
                 ("Singlet electronic excitation energies", self.readExcited),
                 ("Nuclear contribution to dipole moments", self.readDipole),
                 ("SYMGRP: Point group information", self.readSymGrp),
@@ -156,7 +157,7 @@ class daltonToJson:
         self.calculations.append(self.calcTask)
 
     def readQuadResponse(self, outfile):
-        print("READING QUAD RESPONSE from {}".format(outfile))
+        #print("READING QUAD RESPONSE from {}".format(outfile))
         self.outfile = outfile
 
         with open(self.outfile, "r") as file:
@@ -372,6 +373,70 @@ class daltonToJson:
         self.calcTask["calculationResults"] = self.polar_dict
         self.calcTask["calculationSetup"] = self.calcSetup
         self.calculations.append(self.calcTask)
+    def readExcitedCC(self, line, streamIn):
+        self.calcTask["calculationType"] = "SingletExcitationEnergy"
+        # if the line matches to one of these inputs we will take the line
+
+        # skip 8 lines
+        for i in range(8):
+            line = streamIn.readline()
+
+        # remove any '' from the list
+        line = list(filter(None, line.split(" ")))
+        self.scf_energy= float(line[-2])
+        self.mp2_energy=list(filter(None, streamIn.readline().split(" ")))[-2]
+        self.cc2_energy=list(filter(None, streamIn.readline().split(" ")))[-2]
+        #print("SCF Energy:", self.scf_energy)
+        #print("MP2 Energy:", self.mp2_energy)
+        #print("CC2 Energy:", self.cc2_energy)
+
+
+        for i in range (6):
+            line = streamIn.readline()
+        line = streamIn.readline()
+        #print(line)
+
+        self.calcRes["frequencies"] = []
+        self.calcRes["eV"] = []
+        self.calcRes["Sym"] = []
+        self.calcRes["Mode"] = []
+
+        self.calcRes["cc2_energy"] = self.cc2_energy
+        self.calcRes["mp2_energy"] = self.mp2_energy
+        self.calcRes["scf_energy"] = self.scf_energy
+
+        while line:
+            line=streamIn.readline()
+
+            if line.find("                                                                                ") >= 0:
+                print("END OF CC Calculation")
+                break
+            elif line.find("+-----------------------------------------------------------------------------+") >= 0:
+                pass
+                #print("We skip this line")
+            else:
+                line=list(filter(None,line.split(" ")))
+                line=list(filter(lambda x: x!="|",line))
+                # if at this point len list is > 1 then we have a result that we would like to capture
+                if len(line)>1:
+                    #print(line)
+                    self.calcRes["Sym"].append(str(line[0][1:]))
+                    self.calcRes["Mode"].append(int(line[1]))
+                    self.calcRes["frequencies"].append(float(line[2]))
+                    self.calcRes["eV"].append(float(line[3]))
+            
+
+        while line:
+            # SCF converged
+            line = streamIn.readline()
+            if line.find("Total CPU  time used in ABACUS:") >= 0:
+                #print("We break out")
+                line2 = streamIn.readline()
+                self.calcTask["calculationTime"] = self.readTaskTimes(line, line2)
+                break
+        self.calcTask["calculationResults"] = self.calcRes
+        self.calculations.append(self.calcTask)
+
 
     def readExcited(self, line, streamIn):
         # print("READING RESPONSE")
