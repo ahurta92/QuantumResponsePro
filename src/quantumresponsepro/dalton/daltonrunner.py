@@ -308,7 +308,7 @@ class DaltonRunner:
                 xc = model_input["xc"]
                 dalton_inp.append(xc.upper())
             dalton_inp.append("**PROPERTIES")
-            dalon_inp.append(".EXCITA")
+            dalton_inp.append(".EXCITA")
             dalton_inp.append("*EXCITA")
             dalton_inp.append(".NEXCIT")
 
