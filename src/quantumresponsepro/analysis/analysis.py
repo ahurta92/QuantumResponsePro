@@ -312,7 +312,7 @@ def read_basis_quad(json_file):
 
 
 def query_beta_data(df, omega_b, omega_c):
-    om = df.Bfreq.unique()
+    om = df.Cfreq.unique().sort()
 
     b = om[omega_b]
     c = om[omega_c]
@@ -697,24 +697,32 @@ class MRADataFrames:
 
 class MRAComparedBasisDF(pd.DataFrame):
     def __init__(
-        self, polar_data, index, values: list, PercentError: bool, *args, **kwargs
+        self,
+        polar_data,
+        index,
+        values: list,
+        PercentError: bool,
+        mra="mra-high",
+        *args,
+        **kwargs,
     ):
+
         # Use the special_parameter to modify the DataFrame or perform additional initialization
-        basis_data = polar_data.query('basis!="MRA"').copy()
+        basis_data = polar_data.query("basis!=@mra").copy()
         basis_data = basis_data.set_index(index)
 
         for value in values:
-            basis_data[f"{value}MRA"] = polar_data.query('basis=="MRA"').set_index(
+            basis_data[f"{value}[{mra}]"] = polar_data.query("basis==@mra").set_index(
                 index
             )[value]
             if PercentError:
                 basis_data[f"{value}E"] = (
-                    (basis_data[value] - basis_data[f"{value}MRA"])
-                    / basis_data[f"{value}MRA"]
-                    * 100
-                )
+                    basis_data[value] - basis_data[f"{value}[{mra}]"]
+                ) / basis_data[f"{value}[{mra}]"] 
             else:
-                basis_data[f"{value}E"] = basis_data[value] - basis_data[f"{value}MRA"]
+                basis_data[f"{value}E"] = (
+                    basis_data[value] - basis_data[f"{value}[{mra}]"]
+                )
         basis_data = basis_data.reset_index()
         # create a column of percent error in alpha
         basis_data = make_detailed_df(basis_data)
