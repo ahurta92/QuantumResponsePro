@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+import copy
 
 
 class geometry_parameters:
@@ -58,20 +59,39 @@ class geometry_parameters:
 
 
 class MADMolecule:
-    def __init__(self, name=None, geometry=None, symbols=None, parameters=None):
+    def __init__(self, orig=None,name=None, geometry=None, symbols=None, parameters=None):
+        if orig==None:
+            self.geometry = []
+            self.symbols = []
+            self.parameters = geometry_parameters()
+            self.name=name
 
-        self.geometry = []
-        self.symbols = []
-        self.parameters = geometry_parameters()
-        self.name=name
+            if geometry is not None:
+                self.geometry = geometry
+            if symbols is not None:
+                self.symbols = symbols
+            if parameters is not None:
+                self.parameters = geometry_parameters(**parameters)
+        else:
+            self=copy.deepcopy(orig)
+            self.parameters=copy.deepcopy(orig.parameters)
+    def from_string(self, mol_file_string):
+        for line in mol_file_string.splitlines():
+            if line.startswith("end"):
+                break
+            if line and not line.startswith("#"):
+                if line.startswith("geometry"):
+                    continue
+                split = line.split()
+                if split[0] in self.parameters.__dict__.keys():
+                    self.parameters.__dict__[split[0]] = split[1]
 
-        if geometry is not None:
-            self.geometry = geometry
-        if symbols is not None:
-            self.symbols = symbols
-        if parameters is not None:
-            self.parameters = geometry_parameters(**parameters)
-
+                else:
+                    if len(split) != 4:
+                        break
+                    else:
+                        self.symbols.append(split[0])
+                        self.geometry.append([float(i) for i in split[1:]])
     def from_molfile(self, molfile: Path):
         with open(molfile) as f:
             for line in f:
@@ -107,7 +127,7 @@ class MADMolecule:
         self.symbols.append(symbol)
         self.geometry.append([x, y, z])
 
-    def __to_json__(self):
+    def to_json(self):
         return {
             "geometry": self.geometry,
             "symbols": self.symbols,
