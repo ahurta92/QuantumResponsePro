@@ -36,7 +36,7 @@ class madnessToDalton:
         dalton_inp = []
         dalton_inp.append("BASIS")
         dalton_inp.append(basis + "")
-        param_keys={}
+        param_keys = {}
         with open(madmol_f) as file:  # Use file to refer to the file object
             lines = file.readlines()
             atom_dict = {}
@@ -67,7 +67,6 @@ class madnessToDalton:
                     if skey == "geometry":
                         continue
                     param_keys[skey] = split[1]
-                
 
                 # if not a key word then it's probably an atom
                 if not skey in skeys:
@@ -78,13 +77,11 @@ class madnessToDalton:
                     else:
                         atom_dict[skey].append(geometry)
 
-        
         # we validate that the keys are atoms using the dataframe defined from periodic_table.csv
         # Error if we don't find the key in the table
         atom_types = len(atom_dict)
         dalton_inp.append("blah")
         dalton_inp.append("blah")
-
 
         general_line = (
             "Atomtype="
@@ -95,9 +92,12 @@ class madnessToDalton:
             + "Charge="
             + str(ncharge)
         )
+        print(param_keys)
         # if param['norient'] == 'true':
-        if "no_orient" in param_keys and param_keys["no_orient"] == "true":
-            general_line +=" Nosymmetry"
+        if "no_orient" in param_keys and param_keys["no_orient"] == "True":
+            print("no orient")
+            general_line += " Nosymmetry"
+        print("general line", general_line)
         dalton_inp.append(general_line)
 
         for atom in atom_dict.keys():

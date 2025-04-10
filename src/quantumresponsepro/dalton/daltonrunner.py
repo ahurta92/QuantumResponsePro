@@ -282,6 +282,10 @@ class DaltonRunner:
         # Given a molecule, exchange correlation functional, basis an number of states
         # generates a dalton .dal file and writes it in corresponding directory
         # /dalton/[xc]/[madmol]/excited-state
+        print("madmol", madmol)
+        print("model", model)
+        print("basis", basis)
+        print("num_states", num_states)
 
         molname = madmol.split(".")[0]
         # print(molname)
@@ -293,11 +297,11 @@ class DaltonRunner:
             dalton_inp.append("*MOLBAS ")
             dalton_inp.append(".UNCONT ")
         dalton_inp.append("**WAVE FUNCTIONS")
-        dalton_inp.append("."+model.upper())
+        dalton_inp.append("." + model.upper())
 
-        if model=="cc":
+        if model == "cc":
             dalton_inp.append("*CC INPUT")
-            dalton_inp.append("."+model_input["cc_type"].upper())
+            dalton_inp.append("." + model_input["cc_type"].upper())
             dalton_inp.append("*CCEXCI")
             dalton_inp.append(".NCCEXCI")
 
@@ -308,7 +312,7 @@ class DaltonRunner:
                 xc = model_input["xc"]
                 dalton_inp.append(xc.upper())
             dalton_inp.append("**PROPERTIES")
-            dalon_inp.append(".EXCITA")
+            dalton_inp.append(".EXCITA")
             dalton_inp.append("*EXCITA")
             dalton_inp.append(".NEXCIT")
 
@@ -323,7 +327,9 @@ class DaltonRunner:
         else:
             model_name = model
         run_dir = (
-            self.dalton_dir.joinpath(model_name).joinpath(molname).joinpath("excited-state")
+            self.dalton_dir.joinpath(model_name)
+            .joinpath(molname)
+            .joinpath("excited-state")
         )
         print(run_dir)
         mad_to_dal = madnessToDalton(self.base_dir.absolute())
@@ -468,7 +474,7 @@ class DaltonRunner:
             data[dkeys].append(float(e_data["calculationResults"][dkeys]["value"]))
         # print(r_data)
 
-        calc_res= r_data["calculationResults"]
+        calc_res = r_data["calculationResults"]
         # sort the frequencies
         freq = r_data["calculationResults"]["frequencies"]
         if "eV" in calc_res:
@@ -482,13 +488,12 @@ class DaltonRunner:
         if "scf_energy" in calc_res:
             s_dict["scf_energy"] = calc_res["scf_energy"]
 
-        
         Mode = r_data["calculationResults"]["Mode"]
         Sym = r_data["calculationResults"]["Sym"]
 
         s_dict["Sym"] = Sym
         s_dict["Mode"] = Mode
-        s_dict["freq"] = freq 
+        s_dict["freq"] = freq
         s_dict["calculationTime"] = r_data["calculationTime"]
 
         return {
@@ -781,6 +786,8 @@ class DaltonRunner:
         run_directory, dal_input, mol_input = self.__write_excited_input(
             self, mol, model, basis, num_states, model_input
         )
+
+
         print("dal_input:", dal_input)
         print("mol_input:", mol_input)
         print("run_directory:", run_directory)
@@ -791,8 +798,16 @@ class DaltonRunner:
             model_name = model
 
         # you need the _ after model name because dalton writes output files with a dash putting the model name and basis together
-        run_name = "excited-" + "{}".format(model_name)+"_" + "-".join([mol, basis]) + ".out"
-        json_name = "excited_"+"{}".format(model_name)+"_" + "-".join([mol, basis]) + ".json"
+        run_name = (
+            "excited-" + "{}".format(model_name) + "_" + "-".join([mol, basis]) + ".out"
+        )
+        json_name = (
+            "excited_"
+            + "{}".format(model_name)
+            + "_"
+            + "-".join([mol, basis])
+            + ".json"
+        )
         # First look for the output file and try and convert it to a json
         outfile = run_directory.joinpath(run_name)
         outJSON = run_directory.joinpath(json_name)
