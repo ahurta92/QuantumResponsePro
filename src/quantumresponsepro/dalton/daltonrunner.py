@@ -15,6 +15,8 @@ from .madness_to_dalton import madnessToDalton
 class DaltonRunner:
     dalton_dir = None
     base_dir = None
+    run = None
+    use_mpi = None
 
     @classmethod
     def __init__(self, base_dir: Path, run_new):
@@ -644,7 +646,7 @@ class DaltonRunner:
     def get_quad_json(self, mol, xc, operator, basis):
 
         run_directory, dal_input, mol_input = self.__write_quadratic_input(
-            self, mol, xc, operator, basis
+             mol, xc, operator, basis
         )
         output_stem = "quad_" + "-".join([mol, basis])
         output_file = run_directory.joinpath(output_stem + ".out")
@@ -786,60 +788,72 @@ class DaltonRunner:
         run_directory, dal_input, mol_input = self.__write_excited_input(
             self, mol, model, basis, num_states, model_input
         )
-
-
-        print("dal_input:", dal_input)
-        print("mol_input:", mol_input)
         print("run_directory:", run_directory)
+        print("self.dalton_dir:", self.dalton_dir)
+        print("dal_input:", dal_input)
+        print("self.run:", self.run)
+        if self.run:
 
-        if model == "cc":
-            model_name = model_input["cc_type"]
-        else:
-            model_name = model
+            print("dal_input:", dal_input)
+            print("mol_input:", mol_input)
+            print("run_directory:", run_directory)
 
-        # you need the _ after model name because dalton writes output files with a dash putting the model name and basis together
-        run_name = (
-            "excited-" + "{}".format(model_name) + "_" + "-".join([mol, basis]) + ".out"
-        )
-        json_name = (
-            "excited_"
-            + "{}".format(model_name)
-            + "_"
-            + "-".join([mol, basis])
-            + ".json"
-        )
-        # First look for the output file and try and convert it to a json
-        outfile = run_directory.joinpath(run_name)
-        outJSON = run_directory.joinpath(json_name)
-        print("outfile:", outfile)
-        data = None
-        try:
-            # open the output file
-            with open(outfile, "r") as daltonOutput:
-                dj = daltonToJson()
-                dalton_json = json.loads(dj.convert(daltonOutput))
-                with open(outJSON, "w") as f:
-                    f.write(json.dumps(dalton_json, indent=4))
-            data = self.__create_excited_json(dalton_json, basis)
-        except FileNotFoundError as e:
-            print("did not find output file", e)
-            if self.run:
-                print("Try and run molecule ", mol)
-                d_out, d_error = self.__run_dalton(run_directory, dal_input, mol_input)
-                # print(d_out, d_error)
-                print("Finished running  ", mol, " in ", run_directory)
-                print("Trying to open ", outfile)
+            if model == "cc":
+                model_name = model_input["cc_type"]
+            else:
+                model_name = model
+
+            # you need the _ after model name because dalton writes output files with a dash putting the model name and basis together
+            run_name = (
+                "excited-"
+                + "{}".format(model_name)
+                + "_"
+                + "-".join([mol, basis])
+                + ".out"
+            )
+            json_name = (
+                "excited_"
+                + "{}".format(model_name)
+                + "_"
+                + "-".join([mol, basis])
+                + ".json"
+            )
+            # First look for the output file and try and convert it to a json
+            outfile = run_directory.joinpath(run_name)
+            outJSON = run_directory.joinpath(json_name)
+            print("outfile:", outfile)
+            data = None
+            try:
+                # open the output file
                 with open(outfile, "r") as daltonOutput:
                     dj = daltonToJson()
                     dalton_json = json.loads(dj.convert(daltonOutput))
                     with open(outJSON, "w") as f:
                         f.write(json.dumps(dalton_json, indent=4))
-                    data = self.__create_excited_json(dalton_json, basis)
-                pass
-            else:
-                print("Not trying to run dalton for ", mol)
-                pass
-        return data
+                data = self.__create_excited_json(dalton_json, basis)
+            except FileNotFoundError as e:
+                print("did not find output file", e)
+                if self.run:
+                    print("Try and run molecule ", mol)
+                    d_out, d_error = self.__run_dalton(
+                        run_directory, dal_input, mol_input
+                    )
+                    # print(d_out, d_error)
+                    print("Finished running  ", mol, " in ", run_directory)
+                    print("Trying to open ", outfile)
+                    with open(outfile, "r") as daltonOutput:
+                        dj = daltonToJson()
+                        dalton_json = json.loads(dj.convert(daltonOutput))
+                        with open(outJSON, "w") as f:
+                            f.write(json.dumps(dalton_json, indent=4))
+                        data = self.__create_excited_json(dalton_json, basis)
+                    pass
+                else:
+                    print("Not trying to run dalton for ", mol)
+                    pass
+            return data
+        else:
+            print("Only writing input files")
 
     def get_excited_result(self, mol, xc, basis, run):
         excited_j = self.get_excited_json(mol, xc, basis, 4)

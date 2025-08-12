@@ -162,7 +162,6 @@ def make_detailed_df(data):
     data["polarization"] = data["polarization"].astype("category")
     data["mol_system"] = "First-row"
     data.loc[data["molecule"].isin(row2), "mol_system"] = "Second-row"
-    data.loc[data["molecule"].isin(flist), "mol_system"] = "Fluorine"
     data["mol_system"] = data["mol_system"].astype("category")
     data["valence"] = "D"
     data.loc[data["basis"].isin(DZ), "valence"] = "D"
@@ -466,7 +465,7 @@ class BasisDataFrames:
     def __init__(self, database_root, basis_sets, molecules, xc="hf", op="dipole"):
         self.database_root = database_root
         self.csv_data = database_root.joinpath("csv_data")
-        
+
         if not self.csv_data.exists():
             self.csv_data.mkdir()
         self.energy = pd.DataFrame()
